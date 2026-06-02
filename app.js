@@ -33,7 +33,10 @@ ${anuncio.descricao}
 <p>
 📍 ${anuncio.cidade}
 </p>
-<button>
+<button onclick="mostrarContato(
+'${anuncio.nome}',
+'${anuncio.telefone}'
+)">
 Desbloquear Contato
 </button>
 </div>
