@@ -79,34 +79,37 @@ Desbloquear Contato
 
     });
 }
-window.mostrarContato = async function (nome, telefone) {
+window.mostrarContato = async function (
+    anuncioId,
+    nome,
+    telefone
+) {
+
+    console.log("FUNÇÃO INICIADA");
+
     if (!usuarioLogado) {
+
+        console.log("USUÁRIO NÃO LOGADO");
+
         alert("Faça login para desbloquear contatos.");
         return;
+
     }
+
+    console.log("UID:", usuarioLogado.uid);
+
     const usuarioRef =
         doc(db, "usuarios", usuarioLogado.uid);
+
     const usuarioDoc =
         await getDoc(usuarioRef);
+
+    console.log("DOCUMENTO:", usuarioDoc.exists());
+
     const dados =
         usuarioDoc.data();
-    if (dados.creditos <= 0) {
-        alert(
-            "Você não possui créditos suficientes."
-        );
-        return;
-    }
-    await updateDoc(usuarioRef, {
-        creditos: dados.creditos - 1
-    });
-    document.getElementById("nomeCliente")
-        .innerHTML = "<b>Nome:</b> " + nome;
-    document.getElementById("telefoneCliente")
-        .innerHTML = "<b>Telefone:</b> " + telefone;
-    document.getElementById("btnWhatsapp")
-        .href = "https://wa.me/55" + telefone;
-    document.getElementById("modal")
-        .style.display = "block";
+
+    console.log("CRÉDITOS:", dados.creditos);
 
 }
 }
