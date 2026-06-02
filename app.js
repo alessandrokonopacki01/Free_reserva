@@ -4,9 +4,11 @@ import {
     collection,
     getDocs,
     query,
-    orderBy
+    orderBy,
+    where,
+    Timestamp
 }
-    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 const lista =
     document.getElementById("anuncios");
 async function carregar() {
