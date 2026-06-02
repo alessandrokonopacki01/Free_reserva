@@ -2,7 +2,9 @@ import { initializeApp }
     from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getFirestore }
     from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-// Import the functions you need from the SDKs you need
+
+import { getAuth }
+    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 const firebaseConfig = {
     apiKey: "AIzaSyAMsIZftBOCuiFtvz3d76KHTxDGrxi9HYo",
     authDomain: "free-reserva.firebaseapp.com",
