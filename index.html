@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contrata Reserva</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header class="hero">
         <h1>Contrata Reserva</h1>
@@ -22,6 +24,33 @@
         <h2>Serviços Publicados</h2>
         <div id="anuncios"></div>
     </section>
+    <div id="modal" class="modal">
+
+        <div class="modal-content">
+
+            <h2>Contato do Cliente</h2>
+
+            <p id="nomeCliente"></p>
+
+            <p id="telefoneCliente"></p>
+
+            <a id="btnWhatsapp" target="_blank">
+
+                <button class="btn-whatsapp">
+                    Abrir WhatsApp
+                </button>
+
+            </a>
+
+            <br><br>
+
+            <button onclick="fecharModal()">
+                Fechar
+            </button>
+
+        </div>
+
+    </div>
     <script type="module" src="app.js"></script>
 </body>
 
