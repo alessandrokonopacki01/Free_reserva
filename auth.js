@@ -4,6 +4,14 @@ import {
     signInWithPopup
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import {
+    doc,
+    getDoc,
+    setDoc,
+    Timestamp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { db } from "./firebase.js";
 const provider = new GoogleAuthProvider();
 const btnLogin =
     document.getElementById("btnLogin");
