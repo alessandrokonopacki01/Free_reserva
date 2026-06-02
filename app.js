@@ -8,6 +8,9 @@ import {
     orderBy,
     where,
     Timestamp,
+    doc,
+    getDoc,
+    updateDoc,
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
@@ -75,7 +78,7 @@ Desbloquear Contato
 
     });
 }
-window.mostrarContato = function (nome, telefone) {
+window.mostrarContato = async function (nome, telefone) {
 
     if (!usuarioLogado) {
 
@@ -85,9 +88,19 @@ window.mostrarContato = function (nome, telefone) {
 
     }
 
+    const usuarioRef =
+        doc(db, "usuarios", usuarioLogado.uid);
+
+    const usuarioDoc =
+        await getDoc(usuarioRef);
+
+    const dados =
+        usuarioDoc.data();
+
     alert(
-        "Logado como: " +
-        usuarioLogado.displayName
+        "Você possui " +
+        dados.creditos +
+        " créditos."
     );
 
 }
