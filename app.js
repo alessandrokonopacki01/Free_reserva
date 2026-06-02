@@ -51,6 +51,9 @@ ${anuncio.descricao}
 <p>
 📍 ${anuncio.cidade}
 </p>
+<p>
+⏳ Expira em ${horas}h ${minutos}min
+</p>
 <button onclick="mostrarContato(
 '${anuncio.nome}',
 '${anuncio.telefone}'
