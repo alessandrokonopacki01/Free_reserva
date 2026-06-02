@@ -60,7 +60,7 @@ onAuthStateChanged(auth, async (user) => {
         document.getElementById(
             "usuarioInfo"
         ).innerHTML =
-            `👤 ${dados.nome}
+            `👤 Trabalhador: ${dados.nome}
              | 💰 Créditos: ${dados.creditos}`;
 
     }
