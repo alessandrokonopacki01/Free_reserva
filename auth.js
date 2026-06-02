@@ -1,7 +1,8 @@
 import { auth } from "./firebase.js";
 import {
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    onAuthStateChanged
 }
     from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import {
@@ -45,5 +46,22 @@ btnLogin.addEventListener("click", async () => {
     catch (erro) {
         console.error(erro);
         alert("Erro ao fazer login");
+    }
+});
+onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+    const usuarioRef =
+        doc(db, "usuarios", user.uid);
+    const usuarioDoc =
+        await getDoc(usuarioRef);
+    if (usuarioDoc.exists()) {
+        const dados =
+            usuarioDoc.data();
+        document.getElementById(
+            "usuarioInfo"
+        ).innerHTML =
+            `👤 ${dados.nome}
+             | 💰 Créditos: ${dados.creditos}`;
+
     }
 });
