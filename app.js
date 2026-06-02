@@ -41,4 +41,12 @@ Desbloquear Contato
 
     });
 }
+window.mostrarContato = function(nome, telefone){
+
+    alert(
+        "Cliente: " + nome +
+        "\nWhatsApp: " + telefone
+    );
+
+}
 carregar();
