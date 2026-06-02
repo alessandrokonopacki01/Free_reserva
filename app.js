@@ -14,10 +14,16 @@ const lista =
 async function carregar() {
     lista.innerHTML = "";
     const q =
-        query(
-            collection(db, "anuncios"),
-            orderBy("criadoEm", "desc")
-        );
+    query(
+        collection(db, "anuncios"),
+        where(
+            "expiraEm",
+            ">",
+            Timestamp.now()
+        ),
+        orderBy("expiraEm"),
+        orderBy("criadoEm", "desc")
+    );
     const snapshot =
         await getDocs(q);
     snapshot.forEach((doc) => {
