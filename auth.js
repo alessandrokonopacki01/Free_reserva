@@ -23,6 +23,20 @@ btnLogin.addEventListener("click", async () => {
                 provider
             );
         const usuario = resultado.user;
+        const usuarioRef =
+    doc(db, "usuarios", usuario.uid);
+
+const usuarioDoc =
+    await getDoc(usuarioRef);
+if (!usuarioDoc.exists()) {
+    await setDoc(usuarioRef, {
+        nome: usuario.displayName,
+        email: usuario.email,
+        creditos: 5,
+        tipo: "profissional",
+        criadoEm: Timestamp.now()
+    });
+}
         alert(
             "Bem-vindo, " +
             usuario.displayName
