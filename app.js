@@ -88,7 +88,6 @@ window.mostrarContato = async function (
     console.log("FUNÇÃO INICIADA");
 
     if (!usuarioLogado) {
-
         console.log("USUÁRIO NÃO LOGADO");
 
         alert("Faça login para desbloquear contatos.");
