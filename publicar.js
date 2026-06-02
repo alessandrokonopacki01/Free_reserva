@@ -38,7 +38,10 @@ botao.addEventListener("click", async () => {
                 descricao,
                 cidade: "Reserva",
                 status: "ativo",
-                criadoEm: Timestamp.now()
+                criadoEm: Timestamp.now(),
+                expiraEm: Timestamp.fromMillis(
+                    Date.now() + (24 * 60 * 60 * 1000)
+                )
             }
         );
         alert("Serviço publicado!");
