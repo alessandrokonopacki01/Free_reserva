@@ -2,15 +2,16 @@ import { initializeApp }
     from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getFirestore }
     from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+// Import the functions you need from the SDKs you need
 const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
-    authDomain: "SEU_PROJETO.firebaseapp.com",
-    projectId: "SEU_PROJETO",
-    storageBucket: "SEU_PROJETO.appspot.com",
-    messagingSenderId: "123456",
-    appId: "123456"
+    apiKey: "AIzaSyAMsIZftBOCuiFtvz3d76KHTxDGrxi9HYo",
+    authDomain: "free-reserva.firebaseapp.com",
+    projectId: "free-reserva",
+    storageBucket: "free-reserva.firebasestorage.app",
+    messagingSenderId: "237651406510",
+    appId: "1:237651406510:web:16128bc07001ee0391473f"
 };
-const app =
-    initializeApp(firebaseConfig);
-export const db =
-    getFirestore(app);
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);
