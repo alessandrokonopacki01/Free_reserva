@@ -90,3 +90,31 @@ textarea {
     border-radius: 8px;
     cursor: pointer;
 }
+.modal{
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+
+    width:100%;
+    height:100%;
+
+    background:rgba(0,0,0,0.5);
+}
+.modal-content{
+    background:white;
+    max-width:400px;
+    margin:120px auto;
+    padding:25px;
+    border-radius:10px;
+    text-align:center;
+}
+.btn-whatsapp{
+    background:#25D366;
+    color:white;
+    border:none;
+    padding:12px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+}

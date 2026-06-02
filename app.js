@@ -46,10 +46,18 @@ Desbloquear Contato
 }
 window.mostrarContato = function (nome, telefone) {
 
-    alert(
-        "Cliente: " + nome +
-        "\nWhatsApp: " + telefone
-    );
+    document.getElementById("nomeCliente")
+        .innerHTML = "<b>Nome:</b> " + nome;
+    document.getElementById("telefoneCliente")
+        .innerHTML = "<b>Telefone:</b> " + telefone;
+    document.getElementById("btnWhatsapp")
+        .href = "https://wa.me/55" + telefone;
+    document.getElementById("modal")
+        .style.display = "block";
+}
+window.fecharModal = function () {
 
+    document.getElementById("modal")
+        .style.display = "none";
 }
 carregar();
