@@ -41,7 +41,7 @@ Desbloquear Contato
 
     });
 }
-window.mostrarContato = function(nome, telefone){
+window.mostrarContato = function (nome, telefone) {
 
     alert(
         "Cliente: " + nome +
