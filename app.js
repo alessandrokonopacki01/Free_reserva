@@ -17,6 +17,10 @@ import {
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 const lista =
     document.getElementById("anuncios");
+    let usuarioLogado = null;
+onAuthStateChanged(auth, (user) => {
+    usuarioLogado = user;
+});
 async function carregar() {
     lista.innerHTML = "";
     const q =
@@ -73,14 +77,19 @@ Desbloquear Contato
 }
 window.mostrarContato = function (nome, telefone) {
 
-    document.getElementById("nomeCliente")
-        .innerHTML = "<b>Nome:</b> " + nome;
-    document.getElementById("telefoneCliente")
-        .innerHTML = "<b>Telefone:</b> " + telefone;
-    document.getElementById("btnWhatsapp")
-        .href = "https://wa.me/55" + telefone;
-    document.getElementById("modal")
-        .style.display = "block";
+    if (!usuarioLogado) {
+
+        alert("Faça login para desbloquear contatos.");
+
+        return;
+
+    }
+
+    alert(
+        "Logado como: " +
+        usuarioLogado.displayName
+    );
+
 }
 window.fecharModal = function () {
 
