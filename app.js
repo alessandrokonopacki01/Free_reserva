@@ -13,15 +13,15 @@ import {
     updateDoc,
     addDoc
 }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 import {
     onAuthStateChanged
 }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 const lista =
     document.getElementById("anuncios");
-    let usuarioLogado = null;
+let usuarioLogado = null;
 onAuthStateChanged(auth, (user) => {
     usuarioLogado = user;
 });
@@ -68,12 +68,9 @@ ${anuncio.descricao}
 <p>
 ⏳ Anúncio expira em ${horas}h ${minutos}min
 </p>
-<button onclick="mostrarContato(
-'${anuncio.nome}',
-'${anuncio.telefone}'
-)">
-Desbloquear Contato
-</button>
+<button onclick="mostrarContato('${anuncioId}', '${anuncio.nome}', '${anuncio.telefone}')">
+            Desbloquear Contato
+        </button>
 </div>
 `;
 
@@ -110,7 +107,6 @@ window.mostrarContato = async function (
 
     console.log("CRÉDITOS:", dados.creditos);
 
-}
 }
 window.fecharModal = function () {
 
