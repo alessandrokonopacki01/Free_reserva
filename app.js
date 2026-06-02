@@ -1,4 +1,5 @@
 import { db } from "./firebase.js";
+import { auth } from "./firebase.js";
 
 import {
     collection,
@@ -6,9 +7,14 @@ import {
     query,
     orderBy,
     where,
-    Timestamp
+    Timestamp,
 }
-    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+import {
+    onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 const lista =
     document.getElementById("anuncios");
 async function carregar() {
