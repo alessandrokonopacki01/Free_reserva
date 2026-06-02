@@ -14,20 +14,30 @@ const lista =
 async function carregar() {
     lista.innerHTML = "";
     const q =
-    query(
-        collection(db, "anuncios"),
-        where(
-            "expiraEm",
-            ">",
-            Timestamp.now()
-        ),
-        orderBy("expiraEm"),
-        orderBy("criadoEm", "desc")
-    );
+        query(
+            collection(db, "anuncios"),
+            where(
+                "expiraEm",
+                ">",
+                Timestamp.now()
+            ),
+            orderBy("expiraEm"),
+            orderBy("criadoEm", "desc")
+        );
     const snapshot =
         await getDocs(q);
     snapshot.forEach((doc) => {
         const anuncio = doc.data();
+        const agora = Date.now();
+        const expiraEm = anuncio.expiraEm.toDate().getTime();
+        const diferenca = expiraEm - agora;
+        const horas = Math.floor(
+            diferenca / (1000 * 60 * 60)
+        );
+        const minutos = Math.floor(
+            (diferenca % (1000 * 60 * 60))
+            / (1000 * 60)
+        );
         lista.innerHTML += `
 <div class="card">
 <h3>${anuncio.titulo}</h3>
