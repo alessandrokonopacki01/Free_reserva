@@ -82,35 +82,39 @@ window.mostrarContato = async function (
     telefone
 ) {
 
-    console.log("FUNÇÃO INICIADA");
-
     if (!usuarioLogado) {
-        console.log("USUÁRIO NÃO LOGADO");
 
         alert("Faça login para desbloquear contatos.");
+        return;
+    }
+    const usuarioRef =
+        doc(db, "usuarios", usuarioLogado.uid);
+    const usuarioDoc =
+        await getDoc(usuarioRef);
+    const dados =
+        usuarioDoc.data();
+    if (dados.creditos <= 0) {
+        alert("Você não possui créditos.");
         return;
 
     }
 
-    console.log("UID:", usuarioLogado.uid);
+    await updateDoc(usuarioRef, {
 
-    const usuarioRef =
-        doc(db, "usuarios", usuarioLogado.uid);
+        creditos: dados.creditos - 1
 
-    const usuarioDoc =
-        await getDoc(usuarioRef);
+    });
 
-    console.log("DOCUMENTO:", usuarioDoc.exists());
+    document.getElementById("nomeCliente")
+        .innerHTML = "<b>Nome:</b> " + nome;
 
-    const dados =
-        usuarioDoc.data();
+    document.getElementById("telefoneCliente")
+        .innerHTML = "<b>Telefone:</b> " + telefone;
 
-    console.log("CRÉDITOS:", dados.creditos);
-
-}
-window.fecharModal = function () {
+    document.getElementById("btnWhatsapp")
+        .href = "https://wa.me/55" + telefone;
 
     document.getElementById("modal")
-        .style.display = "none";
+        .style.display = "block";
 }
 carregar();
