@@ -12,6 +12,7 @@ import {
     getDoc,
     updateDoc,
     addDoc
+    setDoc
 }
     from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
@@ -86,36 +87,94 @@ window.mostrarContato = async function (
 
         alert("Faça login para desbloquear contatos.");
         return;
+
     }
+
     const usuarioRef =
         doc(db, "usuarios", usuarioLogado.uid);
+
     const usuarioDoc =
         await getDoc(usuarioRef);
+
     const dados =
         usuarioDoc.data();
-    if (dados.creditos <= 0) {
-        alert("Você não possui créditos.");
-        return;
+
+    const desbloqueioId =
+        usuarioLogado.uid + "_" + anuncioId;
+
+    const desbloqueioRef =
+        doc(
+            db,
+            "desbloqueios",
+            desbloqueioId
+        );
+
+    const desbloqueioDoc =
+        await getDoc(desbloqueioRef);
+
+    // Já desbloqueou anteriormente
+
+    if (!desbloqueioDoc.exists()) {
+
+        if (dados.creditos <= 0) {
+
+            alert(
+                "Você não possui créditos suficientes."
+            );
+
+            return;
+
+        }
+
+        await updateDoc(usuarioRef, {
+
+            creditos:
+                dados.creditos - 1
+
+        });
+
+        await setDoc(
+            desbloqueioRef,
+            {
+                usuarioId:
+                    usuarioLogado.uid,
+
+                anuncioId:
+                    anuncioId,
+
+                data:
+                    Timestamp.now()
+            }
+        );
+
+        console.log(
+            "Crédito descontado."
+        );
+
+    } else {
+
+        console.log(
+            "Anúncio já desbloqueado."
+        );
 
     }
 
-    await updateDoc(usuarioRef, {
-
-        creditos: dados.creditos - 1
-
-    });
-
     document.getElementById("nomeCliente")
-        .innerHTML = "<b>Nome:</b> " + nome;
+        .innerHTML =
+        "<b>Nome:</b> " + nome;
 
     document.getElementById("telefoneCliente")
-        .innerHTML = "<b>Telefone:</b> " + telefone;
+        .innerHTML =
+        "<b>Telefone:</b> " + telefone;
 
     document.getElementById("btnWhatsapp")
-        .href = "https://wa.me/55" + telefone;
+        .href =
+        "https://wa.me/55" + telefone;
 
     document.getElementById("modal")
-        .style.display = "block";
+        .style.display =
+        "block";
+
 }
 window.fecharModal = function () {
 
