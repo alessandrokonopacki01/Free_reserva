@@ -117,4 +117,10 @@ window.mostrarContato = async function (
     document.getElementById("modal")
         .style.display = "block";
 }
+window.fecharModal = function () {
+
+    document.getElementById("modal")
+        .style.display = "none";
+
+}
 carregar();
