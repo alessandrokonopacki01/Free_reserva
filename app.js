@@ -68,7 +68,7 @@ ${anuncio.descricao}
 <p>
 ⏳ Anúncio expira em ${horas}h ${minutos}min
 </p>
-<button onclick="mostrarContato('${anuncioId}', '${anuncio.nome}', '${anuncio.telefone}')">
+<button onclick="mostrarContato('${doc.id}', '${anuncio.nome}', '${anuncio.telefone}')">
             Desbloquear Contato
         </button>
 </div>
