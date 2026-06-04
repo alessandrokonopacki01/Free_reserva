@@ -1,13 +1,25 @@
+import { db } from "../firebase-admin.js";
+
 export default async function handler(req, res) {
 
-    console.log("WEBHOOK RECEBIDO");
+    try {
 
-    console.log(
-        JSON.stringify(req.body, null, 2)
-    );
+        console.log("WEBHOOK RECEBIDO");
 
-    return res.status(200).json({
-        recebido: true
-    });
+        console.log(req.body);
+
+        return res.status(200).json({
+            recebido: true
+        });
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        return res.status(500).json({
+            erro: erro.message
+        });
+
+    }
 
 }
