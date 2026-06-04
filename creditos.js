@@ -25,8 +25,7 @@ document
             await resposta.json();
         console.log(dados);
         if (!dados.transactions || !dados.transactions.payments) {
-            console.error("Erro ao gerar Pix:", dados);
-
+            console.error("Erro ao gerar Pix:", JSON.stringify(dados, null, 2));
             document.getElementById("resultado").innerHTML = `
         <p style="color:red;">
             Erro ao gerar Pix. Veja o console.
