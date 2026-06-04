@@ -1,8 +1,18 @@
 export default async function handler(req, res) {
-
+    if (req.method !== "POST") {
+        return res.status(405).json({
+            erro: "Método não permitido"
+        });
+    }
     const token =
         process.env.MERCADOPAGO_ACCESS_TOKEN;
 
+    const { uid } = req.body;
+    if (!uid) {
+        return res.status(400).json({
+            erro: "UID não informado"
+        });
+    }
     try {
 
         const resposta =
@@ -18,7 +28,7 @@ export default async function handler(req, res) {
                     body: JSON.stringify({
                         type: "online",
                         external_reference:
-                            "contrata_reserva_teste",
+                            uid,
 
                         total_amount: "5.00",
 
