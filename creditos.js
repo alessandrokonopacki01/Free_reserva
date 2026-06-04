@@ -21,8 +21,9 @@ document
                     })
                 }
             );
-        const dados =
-            await resposta.json();
+        const texto = await resposta.text();
+        console.log("Resposta bruta da API:", texto);
+        const dados = JSON.parse(texto);
         console.log(dados);
         if (!dados.transactions || !dados.transactions.payments) {
             console.error("Erro ao gerar Pix:", JSON.stringify(dados, null, 2));
