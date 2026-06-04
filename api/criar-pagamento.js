@@ -33,24 +33,23 @@ export default async function handler(req, res) {
                         total_amount: "5.00",
 
                         payer: {
-                            email:
-                                "test_user_br@testuser.com",
-                            first_name:
-                                "APRO"
-                        },
+                            payer: {
+                                email: email,
+                                first_name: nome || "Cliente"
+                            },
 
-                        transactions: {
-                            payments: [
-                                {
-                                    amount: "5.00",
-                                    payment_method: {
-                                        id: "pix",
-                                        type: "bank_transfer"
+                            transactions: {
+                                payments: [
+                                    {
+                                        amount: "5.00",
+                                        payment_method: {
+                                            id: "pix",
+                                            type: "bank_transfer"
+                                        }
                                     }
-                                }
-                            ]
-                        }
-                    })
+                                ]
+                            }
+                        })
                 }
             );
 
