@@ -24,9 +24,19 @@ document
         const dados =
             await resposta.json();
         console.log(dados);
+        if (!dados.transactions || !dados.transactions.payments) {
+            console.error("Erro ao gerar Pix:", dados);
+
+            document.getElementById("resultado").innerHTML = `
+        <p style="color:red;">
+            Erro ao gerar Pix. Veja o console.
+        </p>
+        <pre>${JSON.stringify(dados, null, 2)}</pre>
+    `;
+            return;
+        }
         const pagamento =
-            dados.transactions
-                .payments[0];
+            dados.transactions.payments[0];
         document
             .getElementById("resultado")
             .innerHTML = `
