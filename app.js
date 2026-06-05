@@ -167,9 +167,12 @@ window.mostrarContato = async function (
         .innerHTML =
         "<b>Telefone:</b> " + telefone;
 
+    const mensagem =
+        `Olá! Vi seu anúncio de serviço no site Contrata Reserva e estou interessado. Podemos combinar o preço?`;
+
     document.getElementById("btnWhatsapp")
         .href =
-        "https://wa.me/55" + telefone;
+        `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`;
 
     document.getElementById("modal")
         .style.display =
