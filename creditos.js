@@ -17,8 +17,8 @@ document
                             "application/json"
                     },
                     body: JSON.stringify({
-                        uid: usuario.uid
-                         email: usuario.email,
+                        uid: usuario.uid,
+                        email: usuario.email,
                         nome: usuario.displayName
                     })
                 }
