@@ -1,9 +1,11 @@
 export default async function handler(req, res) {
+
     if (req.method !== "POST") {
         return res.status(405).json({
             erro: "Método não permitido"
         });
     }
+
     const token =
         process.env.MERCADOPAGO_ACCESS_TOKEN;
 
@@ -12,11 +14,13 @@ export default async function handler(req, res) {
         email,
         nome
     } = req.body;
-    if (!uid) {
+
+    if (!uid || !email) {
         return res.status(400).json({
-            erro: "UID não informado"
+            erro: "UID ou email não informado"
         });
     }
+
     try {
 
         const resposta =
@@ -31,43 +35,41 @@ export default async function handler(req, res) {
                     },
                     body: JSON.stringify({
                         type: "online",
-                        external_reference:
-                            uid,
-
+                        external_reference: uid,
                         total_amount: "5.00",
 
                         payer: {
-                            payer: {
-                                email: email,
-                                first_name: nome || "Cliente"
-                            },
+                            email: email,
+                            first_name: nome || "Cliente"
+                        },
 
-                            transactions: {
-                                payments: [
-                                    {
-                                        amount: "5.00",
-                                        payment_method: {
-                                            id: "pix",
-                                            type: "bank_transfer"
-                                        }
+                        transactions: {
+                            payments: [
+                                {
+                                    amount: "5.00",
+                                    payment_method: {
+                                        id: "pix",
+                                        type: "bank_transfer"
                                     }
-                                ]
-                            }
-                        })
+                                }
+                            ]
+                        }
+                    })
                 }
             );
 
         const dados =
             await resposta.json();
 
-        res.status(200).json(dados);
+        return res
+            .status(resposta.status)
+            .json(dados);
 
     } catch (erro) {
 
-        res.status(500).json({
+        return res.status(500).json({
             erro: erro.message
         });
 
     }
-
 }

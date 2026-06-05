@@ -18,6 +18,8 @@ document
                     },
                     body: JSON.stringify({
                         uid: usuario.uid
+                         email: usuario.email,
+                        nome: usuario.displayName
                     })
                 }
             );
