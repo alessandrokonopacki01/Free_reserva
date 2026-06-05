@@ -1,14 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comprar Créditos</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="container creditos-container">
     <h1>Comprar Créditos</h1>
-    <button id="btnComprar">
-        Comprar 5 Créditos - R$ 5,00
-    </button>
+    <p class="subtitulo">
+        Use créditos para desbloquear contatos de clientes interessados em serviços.
+    </p>
+    <div class="plano-card">
+        <h2>Pacote Inicial</h2>
+        <div class="preco">R$ 5,00</div>
+        <p class="creditos-info">
+            Receba <strong>5 créditos</strong>
+        </p>
+        <p class="detalhe">
+            Cada crédito permite desbloquear o contato de um anúncio.
+        </p>
+        <button id="btnComprar" class="btn">
+            Comprar com Pix
+        </button>
+    </div>
     <div id="resultado"></div>
-    <script type="module" src="creditos.js"></script>
+    <br>
+    <a href="index.html" class="voltar-link">
+        Voltar para a página inicial
+    </a>
+</div>
+<script type="module" src="creditos.js"></script>
 </body>
 </html>

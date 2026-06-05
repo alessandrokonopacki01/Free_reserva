@@ -118,3 +118,57 @@ textarea {
     cursor:pointer;
     font-size:16px;
 }
+.creditos-container {
+    text-align: center;
+}
+
+.subtitulo {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.plano-card {
+    background: #ffffff;
+    max-width: 420px;
+    margin: 25px auto;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+}
+
+.plano-card h2 {
+    margin-bottom: 15px;
+}
+
+.preco {
+    font-size: 42px;
+    font-weight: bold;
+    color: #198754;
+    margin-bottom: 10px;
+}
+
+.creditos-info {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.detalhe {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+#resultado {
+    margin-top: 25px;
+}
+
+#resultado textarea {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.voltar-link {
+    color: #0d6efd;
+    text-decoration: none;
+}
