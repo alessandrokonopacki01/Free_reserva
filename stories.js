@@ -56,7 +56,7 @@ async function gerarStory(anuncio) {
     anuncio.categoria || "SERVIÇO DISPONÍVEL";
 
   document.getElementById("storyDescricao").innerText =
-    limitarTexto(anuncio.descricao || "Confira no Contrata Reserva.", 130);
+  limitarTexto(anuncio.descricao || "Encontre este profissional no Contrata Reserva.", 120);
 
   story.style.display = "flex";
 
