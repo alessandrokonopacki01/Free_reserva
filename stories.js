@@ -98,8 +98,11 @@ async function carregarAnuncios() {
     return;
   }
 
-  snapshot.forEach((doc) => {
-    const anuncio = doc.data();
+  snapshot.forEach((documento) => {
+
+    const anuncio = documento.data();
+
+    const id = documento.id;
 
     if (anuncio.instagram && anuncio.instagram.publicado === true) {
       return;
@@ -108,19 +111,42 @@ async function carregarAnuncios() {
     const card = document.createElement("div");
     card.className = "card";
 
-    card.innerHTML = `
-      <h2>${anuncio.categoria || "Serviço"}</h2>
-      <strong>${anuncio.titulo || ""}</strong>
-      <p>${anuncio.descricao || ""}</p>
-      <button>Gerar Story</button>
-    `;
+   const status = anuncio.instagram?.publicado
+    ? "🟢 Postado"
+    : "🟡 Pendente";
+
+card.innerHTML = `
+<h2>${anuncio.categoria}</h2>
+
+<strong>${anuncio.titulo}</strong>
+
+<p>${anuncio.descricao}</p>
+
+<p class="status">${status}</p>
+
+<button class="gerar">
+    Gerar Story
+</button>
+
+<button class="postado">
+    Marcar como Postado
+</button>
+`;
 
     card.querySelector("button").addEventListener("click", () => {
       gerarStory(anuncio);
     });
 
+    card.querySelector(".postado")
+.addEventListener("click", () => {
+
+    marcarComoPostado(id);
+
+});
+
     listaStories.appendChild(card);
   });
+
 }
 
 async function gerarStory(anuncio) {

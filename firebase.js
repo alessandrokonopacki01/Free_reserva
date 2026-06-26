@@ -7,6 +7,12 @@ import { getFirestore }
 import { getAuth } 
     from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
+import {
+    doc,
+    updateDoc
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyAMsIZftBOCuiFtvz3d76KHTxDGrxi9HYo",
     authDomain: "free-reserva.firebaseapp.com",
