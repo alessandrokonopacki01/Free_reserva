@@ -168,9 +168,7 @@ function escolherTema(anuncio) {
   for (const chave in TEMAS) {
     const tema = TEMAS[chave];
 
-    if (tema.palavras.some((palavra) => texto.includes(palavra))) {
-      return tema;
-    }
+   
   }
 
   return TEMAS.servico;
