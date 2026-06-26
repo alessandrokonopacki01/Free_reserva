@@ -9,6 +9,80 @@ import {
 
 const listaStories = document.getElementById("listaStories");
 
+const TEMAS = {
+
+  "Construção": {
+    classe: "construcao",
+    icone: "🔨",
+    beneficios: [
+      "Obras e reformas",
+      "Profissionais qualificados",
+      "Orçamento sem compromisso"
+    ]
+  },
+
+  "Elétrica": {
+    classe: "eletricista",
+    icone: "⚡",
+    beneficios: [
+      "Instalações elétricas",
+      "Manutenção segura",
+      "Atendimento rápido"
+    ]
+  },
+
+  "Informática": {
+    classe: "informatica",
+    icone: "💻",
+    beneficios: [
+      "Suporte técnico",
+      "Computadores e redes",
+      "Atendimento especializado"
+    ]
+  },
+
+  "Aulas Particulares": {
+    classe: "aulas",
+    icone: "📚",
+    beneficios: [
+      "Aprenda com especialistas",
+      "Aulas personalizadas",
+      "Resultados de verdade"
+    ]
+  },
+
+  "Limpeza": {
+    classe: "limpeza",
+    icone: "🧹",
+    beneficios: [
+      "Ambiente impecável",
+      "Serviço de confiança",
+      "Atendimento rápido"
+    ]
+  },
+
+  "Jardinagem": {
+    classe: "jardinagem",
+    icone: "🌳",
+    beneficios: [
+      "Cuidados com seu jardim",
+      "Paisagismo",
+      "Profissionais locais"
+    ]
+  },
+
+  "Outros": {
+    classe: "servico",
+    icone: "💼",
+    beneficios: [
+      "Profissionais locais",
+      "Contato rápido",
+      "Confira no site"
+    ]
+  }
+
+};
+
 async function carregarAnuncios() {
   const q = query(
     collection(db, "anuncios"),
@@ -51,12 +125,21 @@ async function carregarAnuncios() {
 
 async function gerarStory(anuncio) {
   const story = document.getElementById("storyAnuncio");
+  const tema = escolherTema(anuncio);
+
+  story.className = `story-modelo ${tema.classe}`;
+
+  document.getElementById("storyIcone").innerText = tema.icone;
 
   document.getElementById("storyCategoria").innerText =
     anuncio.categoria || "SERVIÇO DISPONÍVEL";
 
   document.getElementById("storyDescricao").innerText =
-  limitarTexto(anuncio.descricao || "Encontre este profissional no Contrata Reserva.", 120);
+    limitarTexto(anuncio.descricao || "Encontre este profissional no Contrata Reserva.", 120);
+
+  document.getElementById("beneficio1").innerText = tema.beneficios[0];
+  document.getElementById("beneficio2").innerText = tema.beneficios[1];
+  document.getElementById("beneficio3").innerText = tema.beneficios[2];
 
   story.style.display = "flex";
 
@@ -73,6 +156,24 @@ async function gerarStory(anuncio) {
   link.download = `story-contrata-reserva-${Date.now()}.png`;
   link.href = canvas.toDataURL("image/png");
   link.click();
+}
+
+function escolherTema(anuncio) {
+  const texto = `
+    ${anuncio.categoria || ""}
+    ${anuncio.titulo || ""}
+    ${anuncio.descricao || ""}
+  `.toLowerCase();
+
+  for (const chave in TEMAS) {
+    const tema = TEMAS[chave];
+
+    if (tema.palavras.some((palavra) => texto.includes(palavra))) {
+      return tema;
+    }
+  }
+
+  return TEMAS.servico;
 }
 
 function limitarTexto(texto, limite) {
