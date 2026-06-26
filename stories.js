@@ -136,7 +136,7 @@ card.innerHTML = `
 `;
 
     card.querySelector("button").addEventListener("click", () => {
-      gerarStory(anuncio);
+      gerarStory(anuncio, id);
     });
 
     card.querySelector(".postado")
@@ -151,14 +151,13 @@ card.innerHTML = `
 
 }
 
-async function gerarStory(anuncio) {
+async function gerarStory(anuncio, id) {
   const story = document.getElementById("storyAnuncio");
   const tema = escolherTema(anuncio);
 
   story.className = `story-modelo ${tema.classe}`;
 
   document.getElementById("storyIcone").innerText = tema.icone;
-
   document.getElementById("storyCategoria").innerText =
     anuncio.categoria || "SERVIÇO DISPONÍVEL";
 
@@ -180,10 +179,31 @@ async function gerarStory(anuncio) {
 
   story.style.display = "none";
 
-  const link = document.createElement("a");
-  link.download = `story-contrata-reserva-${Date.now()}.png`;
-  link.href = canvas.toDataURL("image/png");
-  link.click();
+  const imagemBase64 = canvas.toDataURL("image/png");
+
+  const resposta = await fetch("/api/publicarStory", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      imagemBase64
+    })
+  });
+
+  const resultado = await resposta.json();
+
+  if (!resposta.ok) {
+    console.error(resultado);
+    alert("Erro ao publicar Story");
+    return;
+  }
+
+  alert("Story publicado no Instagram!");
+
+  if (id) {
+    await marcarComoPostado(id);
+  }
 }
 
 function escolherTema(anuncio) {
