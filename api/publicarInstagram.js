@@ -3,12 +3,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ erro: "Método não permitido" });
   }
 
-  const { image_url, caption } = req.body;
+  const { image_url } = req.body;
 
   const IG_ID = process.env.IG_ID;
   const TOKEN = process.env.META_TOKEN;
 
-  try {
+ try {
     const criarContainer = await fetch(
       `https://graph.facebook.com/v25.0/${IG_ID}/media`,
       {
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           image_url,
-          caption,
+          media_type: "STORIES",
           access_token: TOKEN
         })
       }
