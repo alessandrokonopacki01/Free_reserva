@@ -159,19 +159,7 @@ async function gerarStory(anuncio) {
 }
 
 function escolherTema(anuncio) {
-  const texto = `
-    ${anuncio.categoria || ""}
-    ${anuncio.titulo || ""}
-    ${anuncio.descricao || ""}
-  `.toLowerCase();
-
-  for (const chave in TEMAS) {
-    const tema = TEMAS[chave];
-
-   
-  }
-
-  return TEMAS.servico;
+  return TEMAS[anuncio.categoria] || TEMAS["Outros"];
 }
 
 function limitarTexto(texto, limite) {
