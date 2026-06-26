@@ -229,8 +229,8 @@ body > h1 {
 }
 
 .story-modelo.informatica {
-  --cor: #ff4fa3;
-  --cor2: #ffb3df;
+  --cor: #4fff84;
+  --cor2: #b3ffca;
   --fundo:
     radial-gradient(circle at top, rgba(255, 79, 163, .25), transparent 35%),
     linear-gradient(160deg, #210010, #000 70%);

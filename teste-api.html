@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste Instagram API</title>
+</head>
+<body>
+  <h1>Teste Instagram API</h1>
+  <button id="btnTeste">Publicar Teste</button>
+
+  <script>
+    document.getElementById("btnTeste").addEventListener("click", async () => {
+      const resposta = await fetch("/api/publicarInstagram", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          image_url: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg",
+          caption: "Teste automático do Contrata Reserva 🚀"
+        })
+      });
+
+      const dados = await resposta.json();
+      console.log(dados);
+      alert(JSON.stringify(dados));
+    });
+  </script>
+</body>
+</html>
