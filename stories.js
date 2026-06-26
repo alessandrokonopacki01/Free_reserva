@@ -4,7 +4,9 @@ import {
   collection,
   getDocs,
   query,
-  orderBy
+  orderBy,
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const listaStories = document.getElementById("listaStories");
@@ -192,5 +194,13 @@ function limitarTexto(texto, limite) {
   if (texto.length <= limite) return texto;
   return texto.substring(0, limite) + "...";
 }
+async function marcarComoPostado(id) {
+  await updateDoc(doc(db, "anuncios", id), {
+    "instagram.publicado": true,
+    "instagram.status": "postado_manual"
+  });
 
+  alert("Marcado como postado!");
+  carregarAnuncios();
+}
 carregarAnuncios();
