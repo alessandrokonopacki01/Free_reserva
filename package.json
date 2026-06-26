@@ -2,9 +2,7 @@
   "name": "free_reserva",
   "version": "1.0.0",
   "type": "module",
-  "description":  {
-    "firebase-admin": "^13.0.0"
-  },
+  "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -21,6 +19,7 @@
   },
   "homepage": "https://github.com/alessandrokonopacki01/Free_reserva#readme",
   "dependencies": {
-    "firebase-admin": "^13.10.0"
+    "firebase-admin": "^13.10.0",
+    "@vercel/blob": "latest"
   }
 }
