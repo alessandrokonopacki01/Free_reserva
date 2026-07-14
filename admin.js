@@ -412,20 +412,26 @@ async function alterarStatusAnuncio(
             anuncioId
         );
 
-        if (novoStatus === "ativo") {
-            const novaExpiracao = new Date();
+       if (novoStatus === "ativo") {
+    const novaExpiracao = new Date();
 
-            novaExpiracao.setHours(
-                novaExpiracao.getHours() + 24
-            );
+    novaExpiracao.setHours(
+        novaExpiracao.getHours() + 24
+    );
 
-            await updateDoc(referencia, {
-                status: "ativo",
-                expiraEm: Timestamp.fromDate(
-                    novaExpiracao
-                )
-            });
-        }
+    await updateDoc(referencia, {
+        status: "ativo",
+
+        expiraEm: Timestamp.fromDate(
+            novaExpiracao
+        ),
+
+        // Faz o anúncio aparecer novamente
+        // na página stories.html
+        "instagram.publicado": false,
+        "instagram.status": "pendente"
+    });
+}
 
         if (novoStatus === "expirado") {
             await updateDoc(referencia, {
