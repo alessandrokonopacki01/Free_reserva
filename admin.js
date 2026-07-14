@@ -261,20 +261,20 @@ function renderizarProfissionais(lista) {
             <tr>
                 <td>
                     ${escaparHTML(
-                        profissional.nome || "Não informado"
-                    )}
+            profissional.nome || "Não informado"
+        )}
                 </td>
 
                 <td>
                     ${escaparHTML(
-                        profissional.email || "Não informado"
-                    )}
+            profissional.email || "Não informado"
+        )}
                 </td>
 
                 <td>
                     ${escaparHTML(
-                        profissional.tipo || "profissional"
-                    )}
+            profissional.tipo || "profissional"
+        )}
                 </td>
 
                 <td>
@@ -286,9 +286,8 @@ function renderizarProfissionais(lista) {
                 </td>
 
                 <td>
-                    ${
-                        estaEmDestaque
-                            ? `
+                    ${estaEmDestaque
+                ? `
                                 <button
                                     class="btn-destaque remover"
                                     data-acao-destaque="remover"
@@ -297,7 +296,7 @@ function renderizarProfissionais(lista) {
                                     Remover destaque
                                 </button>
                             `
-                            : `
+                : `
                                 <button
                                     class="btn-destaque adicionar"
                                     data-acao-destaque="adicionar"
@@ -306,7 +305,7 @@ function renderizarProfissionais(lista) {
                                     Colocar em destaque
                                 </button>
                             `
-                    }
+            }
                 </td>
             </tr>
         `;
@@ -716,6 +715,62 @@ document
             );
 
             if (acao === "adicionar") {
+                const servico = prompt(
+                    `Qual é o serviço de ${profissional.nome || "este profissional"}?`,
+                    profissional.categoria ||
+                    profissional.profissao ||
+                    ""
+                );
+
+                if (!servico || !servico.trim()) {
+                    alert("Informe o serviço do profissional.");
+                    botao.disabled = false;
+                    botao.textContent = "Colocar em destaque";
+                    return;
+                }
+
+                const whatsapp = prompt(
+                    "Informe o WhatsApp do profissional com DDD:",
+                    profissional.whatsapp ||
+                    profissional.telefone ||
+                    ""
+                );
+
+                const numeroLimpo = String(whatsapp || "")
+                    .replace(/\D/g, "");
+
+                if (numeroLimpo.length < 10 || numeroLimpo.length > 11) {
+                    alert(
+                        "Informe um WhatsApp válido com DDD. Exemplo: 42999999999"
+                    );
+
+                    botao.disabled = false;
+                    botao.textContent = "Colocar em destaque";
+                    return;
+                }
+
+                const descricao = prompt(
+                    "Escreva uma descrição curta sobre o profissional:",
+                    profissional.descricao ||
+                    `${servico.trim()} em Reserva e região.`
+                );
+
+                if (!descricao || !descricao.trim()) {
+                    alert("Informe uma descrição para o destaque.");
+                    botao.disabled = false;
+                    botao.textContent = "Colocar em destaque";
+                    return;
+                }
+
+                const quantidadeDias = 7;
+
+                const inicioDestaque = new Date();
+                const fimDestaque = new Date();
+
+                fimDestaque.setDate(
+                    fimDestaque.getDate() + quantidadeDias
+                );
+
                 await setDoc(referenciaDestaque, {
                     profissionalId,
 
@@ -723,34 +778,38 @@ document
                         profissional.nome ||
                         "Profissional",
 
-                    categoria:
-                        profissional.categoria ||
-                        profissional.profissao ||
-                        "Profissional cadastrado",
+                    servico: servico.trim(),
+
+                    categoria: servico.trim(),
 
                     cidade:
                         profissional.cidade ||
                         "Reserva - PR",
 
-                    descricao:
-                        profissional.descricao ||
-                        "Profissional disponível no Contrata Reserva.",
+                    descricao: descricao.trim(),
 
                     foto:
                         profissional.foto ||
                         profissional.fotoPerfil ||
                         "",
 
-                    whatsapp:
-                        profissional.whatsapp ||
-                        profissional.telefone ||
-                        "",
+                    whatsapp: numeroLimpo,
+
+                    ativo: true,
+
+                    duracaoDias: quantidadeDias,
+
+                    inicioDestaque:
+                        Timestamp.fromDate(inicioDestaque),
+
+                    fimDestaque:
+                        Timestamp.fromDate(fimDestaque),
 
                     criadoEm: Timestamp.now()
                 });
 
                 alert(
-                    `${profissional.nome || "Profissional"} foi colocado em destaque.`
+                    `${profissional.nome || "Profissional"} ficará em destaque por ${quantidadeDias} dias.`
                 );
             }
 

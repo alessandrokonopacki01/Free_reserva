@@ -54,11 +54,29 @@ async function carregarDestaques() {
             collection(db, "destaques")
         );
 
-        profissionaisDestaque =
-            snapshot.docs.map((documento) => ({
+        const agora = Date.now();
+
+        profissionaisDestaque = snapshot.docs
+            .map((documento) => ({
                 id: documento.id,
                 ...documento.data()
-            }));
+            }))
+            .filter((profissional) => {
+                if (profissional.ativo === false) {
+                    return false;
+                }
+
+                if (
+                    profissional.fimDestaque &&
+                    typeof profissional.fimDestaque.toDate === "function"
+                ) {
+                    return profissional.fimDestaque
+                        .toDate()
+                        .getTime() > agora;
+                }
+
+                return true;
+            });
 
         if (profissionaisDestaque.length === 0) {
             secaoDestaques.classList.add("oculto");
@@ -148,6 +166,7 @@ function renderizarCarrossel() {
                         <div class="conteudo-destaque">
                             <span class="categoria-destaque">
                                 ${escaparHTMLCarrossel(
+                        profissional.servico ||
                         profissional.categoria ||
                         "Profissional"
                     )}
