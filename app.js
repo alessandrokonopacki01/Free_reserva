@@ -89,7 +89,7 @@ async function carregarDestaques() {
             cidade: "Contrata Reserva",
             descricao:
                 "Apareça no topo do site durante 7 dias e seja visto por mais clientes.",
-            preco: "10 créditos",
+            preco: "5 créditos",
             whatsappAdmin: "42999806150"
         };
 
