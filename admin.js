@@ -14,6 +14,8 @@ import {
     orderBy,
     doc,
     updateDoc,
+    setDoc,
+    deleteDoc,
     Timestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
@@ -29,6 +31,7 @@ const btnAtualizar = document.getElementById("btnAtualizar");
 
 let profissionais = [];
 let anuncios = [];
+let destaques = [];
 
 /* ======================================================
    LOGIN DO ADMINISTRADOR
@@ -110,17 +113,23 @@ async function carregarDados() {
     btnAtualizar.textContent = "Atualizando...";
 
     try {
-        const [snapshotUsuarios, snapshotAnuncios] =
-            await Promise.all([
-                getDocs(collection(db, "usuarios")),
+        const [
+            snapshotUsuarios,
+            snapshotAnuncios,
+            snapshotDestaques
+        ] = await Promise.all([
 
-                getDocs(
-                    query(
-                        collection(db, "anuncios"),
-                        orderBy("criadoEm", "desc")
-                    )
+            getDocs(collection(db, "usuarios")),
+
+            getDocs(
+                query(
+                    collection(db, "anuncios"),
+                    orderBy("criadoEm", "desc")
                 )
-            ]);
+            ),
+
+            getDocs(collection(db, "destaques"))
+        ]);
 
         profissionais = snapshotUsuarios.docs.map((documento) => ({
             id: documento.id,
@@ -128,6 +137,11 @@ async function carregarDados() {
         }));
 
         anuncios = snapshotAnuncios.docs.map((documento) => ({
+            id: documento.id,
+            ...documento.data()
+        }));
+
+        destaques = snapshotDestaques.docs.map((documento) => ({
             id: documento.id,
             ...documento.data()
         }));
@@ -224,8 +238,11 @@ function renderizarUltimosAnuncios() {
 ====================================================== */
 
 function renderizarProfissionais(lista) {
-    const tabela = document.getElementById("tabelaProfissionais");
-    const vazio = document.getElementById("vazioProfissionais");
+    const tabela =
+        document.getElementById("tabelaProfissionais");
+
+    const vazio =
+        document.getElementById("vazioProfissionais");
 
     if (lista.length === 0) {
         tabela.innerHTML = "";
@@ -235,39 +252,65 @@ function renderizarProfissionais(lista) {
 
     vazio.classList.add("oculto");
 
-    tabela.innerHTML = lista
-        .map(
-            (profissional) => `
-                <tr>
-                    <td>
-                        ${escaparHTML(
-                            profissional.nome || "Não informado"
-                        )}
-                    </td>
+    tabela.innerHTML = lista.map((profissional) => {
+        const estaEmDestaque = destaques.some(
+            (destaque) => destaque.id === profissional.id
+        );
 
-                    <td>
-                        ${escaparHTML(
-                            profissional.email || "Não informado"
-                        )}
-                    </td>
+        return `
+            <tr>
+                <td>
+                    ${escaparHTML(
+                        profissional.nome || "Não informado"
+                    )}
+                </td>
 
-                    <td>
-                        ${escaparHTML(
-                            profissional.tipo || "profissional"
-                        )}
-                    </td>
+                <td>
+                    ${escaparHTML(
+                        profissional.email || "Não informado"
+                    )}
+                </td>
 
-                    <td>
-                        ${Number(profissional.creditos || 0)}
-                    </td>
+                <td>
+                    ${escaparHTML(
+                        profissional.tipo || "profissional"
+                    )}
+                </td>
 
-                    <td>
-                        ${formatarData(profissional.criadoEm)}
-                    </td>
-                </tr>
-            `
-        )
-        .join("");
+                <td>
+                    ${Number(profissional.creditos || 0)}
+                </td>
+
+                <td>
+                    ${formatarData(profissional.criadoEm)}
+                </td>
+
+                <td>
+                    ${
+                        estaEmDestaque
+                            ? `
+                                <button
+                                    class="btn-destaque remover"
+                                    data-acao-destaque="remover"
+                                    data-profissional-id="${profissional.id}"
+                                >
+                                    Remover destaque
+                                </button>
+                            `
+                            : `
+                                <button
+                                    class="btn-destaque adicionar"
+                                    data-acao-destaque="adicionar"
+                                    data-profissional-id="${profissional.id}"
+                                >
+                                    Colocar em destaque
+                                </button>
+                            `
+                    }
+                </td>
+            </tr>
+        `;
+    }).join("");
 }
 
 /* ======================================================
@@ -303,21 +346,21 @@ function renderizarAnuncios(lista) {
                     <p>
                         <strong>Cliente:</strong>
                         ${escaparHTML(
-                            anuncio.nome || "Não informado"
-                        )}
+                anuncio.nome || "Não informado"
+            )}
                     </p>
 
                     <p>
                         <strong>Categoria:</strong>
                         ${escaparHTML(
-                            anuncio.categoria || "Não informada"
-                        )}
+                anuncio.categoria || "Não informada"
+            )}
                     </p>
 
                     <p>
                         ${escaparHTML(
-                            anuncio.descricao || "Sem descrição"
-                        )}
+                anuncio.descricao || "Sem descrição"
+            )}
                     </p>
 
                     <div class="anuncio-rodape">
@@ -327,8 +370,8 @@ function renderizarAnuncios(lista) {
 
                         <span class="status ${status}">
                             ${status === "ativo"
-                                ? "Ativo"
-                                : "Expirado"}
+                    ? "Ativo"
+                    : "Expirado"}
                         </span>
                     </div>
 
@@ -412,26 +455,26 @@ async function alterarStatusAnuncio(
             anuncioId
         );
 
-       if (novoStatus === "ativo") {
-    const novaExpiracao = new Date();
+        if (novoStatus === "ativo") {
+            const novaExpiracao = new Date();
 
-    novaExpiracao.setHours(
-        novaExpiracao.getHours() + 24
-    );
+            novaExpiracao.setHours(
+                novaExpiracao.getHours() + 24
+            );
 
-    await updateDoc(referencia, {
-        status: "ativo",
+            await updateDoc(referencia, {
+                status: "ativo",
 
-        expiraEm: Timestamp.fromDate(
-            novaExpiracao
-        ),
+                expiraEm: Timestamp.fromDate(
+                    novaExpiracao
+                ),
 
-        // Faz o anúncio aparecer novamente
-        // na página stories.html
-        "instagram.publicado": false,
-        "instagram.status": "pendente"
-    });
-}
+                // Faz o anúncio aparecer novamente
+                // na página stories.html
+                "instagram.publicado": false,
+                "instagram.status": "pendente"
+            });
+        }
 
         if (novoStatus === "expirado") {
             await updateDoc(referencia, {
@@ -620,7 +663,7 @@ function filtrarAnuncios() {
             const correspondeStatus =
                 statusSelecionado === "todos" ||
                 obterStatus(anuncio) ===
-                    statusSelecionado;
+                statusSelecionado;
 
             return (
                 correspondeTexto &&
@@ -628,6 +671,109 @@ function filtrarAnuncios() {
             );
         }
     );
+/* ======================================================
+   CONTROLE DOS PROFISSIONAIS EM DESTAQUE
+====================================================== */
 
+document
+    .getElementById("tabelaProfissionais")
+    .addEventListener("click", async (evento) => {
+
+        const botao = evento.target.closest(
+            "[data-acao-destaque][data-profissional-id]"
+        );
+
+        if (!botao) {
+            return;
+        }
+
+        const profissionalId =
+            botao.dataset.profissionalId;
+
+        const acao =
+            botao.dataset.acaoDestaque;
+
+        const profissional = profissionais.find(
+            (item) => item.id === profissionalId
+        );
+
+        if (!profissional) {
+            alert("Profissional não encontrado.");
+            return;
+        }
+
+        botao.disabled = true;
+        botao.textContent = "Salvando...";
+
+        try {
+            const referenciaDestaque = doc(
+                db,
+                "destaques",
+                profissionalId
+            );
+
+            if (acao === "adicionar") {
+                await setDoc(referenciaDestaque, {
+                    profissionalId: profissionalId,
+
+                    nome:
+                        profissional.nome ||
+                        "Profissional",
+
+                    categoria:
+                        profissional.categoria ||
+                        profissional.profissao ||
+                        "Profissional cadastrado",
+
+                    cidade:
+                        profissional.cidade ||
+                        "Reserva - PR",
+
+                    descricao:
+                        profissional.descricao ||
+                        "Profissional disponível no Contrata Reserva.",
+
+                    foto:
+                        profissional.foto ||
+                        profissional.fotoPerfil ||
+                        "",
+
+                    whatsapp:
+                        profissional.whatsapp ||
+                        profissional.telefone ||
+                        "",
+
+                    criadoEm: Timestamp.now()
+                });
+
+                alert(
+                    `${profissional.nome || "Profissional"} foi colocado em destaque.`
+                );
+            }
+
+            if (acao === "remover") {
+                await deleteDoc(referenciaDestaque);
+
+                alert(
+                    `${profissional.nome || "Profissional"} foi removido dos destaques.`
+                );
+            }
+
+            await carregarDados();
+
+        } catch (erro) {
+            console.error(
+                "Erro ao alterar destaque:",
+                erro
+            );
+
+            alert(
+                "Não foi possível alterar o destaque."
+            );
+
+            botao.disabled = false;
+        }
+    });
+    
     renderizarAnuncios(filtrados);
 }

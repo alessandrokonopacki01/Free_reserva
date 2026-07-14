@@ -29,6 +29,34 @@
             </button>
         </a>
     </header>
+    
+    <section id="secaoDestaques" class="secao-destaques oculto">
+        <div class="cabecalho-destaques">
+            <div>
+                <span class="rotulo-destaque">
+                    Profissionais selecionados
+                </span>
+
+                <h2>Profissionais em destaque</h2>
+            </div>
+
+            <div class="controles-carrossel">
+                <button id="carrosselAnterior" type="button" aria-label="Profissional anterior">
+                    &#10094;
+                </button>
+
+                <button id="carrosselProximo" type="button" aria-label="Próximo profissional">
+                    &#10095;
+                </button>
+            </div>
+        </div>
+
+        <div class="carrossel-janela">
+            <div id="carrosselDestaques" class="carrossel-destaques"></div>
+        </div>
+
+        <div id="indicadoresCarrossel" class="indicadores-carrossel"></div>
+    </section>
     <section class="lista">
         <h2>Serviços Publicados</h2>
         <div id="anuncios"></div>

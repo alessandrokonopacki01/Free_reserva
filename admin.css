@@ -476,3 +476,41 @@ td {
         flex-direction: column;
     }
 }
+
+/* BOTÕES DE DESTAQUE */
+
+.btn-destaque {
+    min-width: 155px;
+    padding: 10px 13px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-destaque.adicionar {
+    border: 1px solid var(--dourado);
+    background: rgba(255, 215, 0, 0.12);
+    color: var(--dourado);
+}
+
+.btn-destaque.adicionar:hover {
+    background: var(--dourado);
+    color: #000;
+}
+
+.btn-destaque.remover {
+    border: 1px solid var(--vermelho);
+    background: rgba(255, 104, 104, 0.1);
+    color: var(--vermelho);
+}
+
+.btn-destaque.remover:hover {
+    background: var(--vermelho);
+    color: #000;
+}
+
+.btn-destaque:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
