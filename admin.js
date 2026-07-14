@@ -662,8 +662,7 @@ function filtrarAnuncios() {
 
             const correspondeStatus =
                 statusSelecionado === "todos" ||
-                obterStatus(anuncio) ===
-                statusSelecionado;
+                obterStatus(anuncio) === statusSelecionado;
 
             return (
                 correspondeTexto &&
@@ -671,6 +670,10 @@ function filtrarAnuncios() {
             );
         }
     );
+
+    renderizarAnuncios(filtrados);
+}
+
 /* ======================================================
    CONTROLE DOS PROFISSIONAIS EM DESTAQUE
 ====================================================== */
@@ -714,7 +717,7 @@ document
 
             if (acao === "adicionar") {
                 await setDoc(referenciaDestaque, {
-                    profissionalId: profissionalId,
+                    profissionalId,
 
                     nome:
                         profissional.nome ||
@@ -772,8 +775,9 @@ document
             );
 
             botao.disabled = false;
+            botao.textContent =
+                acao === "adicionar"
+                    ? "Colocar em destaque"
+                    : "Remover destaque";
         }
     });
-    
-    renderizarAnuncios(filtrados);
-}
