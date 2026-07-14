@@ -566,3 +566,87 @@ a {
         right: 14px;
     }
 }
+
+/* PROPAGANDA DO DESTAQUE */
+
+.card-propaganda {
+    grid-template-columns: 35% 1fr;
+    background:
+        radial-gradient(
+            circle at 20% 50%,
+            rgba(255, 215, 0, 0.3),
+            transparent 38%
+        ),
+        linear-gradient(
+            135deg,
+            #1d1d1d,
+            #050505
+        );
+}
+
+.propaganda-icone {
+    min-height: 350px;
+    display: grid;
+    place-items: center;
+    font-size: 150px;
+    text-shadow:
+        0 0 20px rgba(255, 215, 0, 0.55),
+        0 0 60px rgba(255, 215, 0, 0.3);
+}
+
+.propaganda-conteudo h3 {
+    max-width: 650px;
+}
+
+.chamada-propaganda {
+    max-width: 600px;
+    margin: 12px 0 20px;
+    color: #eeeeee;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.preco-destaque {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 27px;
+    color: #ffffff;
+}
+
+.preco-destaque span {
+    font-size: 17px;
+}
+
+.preco-destaque strong {
+    color: var(--dourado);
+    font-size: clamp(32px, 5vw, 50px);
+    line-height: 1;
+}
+
+@media (max-width: 700px) {
+    .card-propaganda,
+    .card-propaganda.ativo {
+        grid-template-columns: 1fr;
+    }
+
+    .propaganda-icone {
+        min-height: 190px;
+        font-size: 100px;
+    }
+
+    .propaganda-conteudo {
+        text-align: center;
+    }
+
+    .preco-destaque {
+        justify-content: center;
+    }
+
+    .propaganda-conteudo
+    .btn-contatar-destaque {
+        align-self: center;
+        text-align: center;
+    }
+}

@@ -56,7 +56,7 @@ async function carregarDestaques() {
 
         const agora = Date.now();
 
-        profissionaisDestaque = snapshot.docs
+        const destaquesCadastrados = snapshot.docs
             .map((documento) => ({
                 id: documento.id,
                 ...documento.data()
@@ -70,18 +70,33 @@ async function carregarDestaques() {
                     profissional.fimDestaque &&
                     typeof profissional.fimDestaque.toDate === "function"
                 ) {
-                    return profissional.fimDestaque
-                        .toDate()
-                        .getTime() > agora;
+                    return (
+                        profissional.fimDestaque
+                            .toDate()
+                            .getTime() > agora
+                    );
                 }
 
                 return true;
             });
 
-        if (profissionaisDestaque.length === 0) {
-            secaoDestaques.classList.add("oculto");
-            return;
-        }
+        const propagandaDestaque = {
+            id: "propaganda-destaque",
+            tipo: "propaganda",
+            nome: "Seu serviço em destaque",
+            servico: "Divulgue seu trabalho",
+            categoria: "Espaço disponível",
+            cidade: "Contrata Reserva",
+            descricao:
+                "Apareça no topo do site durante 7 dias e seja visto por mais clientes.",
+            preco: "10 créditos",
+            whatsappAdmin: "42999806150"
+        };
+
+        profissionaisDestaque = [
+            propagandaDestaque,
+            ...destaquesCadastrados
+        ];
 
         secaoDestaques.classList.remove("oculto");
 
@@ -99,61 +114,121 @@ async function carregarDestaques() {
         secaoDestaques.classList.add("oculto");
     }
 }
-
 function renderizarCarrossel() {
-    carrosselDestaques.innerHTML =
-        profissionaisDestaque.map(
-            (profissional, indice) => {
+        carrosselDestaques.innerHTML =
+            profissionaisDestaque.map(
+                (profissional, indice) => {
 
-                const inicial = String(
-                    profissional.nome || "P"
-                )
-                    .trim()
-                    .charAt(0)
-                    .toUpperCase();
+                    if (profissional.tipo === "propaganda") {
+                        const numeroAdmin = somenteNumeros(
+                            profissional.whatsappAdmin
+                        );
 
-                const foto = profissional.foto
-                    ? `
+                        const mensagem = encodeURIComponent(
+                            "Olá! Vi no Contrata Reserva a opção de colocar meu perfil em destaque por 7 dias. Gostaria de saber como funciona."
+                        );
+
+                        return `
+        <article
+            class="card-destaque card-propaganda ${indice === destaqueAtual
+                                ? "ativo"
+                                : ""
+                            }"
+        >
+            <div class="propaganda-icone">
+                ⭐
+            </div>
+
+            <div class="conteudo-destaque propaganda-conteudo">
+                <span class="categoria-destaque">
+                    ${escaparHTMLCarrossel(
+                                profissional.categoria
+                            )}
+                </span>
+
+                <h3>
+                    Seu serviço merece destaque
+                </h3>
+
+                <p class="chamada-propaganda">
+                    Apareça no topo do Contrata Reserva
+                    e alcance mais clientes da cidade.
+                </p>
+
+                <div class="preco-destaque">
+                    <span>Apenas</span>
+
+                    <strong>
+                        ${escaparHTMLCarrossel(
+                                profissional.preco
+                            )}
+                    </strong>
+
+                    <span>por 7 dias</span>
+                </div>
+
+                <a
+                    class="btn-contatar-destaque"
+                    href="https://wa.me/55${numeroAdmin}?text=${mensagem}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Quero colocar meu perfil em destaque
+                </a>
+            </div>
+        </article>
+    `;
+                    }
+
+                    const inicial = String(
+                        profissional.nome || "P"
+                    )
+                        .trim()
+                        .charAt(0)
+                        .toUpperCase();
+
+                    const foto = profissional.foto
+                        ? `
                         <img
                             src="${escaparAtributo(profissional.foto)}"
                             alt="Foto de ${escaparHTMLCarrossel(
-                        profissional.nome || "profissional"
-                    )}"
+                            profissional.nome || "profissional"
+                        )}"
                         >
                     `
-                    : `
+                        : `
                         <div class="avatar-inicial">
                             ${inicial}
                         </div>
                     `;
 
-                const linkWhatsapp = profissional.whatsapp
-                    ? `
+                    const linkWhatsapp = profissional.whatsapp
+                        ? `
                         <a
                             class="btn-contatar-destaque"
                             href="https://wa.me/55${somenteNumeros(
-                        profissional.whatsapp
-                    )}?text=${encodeURIComponent(
-                        "Olá! Vi seu perfil em destaque no site Contrata Reserva."
-                    )}"
+                            profissional.whatsapp
+                        )}?text=${encodeURIComponent(
+                            "Olá! Vi seu perfil em destaque no site Contrata Reserva."
+                        )}"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
                             Conversar no WhatsApp
                         </a>
                     `
-                    : `
+                        : `
                         <span class="perfil-sem-contato">
                             Disponível no Contrata Reserva
                         </span>
                     `;
 
-                return `
+                    return `
                     <article
                         class="card-destaque ${indice === destaqueAtual
-                        ? "ativo"
-                        : ""
-                    }"
+                            ? "ativo"
+                            : ""
+                        }"
                     >
                         <div class="selo-destaque">
                             ★ Destaque
@@ -166,169 +241,169 @@ function renderizarCarrossel() {
                         <div class="conteudo-destaque">
                             <span class="categoria-destaque">
                                 ${escaparHTMLCarrossel(
-                        profissional.servico ||
-                        profissional.categoria ||
-                        "Profissional"
-                    )}
+                            profissional.servico ||
+                            profissional.categoria ||
+                            "Profissional"
+                        )}
                             </span>
 
                             <h3>
                                 ${escaparHTMLCarrossel(
-                        profissional.nome ||
-                        "Profissional"
-                    )}
+                            profissional.nome ||
+                            "Profissional"
+                        )}
                             </h3>
 
                             <p class="cidade-destaque">
                                 📍 ${escaparHTMLCarrossel(
-                        profissional.cidade ||
-                        "Reserva - PR"
-                    )}
+                            profissional.cidade ||
+                            "Reserva - PR"
+                        )}
                             </p>
 
                             <p class="descricao-destaque">
                                 ${escaparHTMLCarrossel(
-                        profissional.descricao ||
-                        "Profissional disponível no Contrata Reserva."
-                    )}
+                            profissional.descricao ||
+                            "Profissional disponível no Contrata Reserva."
+                        )}
                             </p>
 
                             ${linkWhatsapp}
                         </div>
                     </article>
                 `;
-            }
-        ).join("");
+                }
+            ).join("");
 
-    renderizarIndicadores();
-}
+        renderizarIndicadores();
+    }
 
-function renderizarIndicadores() {
-    indicadoresCarrossel.innerHTML =
-        profissionaisDestaque.map(
-            (_, indice) => `
+    function renderizarIndicadores() {
+        indicadoresCarrossel.innerHTML =
+            profissionaisDestaque.map(
+                (_, indice) => `
                 <button
                     class="indicador ${indice === destaqueAtual
-                    ? "ativo"
-                    : ""
-                }"
+                        ? "ativo"
+                        : ""
+                    }"
                     data-indice="${indice}"
                     aria-label="Abrir destaque ${indice + 1}"
                 ></button>
             `
-        ).join("");
-}
-
-function mostrarDestaque(indice) {
-    if (profissionaisDestaque.length === 0) {
-        return;
+            ).join("");
     }
 
-    if (indice < 0) {
-        destaqueAtual =
-            profissionaisDestaque.length - 1;
-    } else if (
-        indice >= profissionaisDestaque.length
-    ) {
-        destaqueAtual = 0;
-    } else {
-        destaqueAtual = indice;
-    }
-
-    renderizarCarrossel();
-}
-
-function iniciarCarrosselAutomatico() {
-    pararCarrosselAutomatico();
-
-    if (profissionaisDestaque.length <= 1) {
-        return;
-    }
-
-    intervaloCarrossel = setInterval(() => {
-        mostrarDestaque(destaqueAtual + 1);
-    }, 5000);
-}
-
-function pararCarrosselAutomatico() {
-    if (intervaloCarrossel) {
-        clearInterval(intervaloCarrossel);
-        intervaloCarrossel = null;
-    }
-}
-
-botaoAnterior.addEventListener("click", () => {
-    mostrarDestaque(destaqueAtual - 1);
-    iniciarCarrosselAutomatico();
-});
-
-botaoProximo.addEventListener("click", () => {
-    mostrarDestaque(destaqueAtual + 1);
-    iniciarCarrosselAutomatico();
-});
-
-indicadoresCarrossel.addEventListener(
-    "click",
-    (evento) => {
-        const indicador =
-            evento.target.closest("[data-indice]");
-
-        if (!indicador) {
+    function mostrarDestaque(indice) {
+        if (profissionaisDestaque.length === 0) {
             return;
         }
 
-        mostrarDestaque(
-            Number(indicador.dataset.indice)
-        );
+        if (indice < 0) {
+            destaqueAtual =
+                profissionaisDestaque.length - 1;
+        } else if (
+            indice >= profissionaisDestaque.length
+        ) {
+            destaqueAtual = 0;
+        } else {
+            destaqueAtual = indice;
+        }
 
-        iniciarCarrosselAutomatico();
+        renderizarCarrossel();
     }
-);
 
-function somenteNumeros(valor) {
-    return String(valor || "").replace(/\D/g, "");
-}
+    function iniciarCarrosselAutomatico() {
+        pararCarrosselAutomatico();
 
-function escaparHTMLCarrossel(valor) {
-    return String(valor)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
+        if (profissionaisDestaque.length <= 1) {
+            return;
+        }
 
-function escaparAtributo(valor) {
-    return escaparHTMLCarrossel(valor);
-}
-async function carregar() {
-    lista.innerHTML = "";
-    const q =
-        query(
-            collection(db, "anuncios"),
-            where(
-                "expiraEm",
-                ">",
-                Timestamp.now()
-            ),
-            orderBy("expiraEm"),
-            orderBy("criadoEm", "desc")
-        );
-    const snapshot =
-        await getDocs(q);
-    snapshot.forEach((doc) => {
-        const anuncio = doc.data();
-        const agora = Date.now();
-        const expiraEm = anuncio.expiraEm.toDate().getTime();
-        const diferenca = expiraEm - agora;
-        const horas = Math.floor(
-            diferenca / (1000 * 60 * 60)
-        );
-        const minutos = Math.floor(
-            (diferenca % (1000 * 60 * 60))
-            / (1000 * 60)
-        );
-        lista.innerHTML += `
+        intervaloCarrossel = setInterval(() => {
+            mostrarDestaque(destaqueAtual + 1);
+        }, 5000);
+    }
+
+    function pararCarrosselAutomatico() {
+        if (intervaloCarrossel) {
+            clearInterval(intervaloCarrossel);
+            intervaloCarrossel = null;
+        }
+    }
+
+    botaoAnterior.addEventListener("click", () => {
+        mostrarDestaque(destaqueAtual - 1);
+        iniciarCarrosselAutomatico();
+    });
+
+    botaoProximo.addEventListener("click", () => {
+        mostrarDestaque(destaqueAtual + 1);
+        iniciarCarrosselAutomatico();
+    });
+
+    indicadoresCarrossel.addEventListener(
+        "click",
+        (evento) => {
+            const indicador =
+                evento.target.closest("[data-indice]");
+
+            if (!indicador) {
+                return;
+            }
+
+            mostrarDestaque(
+                Number(indicador.dataset.indice)
+            );
+
+            iniciarCarrosselAutomatico();
+        }
+    );
+
+    function somenteNumeros(valor) {
+        return String(valor || "").replace(/\D/g, "");
+    }
+
+    function escaparHTMLCarrossel(valor) {
+        return String(valor)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    function escaparAtributo(valor) {
+        return escaparHTMLCarrossel(valor);
+    }
+    async function carregar() {
+        lista.innerHTML = "";
+        const q =
+            query(
+                collection(db, "anuncios"),
+                where(
+                    "expiraEm",
+                    ">",
+                    Timestamp.now()
+                ),
+                orderBy("expiraEm"),
+                orderBy("criadoEm", "desc")
+            );
+        const snapshot =
+            await getDocs(q);
+        snapshot.forEach((doc) => {
+            const anuncio = doc.data();
+            const agora = Date.now();
+            const expiraEm = anuncio.expiraEm.toDate().getTime();
+            const diferenca = expiraEm - agora;
+            const horas = Math.floor(
+                diferenca / (1000 * 60 * 60)
+            );
+            const minutos = Math.floor(
+                (diferenca % (1000 * 60 * 60))
+                / (1000 * 60)
+            );
+            lista.innerHTML += `
 <div class="card">
 <h3>${anuncio.titulo}</h3>
 <p>
@@ -350,115 +425,115 @@ ${anuncio.descricao}
 </div>
 `;
 
-    });
-}
-window.mostrarContato = async function (
-    anuncioId,
-    nome,
-    telefone
-) {
-
-    if (!usuarioLogado) {
-
-        alert("Faça login para desbloquear contatos.");
-        return;
-
+        });
     }
+    window.mostrarContato = async function (
+        anuncioId,
+        nome,
+        telefone
+    ) {
 
-    const usuarioRef =
-        doc(db, "usuarios", usuarioLogado.uid);
+        if (!usuarioLogado) {
 
-    const usuarioDoc =
-        await getDoc(usuarioRef);
-
-    const dados =
-        usuarioDoc.data();
-
-    const desbloqueioId =
-        usuarioLogado.uid + "_" + anuncioId;
-
-    const desbloqueioRef =
-        doc(
-            db,
-            "desbloqueios",
-            desbloqueioId
-        );
-
-    const desbloqueioDoc =
-        await getDoc(desbloqueioRef);
-
-    // Já desbloqueou anteriormente
-
-    if (!desbloqueioDoc.exists()) {
-
-        if (dados.creditos <= 0) {
-
-            alert(
-                "Você não possui créditos suficientes."
-            );
-
+            alert("Faça login para desbloquear contatos.");
             return;
 
         }
 
-        await updateDoc(usuarioRef, {
+        const usuarioRef =
+            doc(db, "usuarios", usuarioLogado.uid);
 
-            creditos:
-                dados.creditos - 1
+        const usuarioDoc =
+            await getDoc(usuarioRef);
 
-        });
+        const dados =
+            usuarioDoc.data();
 
-        await setDoc(
-            desbloqueioRef,
-            {
-                usuarioId:
-                    usuarioLogado.uid,
+        const desbloqueioId =
+            usuarioLogado.uid + "_" + anuncioId;
 
-                anuncioId:
-                    anuncioId,
+        const desbloqueioRef =
+            doc(
+                db,
+                "desbloqueios",
+                desbloqueioId
+            );
 
-                data:
-                    Timestamp.now()
+        const desbloqueioDoc =
+            await getDoc(desbloqueioRef);
+
+        // Já desbloqueou anteriormente
+
+        if (!desbloqueioDoc.exists()) {
+
+            if (dados.creditos <= 0) {
+
+                alert(
+                    "Você não possui créditos suficientes."
+                );
+
+                return;
+
             }
-        );
 
-        console.log(
-            "Crédito descontado."
-        );
+            await updateDoc(usuarioRef, {
 
-    } else {
+                creditos:
+                    dados.creditos - 1
 
-        console.log(
-            "Anúncio já desbloqueado."
-        );
+            });
+
+            await setDoc(
+                desbloqueioRef,
+                {
+                    usuarioId:
+                        usuarioLogado.uid,
+
+                    anuncioId:
+                        anuncioId,
+
+                    data:
+                        Timestamp.now()
+                }
+            );
+
+            console.log(
+                "Crédito descontado."
+            );
+
+        } else {
+
+            console.log(
+                "Anúncio já desbloqueado."
+            );
+
+        }
+
+        document.getElementById("nomeCliente")
+            .innerHTML =
+            "<b>Nome:</b> " + nome;
+
+        document.getElementById("telefoneCliente")
+            .innerHTML =
+            "<b>Telefone:</b> " + telefone;
+
+        const mensagem =
+            `Olá! Vi seu anúncio de serviço no site Contrata Reserva e estou interessado. Podemos combinar o preço?`;
+
+        document.getElementById("btnWhatsapp")
+            .href =
+            `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`;
+
+        document.getElementById("modal")
+            .style.display =
+            "block";
 
     }
+    window.fecharModal = function () {
 
-    document.getElementById("nomeCliente")
-        .innerHTML =
-        "<b>Nome:</b> " + nome;
+        document.getElementById("modal")
+            .style.display = "none";
 
-    document.getElementById("telefoneCliente")
-        .innerHTML =
-        "<b>Telefone:</b> " + telefone;
-
-    const mensagem =
-        `Olá! Vi seu anúncio de serviço no site Contrata Reserva e estou interessado. Podemos combinar o preço?`;
-
-    document.getElementById("btnWhatsapp")
-        .href =
-        `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`;
-
-    document.getElementById("modal")
-        .style.display =
-        "block";
-
-}
-window.fecharModal = function () {
-
-    document.getElementById("modal")
-        .style.display = "none";
-
-}
-carregarDestaques();
-carregar();
+    }
+    carregarDestaques();
+    carregar();
