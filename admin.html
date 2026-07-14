@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo | Contrata Reserva</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <section id="telaAcesso" class="tela-acesso">
+        <div class="acesso-card">
+            <span class="marca">CONTRATA RESERVA</span>
+            <h1>Painel Administrativo</h1>
+            <p>Entre com a conta autorizada para administrar a plataforma.</p>
+            <button id="btnEntrarAdmin" class="btn-principal">Entrar com Google</button>
+            <a href="index.html" class="link-voltar">← Voltar ao site</a>
+            <p id="mensagemAcesso" class="mensagem"></p>
+        </div>
+    </section>
+
+    <div id="painelAdmin" class="painel oculto">
+        <aside class="menu-lateral">
+            <div>
+                <span class="marca">CONTRATA RESERVA</span>
+                <h2>Admin</h2>
+            </div>
+
+            <nav>
+                <button class="menu-item ativo" data-secao="visaoGeral">Visão geral</button>
+                <button class="menu-item" data-secao="profissionais">Profissionais</button>
+                <button class="menu-item" data-secao="anuncios">Anúncios</button>
+            </nav>
+
+            <div class="usuario-admin">
+                <p id="nomeAdmin"></p>
+                <small id="emailAdmin"></small>
+                <button id="btnSair">Sair</button>
+            </div>
+        </aside>
+
+        <main class="conteudo">
+            <header class="topo-painel">
+                <div>
+                    <p class="rotulo">Administração</p>
+                    <h1 id="tituloSecao">Visão geral</h1>
+                </div>
+                <button id="btnAtualizar" class="btn-secundario">Atualizar dados</button>
+            </header>
+
+            <section id="visaoGeral" class="secao ativa">
+                <div class="cards-resumo">
+                    <article class="resumo-card">
+                        <span>Profissionais cadastrados</span>
+                        <strong id="totalProfissionais">0</strong>
+                    </article>
+                    <article class="resumo-card">
+                        <span>Anúncios cadastrados</span>
+                        <strong id="totalAnuncios">0</strong>
+                    </article>
+                    <article class="resumo-card">
+                        <span>Anúncios ativos</span>
+                        <strong id="totalAtivos">0</strong>
+                    </article>
+                    <article class="resumo-card">
+                        <span>Créditos em circulação</span>
+                        <strong id="totalCreditos">0</strong>
+                    </article>
+                </div>
+
+                <div class="bloco">
+                    <h2>Últimos anúncios</h2>
+                    <div id="ultimosAnuncios" class="lista-compacta"></div>
+                </div>
+            </section>
+
+            <section id="profissionais" class="secao">
+                <div class="barra-filtros">
+                    <input id="buscaProfissional" type="search" placeholder="Buscar por nome ou e-mail">
+                </div>
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Tipo</th>
+                                <th>Créditos</th>
+                                <th>Cadastro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaProfissionais"></tbody>
+                    </table>
+                </div>
+                <p id="vazioProfissionais" class="estado-vazio oculto">Nenhum profissional encontrado.</p>
+            </section>
+
+            <section id="anuncios" class="secao">
+                <div class="barra-filtros">
+                    <input id="buscaAnuncio" type="search" placeholder="Buscar por título, cliente ou categoria">
+                    <select id="filtroStatus">
+                        <option value="todos">Todos os anúncios</option>
+                        <option value="ativo">Ativos</option>
+                        <option value="expirado">Expirados</option>
+                    </select>
+                </div>
+                <div id="listaAnunciosAdmin" class="grade-anuncios"></div>
+                <p id="vazioAnuncios" class="estado-vazio oculto">Nenhum anúncio encontrado.</p>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
