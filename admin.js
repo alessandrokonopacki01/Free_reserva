@@ -14,6 +14,7 @@ import {
     orderBy,
     doc,
     updateDoc,
+    addDoc,
     setDoc,
     deleteDoc,
     Timestamp
@@ -32,6 +33,17 @@ const btnAtualizar = document.getElementById("btnAtualizar");
 let profissionais = [];
 let anuncios = [];
 let destaques = [];
+
+let videosPatrocinados = [];
+
+const formVideoAnuncio =
+    document.getElementById("formVideoAnuncio");
+
+const listaVideosAdmin =
+    document.getElementById("listaVideosAdmin");
+
+const mensagemVideo =
+    document.getElementById("mensagemVideo");
 
 /* ======================================================
    LOGIN DO ADMINISTRADOR
@@ -114,22 +126,30 @@ async function carregarDados() {
 
     try {
         const [
-            snapshotUsuarios,
-            snapshotAnuncios,
-            snapshotDestaques
-        ] = await Promise.all([
+    snapshotUsuarios,
+    snapshotAnuncios,
+    snapshotDestaques,
+    snapshotVideos
+] = await Promise.all([
 
-            getDocs(collection(db, "usuarios")),
+    getDocs(collection(db, "usuarios")),
 
-            getDocs(
-                query(
-                    collection(db, "anuncios"),
-                    orderBy("criadoEm", "desc")
-                )
-            ),
+    getDocs(
+        query(
+            collection(db, "anuncios"),
+            orderBy("criadoEm", "desc")
+        )
+    ),
 
-            getDocs(collection(db, "destaques"))
-        ]);
+    getDocs(collection(db, "destaques")),
+
+    getDocs(
+        query(
+            collection(db, "anunciosVideos"),
+            orderBy("criadoEm", "desc")
+        )
+    )
+]);
 
         profissionais = snapshotUsuarios.docs.map((documento) => ({
             id: documento.id,
@@ -146,10 +166,17 @@ async function carregarDados() {
             ...documento.data()
         }));
 
+        videosPatrocinados =
+    snapshotVideos.docs.map((documento) => ({
+        id: documento.id,
+        ...documento.data()
+    }));
+
         atualizarResumo();
         renderizarProfissionais(profissionais);
         renderizarAnuncios(anuncios);
         renderizarUltimosAnuncios();
+        renderizarVideosPatrocinados();
     } catch (erro) {
         console.error("Erro ao carregar o painel:", erro);
 
@@ -840,3 +867,263 @@ document
                     : "Remover destaque";
         }
     });
+
+    function extrairIdYoutube(url) {
+
+    try {
+
+        const endereco = new URL(url);
+
+        if (endereco.hostname.includes("youtu.be")) {
+            return endereco.pathname.replace("/", "");
+        }
+
+        if (endereco.pathname.includes("/shorts/")) {
+            return endereco.pathname
+                .split("/shorts/")[1]
+                .split("/")[0];
+        }
+
+        if (endereco.pathname.includes("/embed/")) {
+            return endereco.pathname
+                .split("/embed/")[1]
+                .split("/")[0];
+        }
+
+        return endereco.searchParams.get("v");
+
+    } catch (erro) {
+
+        return null;
+    }
+}
+
+formVideoAnuncio.addEventListener(
+    "submit",
+    async (evento) => {
+
+        evento.preventDefault();
+
+        const empresa =
+            document.getElementById("empresaVideo")
+                .value.trim();
+
+        const titulo =
+            document.getElementById("tituloVideo")
+                .value.trim();
+
+        const youtubeUrl =
+            document.getElementById("youtubeUrl")
+                .value.trim();
+
+        const youtubeId =
+            extrairIdYoutube(youtubeUrl);
+
+        if (!youtubeId) {
+
+            mensagemVideo.textContent =
+                "Informe um link válido do YouTube.";
+
+            return;
+        }
+
+        mensagemVideo.textContent =
+            "Salvando anúncio...";
+
+        try {
+
+            // Desativa os anúncios anteriores
+            const ativos = videosPatrocinados.filter(
+                (video) => video.ativo === true
+            );
+
+            for (const video of ativos) {
+
+                await updateDoc(
+                    doc(
+                        db,
+                        "anunciosVideos",
+                        video.id
+                    ),
+                    {
+                        ativo: false
+                    }
+                );
+            }
+
+            await addDoc(
+                collection(db, "anunciosVideos"),
+                {
+                    empresa,
+                    titulo,
+                    youtubeUrl,
+                    youtubeId,
+                    ativo: true,
+                    criadoEm: Timestamp.now()
+                }
+            );
+
+            formVideoAnuncio.reset();
+
+            mensagemVideo.textContent =
+                "Anúncio cadastrado com sucesso!";
+
+            await carregarDados();
+
+        } catch (erro) {
+
+            console.error(
+                "Erro ao cadastrar vídeo:",
+                erro
+            );
+
+            mensagemVideo.textContent =
+                "Não foi possível cadastrar o anúncio.";
+        }
+    }
+);
+
+function renderizarVideosPatrocinados() {
+
+    if (!listaVideosAdmin) {
+        return;
+    }
+
+    if (videosPatrocinados.length === 0) {
+
+        listaVideosAdmin.innerHTML =
+            "<p>Nenhum anúncio cadastrado.</p>";
+
+        return;
+    }
+
+    listaVideosAdmin.innerHTML =
+        videosPatrocinados.map((video) => {
+
+            return `
+                <article class="card-admin">
+
+                    <h3>
+                        ${escaparHTML(
+                            video.titulo || "Anúncio"
+                        )}
+                    </h3>
+
+                    <p>
+                        Empresa:
+                        ${escaparHTML(
+                            video.empresa || ""
+                        )}
+                    </p>
+
+                    <p>
+                        Status:
+                        <strong>
+                            ${video.ativo
+                                ? "Ativo"
+                                : "Inativo"}
+                        </strong>
+                    </p>
+
+                    <iframe
+                        width="100%"
+                        height="220"
+                        src="https://www.youtube.com/embed/${video.youtubeId}"
+                        title="Prévia do anúncio"
+                        frameborder="0"
+                        allowfullscreen
+                    ></iframe>
+
+                    <div class="acoes-admin">
+
+                        <button
+                            data-video-id="${video.id}"
+                            data-acao="ativar-video"
+                        >
+                            Ativar
+                        </button>
+
+                        <button
+                            data-video-id="${video.id}"
+                            data-acao="excluir-video"
+                        >
+                            Excluir
+                        </button>
+
+                    </div>
+
+                </article>
+            `;
+        }).join("");
+}
+
+listaVideosAdmin.addEventListener(
+    "click",
+    async (evento) => {
+
+        const botao =
+            evento.target.closest("[data-video-id]");
+
+        if (!botao) {
+            return;
+        }
+
+        const videoId =
+            botao.dataset.videoId;
+
+        const acao =
+            botao.dataset.acao;
+
+        try {
+
+            if (acao === "ativar-video") {
+
+                for (const video of videosPatrocinados) {
+
+                    await updateDoc(
+                        doc(
+                            db,
+                            "anunciosVideos",
+                            video.id
+                        ),
+                        {
+                            ativo: video.id === videoId
+                        }
+                    );
+                }
+            }
+
+            if (acao === "excluir-video") {
+
+                const confirmar = confirm(
+                    "Deseja excluir este anúncio?"
+                );
+
+                if (!confirmar) {
+                    return;
+                }
+
+                await deleteDoc(
+                    doc(
+                        db,
+                        "anunciosVideos",
+                        videoId
+                    )
+                );
+            }
+
+            await carregarDados();
+
+        } catch (erro) {
+
+            console.error(
+                "Erro ao alterar anúncio:",
+                erro
+            );
+
+            alert(
+                "Não foi possível alterar o anúncio."
+            );
+        }
+    }
+);

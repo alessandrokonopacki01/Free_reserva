@@ -31,6 +31,7 @@
                 <button class="menu-item ativo" data-secao="visaoGeral">Visão geral</button>
                 <button class="menu-item" data-secao="profissionais">Profissionais</button>
                 <button class="menu-item" data-secao="anuncios">Anúncios</button>
+                <button class="menu-item" data-secao="videos">Vídeos patrocinados</button>
             </nav>
 
             <div class="usuario-admin">
@@ -108,6 +109,35 @@
                 </div>
                 <div id="listaAnunciosAdmin" class="grade-anuncios"></div>
                 <p id="vazioAnuncios" class="estado-vazio oculto">Nenhum anúncio encontrado.</p>
+            </section>
+            <section id="videos" class="secao">
+
+                <div class="bloco">
+                    <h2>Cadastrar anúncio do YouTube</h2>
+
+                    <form id="formVideoAnuncio">
+
+                        <input id="empresaVideo" type="text" placeholder="Nome da empresa" required>
+
+                        <input id="tituloVideo" type="text" placeholder="Título do anúncio" required>
+
+                        <input id="youtubeUrl" type="url" placeholder="Link do vídeo no YouTube" required>
+
+                        <button type="submit" class="btn-principal">
+                            Cadastrar anúncio
+                        </button>
+
+                    </form>
+
+                    <p id="mensagemVideo" class="mensagem"></p>
+                </div>
+
+                <div class="bloco">
+                    <h2>Anúncios cadastrados</h2>
+
+                    <div id="listaVideosAdmin"></div>
+                </div>
+
             </section>
         </main>
     </div>

@@ -466,41 +466,39 @@ ${anuncio.descricao}
 
         if (!desbloqueioDoc.exists()) {
 
-            if (dados.creditos <= 0) {
+if (dados.creditos <= 0) {
 
-                alert(
-                    "Você não possui créditos suficientes."
-                );
+    const anuncioAssistido =
+        await abrirModalAnuncio();
 
-                return;
+    if (!anuncioAssistido) {
+        return;
+    }
 
-            }
+    await registrarDesbloqueioGratuito(
+        desbloqueioRef,
+        anuncioId
+    );
 
-            await updateDoc(usuarioRef, {
+} else {
 
-                creditos:
-                    dados.creditos - 1
+    await updateDoc(usuarioRef, {
+        creditos: dados.creditos - 1
+    });
 
-            });
+    await setDoc(
+        desbloqueioRef,
+        {
+            usuarioId: usuarioLogado.uid,
+            anuncioId: anuncioId,
+            formaDesbloqueio: "credito",
+            data: Timestamp.now()
+        }
+    );
 
-            await setDoc(
-                desbloqueioRef,
-                {
-                    usuarioId:
-                        usuarioLogado.uid,
-
-                    anuncioId:
-                        anuncioId,
-
-                    data:
-                        Timestamp.now()
-                }
-            );
-
-            console.log(
-                "Crédito descontado."
-            );
-
+    console.log("Crédito descontado.");
+}
+            
         } else {
 
             console.log(
@@ -529,6 +527,258 @@ ${anuncio.descricao}
             "block";
 
     }
+    async function registrarDesbloqueioGratuito(
+    desbloqueioRef,
+    anuncioId
+) {
+
+    await setDoc(
+        desbloqueioRef,
+        {
+            usuarioId: usuarioLogado.uid,
+            anuncioId: anuncioId,
+            formaDesbloqueio: "anuncio",
+            data: Timestamp.now()
+        }
+    );
+
+    console.log(
+        "Contato desbloqueado após anúncio."
+    );
+}
+
+function abrirModalAnuncio() {
+
+    return new Promise((resolve) => {
+
+        const modalAnuncio =
+            document.getElementById(
+                "modalAnuncio"
+            );
+
+        const videoAnuncio =
+            document.getElementById(
+                "videoAnuncio"
+            );
+
+        const btnAssistir =
+            document.getElementById(
+                "btnAssistirAnuncio"
+            );
+
+        const btnCancelar =
+            document.getElementById(
+                "btnCancelarAnuncio"
+            );
+
+        const tempoAnuncio =
+            document.getElementById(
+                "tempoAnuncio"
+            );
+
+        let anuncioIniciado = false;
+        let processoFinalizado = false;
+
+        function limparModal() {
+
+            videoAnuncio.pause();
+            videoAnuncio.currentTime = 0;
+            videoAnuncio.style.display = "none";
+
+            btnAssistir.disabled = false;
+            btnCancelar.disabled = false;
+
+            btnAssistir.textContent =
+                "Assistir anúncio";
+
+            btnCancelar.style.display =
+                "inline-block";
+
+            tempoAnuncio.textContent =
+                "Clique em assistir para começar.";
+
+            modalAnuncio.style.display =
+                "none";
+
+            btnAssistir.removeEventListener(
+                "click",
+                iniciarAnuncio
+            );
+
+            btnCancelar.removeEventListener(
+                "click",
+                cancelarAnuncio
+            );
+
+            videoAnuncio.removeEventListener(
+                "ended",
+                concluirAnuncio
+            );
+
+            videoAnuncio.removeEventListener(
+                "timeupdate",
+                atualizarTempo
+            );
+
+            videoAnuncio.removeEventListener(
+                "pause",
+                impedirPausa
+            );
+        }
+
+        function finalizar(resultado) {
+
+            if (processoFinalizado) {
+                return;
+            }
+
+            processoFinalizado = true;
+
+            limparModal();
+
+            resolve(resultado);
+        }
+
+        function cancelarAnuncio() {
+
+            if (anuncioIniciado) {
+                return;
+            }
+
+            finalizar(false);
+        }
+
+        async function iniciarAnuncio() {
+
+            anuncioIniciado = true;
+
+            btnAssistir.disabled = true;
+            btnCancelar.disabled = true;
+
+            btnAssistir.textContent =
+                "Assistindo...";
+
+            btnCancelar.style.display =
+                "none";
+
+            videoAnuncio.style.display =
+                "block";
+
+            tempoAnuncio.textContent =
+                "Assista até o final para desbloquear.";
+
+            try {
+
+                await videoAnuncio.play();
+
+            } catch (erro) {
+
+                console.error(
+                    "Não foi possível reproduzir o anúncio:",
+                    erro
+                );
+
+                anuncioIniciado = false;
+
+                btnAssistir.disabled = false;
+                btnCancelar.disabled = false;
+
+                btnAssistir.textContent =
+                    "Tentar novamente";
+
+                btnCancelar.style.display =
+                    "inline-block";
+
+                tempoAnuncio.textContent =
+                    "Não foi possível iniciar o vídeo.";
+            }
+        }
+
+        function atualizarTempo() {
+
+            if (
+                !Number.isFinite(
+                    videoAnuncio.duration
+                )
+            ) {
+                return;
+            }
+
+            const restante =
+                Math.ceil(
+                    videoAnuncio.duration -
+                    videoAnuncio.currentTime
+                );
+
+            tempoAnuncio.textContent =
+                `Tempo restante: ${Math.max(
+                    restante,
+                    0
+                )} segundos`;
+        }
+
+        function impedirPausa() {
+
+            if (
+                anuncioIniciado &&
+                !videoAnuncio.ended &&
+                videoAnuncio.currentTime > 0
+            ) {
+
+                tempoAnuncio.textContent =
+                    "O anúncio precisa ser assistido até o final.";
+
+                videoAnuncio.play()
+                    .catch((erro) => {
+                        console.error(
+                            "Erro ao continuar vídeo:",
+                            erro
+                        );
+                    });
+            }
+        }
+
+        function concluirAnuncio() {
+
+            tempoAnuncio.textContent =
+                "Anúncio concluído! Liberando contato...";
+
+            setTimeout(() => {
+                finalizar(true);
+            }, 700);
+        }
+
+        videoAnuncio.controls = false;
+
+        videoAnuncio.addEventListener(
+            "ended",
+            concluirAnuncio
+        );
+
+        videoAnuncio.addEventListener(
+            "timeupdate",
+            atualizarTempo
+        );
+
+        videoAnuncio.addEventListener(
+            "pause",
+            impedirPausa
+        );
+
+        btnAssistir.addEventListener(
+            "click",
+            iniciarAnuncio
+        );
+
+        btnCancelar.addEventListener(
+            "click",
+            cancelarAnuncio
+        );
+
+        modalAnuncio.style.display =
+            "block";
+    });
+}
     window.fecharModal = function () {
 
         document.getElementById("modal")

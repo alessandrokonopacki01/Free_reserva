@@ -77,6 +77,55 @@
             </button>
         </div>
     </div>
+    <!-- MODAL PARA ASSISTIR AO ANÚNCIO -->
+<div id="modalAnuncio" class="modal">
+    <div class="modal-content modal-anuncio-content">
+
+        <h2>📺 Anúncio patrocinado</h2>
+
+        <p id="textoModalAnuncio">
+            Você está sem créditos.
+            Assista ao anúncio completo para desbloquear o contato.
+        </p>
+
+        <video
+            id="videoAnuncio"
+            class="video-anuncio"
+            controls
+            playsinline
+            preload="metadata"
+        >
+            <source src="anuncio.mp4" type="video/mp4">
+
+            Seu navegador não suporta vídeos.
+        </video>
+
+        <p id="tempoAnuncio">
+            Clique em assistir para começar.
+        </p>
+
+        <div class="botoes-anuncio">
+
+            <button
+                id="btnCancelarAnuncio"
+                type="button"
+                class="btn-cancelar-anuncio"
+            >
+                Não
+            </button>
+
+            <button
+                id="btnAssistirAnuncio"
+                type="button"
+                class="btn-assistir-anuncio"
+            >
+                Assistir anúncio
+            </button>
+
+        </div>
+
+    </div>
+</div>
     <script type="module" src="auth.js"></script>
     <script type="module" src="app.js"></script>
 </body>

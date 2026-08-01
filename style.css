@@ -188,6 +188,8 @@ a {
     display: none;
     position: fixed;
     inset: 0;
+    z-index: 9999;
+    overflow-y: auto;
     background: rgba(0,0,0,0.75);
     backdrop-filter: blur(4px);
 }
@@ -648,5 +650,76 @@ a {
     .btn-contatar-destaque {
         align-self: center;
         text-align: center;
+    }
+}
+/* ======================================================
+   MODAL DE ANÚNCIO
+====================================================== */
+
+.modal-anuncio-content {
+    max-width: 620px;
+    margin: 40px auto;
+}
+
+.video-anuncio {
+    display: none;
+    width: 100%;
+    max-height: 360px;
+    margin: 20px 0;
+    background: #000;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.45);
+}
+
+#tempoAnuncio {
+    margin: 15px 0;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.botoes-anuncio {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn-assistir-anuncio,
+.btn-cancelar-anuncio {
+    border: none;
+    padding: 13px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.btn-assistir-anuncio {
+    background: linear-gradient(
+        135deg,
+        #ffd700,
+        #ff9d00
+    );
+
+    color: #000000;
+}
+
+.btn-cancelar-anuncio {
+    background: #333333;
+    color: #ffffff;
+}
+
+.btn-assistir-anuncio:disabled,
+.btn-cancelar-anuncio:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+    .modal-anuncio-content {
+        width: calc(100% - 30px);
+        margin: 30px auto;
+        padding: 20px;
     }
 }
