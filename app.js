@@ -1,5 +1,4 @@
-import { db } from "./firebase.js";
-import { auth } from "./firebase.js";
+import { db, auth } from "./firebase.js";
 
 import {
     collection,
@@ -11,17 +10,19 @@ import {
     doc,
     getDoc,
     updateDoc,
-    addDoc,
-    setDoc,
-}
-    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+    setDoc
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 import {
     onAuthStateChanged
-}
-    from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-const lista =
-    document.getElementById("anuncios");
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+/* ======================================================
+   ELEMENTOS E VARIÁVEIS GLOBAIS
+====================================================== */
+
+const lista = document.getElementById("anuncios");
+
 const secaoDestaques =
     document.getElementById("secaoDestaques");
 
@@ -40,17 +41,62 @@ const botaoProximo =
 let profissionaisDestaque = [];
 let destaqueAtual = 0;
 let intervaloCarrossel = null;
+
 let usuarioLogado = null;
+
 let playerAnuncio = null;
 let anuncioAtual = null;
+
+/* ======================================================
+   AUTENTICAÇÃO
+====================================================== */
+
 onAuthStateChanged(auth, (user) => {
     usuarioLogado = user;
 });
+
 /* ======================================================
-   CARROSSEL DE PROFISSIONAIS EM DESTAQUE
+   FUNÇÕES AUXILIARES
+====================================================== */
+
+function somenteNumeros(valor) {
+    return String(valor || "").replace(/\D/g, "");
+}
+
+function escaparHTML(valor) {
+    return String(valor ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function escaparAtributo(valor) {
+    return escaparHTML(valor);
+}
+
+function escaparTextoInline(valor) {
+    return String(valor ?? "")
+        .replaceAll("\\", "\\\\")
+        .replaceAll("'", "\\'")
+        .replaceAll("\n", " ")
+        .replaceAll("\r", " ");
+}
+
+/* ======================================================
+   CARREGAR PROFISSIONAIS EM DESTAQUE
 ====================================================== */
 
 async function carregarDestaques() {
+    if (
+        !secaoDestaques ||
+        !carrosselDestaques ||
+        !indicadoresCarrossel
+    ) {
+        return;
+    }
+
     try {
         const snapshot = await getDocs(
             collection(db, "destaques")
@@ -70,7 +116,8 @@ async function carregarDestaques() {
 
                 if (
                     profissional.fimDestaque &&
-                    typeof profissional.fimDestaque.toDate === "function"
+                    typeof profissional.fimDestaque.toDate ===
+                        "function"
                 ) {
                     return (
                         profissional.fimDestaque
@@ -106,7 +153,6 @@ async function carregarDestaques() {
 
         renderizarCarrossel();
         iniciarCarrosselAutomatico();
-
     } catch (erro) {
         console.error(
             "Erro ao carregar profissionais em destaque:",
@@ -116,121 +162,136 @@ async function carregarDestaques() {
         secaoDestaques.classList.add("oculto");
     }
 }
+
+/* ======================================================
+   RENDERIZAR CARROSSEL
+====================================================== */
+
 function renderizarCarrossel() {
-        carrosselDestaques.innerHTML =
-            profissionaisDestaque.map(
-                (profissional, indice) => {
+    if (!carrosselDestaques) {
+        return;
+    }
 
-                    if (profissional.tipo === "propaganda") {
-                        const numeroAdmin = somenteNumeros(
-                            profissional.whatsappAdmin
-                        );
+    carrosselDestaques.innerHTML =
+        profissionaisDestaque
+            .map((profissional, indice) => {
+                const classeAtivo =
+                    indice === destaqueAtual
+                        ? "ativo"
+                        : "";
 
-                        const mensagem = encodeURIComponent(
-                            "Olá! Vi no Contrata Reserva a opção de colocar meu perfil em destaque por 7 dias. Gostaria de saber como funciona."
-                        );
+                if (profissional.tipo === "propaganda") {
+                    const numeroAdmin = somenteNumeros(
+                        profissional.whatsappAdmin
+                    );
 
-                        return `
-        <article
-            class="card-destaque card-propaganda ${indice === destaqueAtual
-                                ? "ativo"
-                                : ""
-                            }"
-        >
-            <div class="propaganda-icone">
-                ⭐
-            </div>
+                    const mensagem = encodeURIComponent(
+                        "Olá! Vi no Contrata Reserva a opção de colocar meu perfil em destaque por 7 dias. Gostaria de saber como funciona."
+                    );
 
-            <div class="conteudo-destaque propaganda-conteudo">
-                <span class="categoria-destaque">
-                    ${escaparHTMLCarrossel(
-                                profissional.categoria
-                            )}
-                </span>
+                    return `
+                        <article
+                            class="card-destaque card-propaganda ${classeAtivo}"
+                        >
+                            <div class="propaganda-icone">
+                                ⭐
+                            </div>
 
-                <h3>
-                    Seu serviço merece destaque
-                </h3>
+                            <div
+                                class="conteudo-destaque propaganda-conteudo"
+                            >
+                                <span class="categoria-destaque">
+                                    ${escaparHTML(
+                                        profissional.categoria
+                                    )}
+                                </span>
 
-                <p class="chamada-propaganda">
-                    Apareça no topo do Contrata Reserva
-                    e alcance mais clientes da cidade.
-                </p>
+                                <h3>
+                                    Seu serviço merece destaque
+                                </h3>
 
-                <div class="preco-destaque">
-                    <span>Apenas</span>
+                                <p class="chamada-propaganda">
+                                    Apareça no topo do
+                                    Contrata Reserva e alcance
+                                    mais clientes da cidade.
+                                </p>
 
-                    <strong>
-                        ${escaparHTMLCarrossel(
-                                profissional.preco
-                            )}
-                    </strong>
+                                <div class="preco-destaque">
+                                    <span>Apenas</span>
 
-                    <span>por 7 dias</span>
-                </div>
+                                    <strong>
+                                        ${escaparHTML(
+                                            profissional.preco
+                                        )}
+                                    </strong>
 
-                <a
-                    class="btn-contatar-destaque"
-                    href="https://wa.me/55${numeroAdmin}?text=${mensagem}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Quero colocar meu perfil em destaque
-                </a>
-            </div>
-        </article>
-    `;
-                    }
+                                    <span>por 7 dias</span>
+                                </div>
 
-                    const inicial = String(
-                        profissional.nome || "P"
-                    )
-                        .trim()
-                        .charAt(0)
-                        .toUpperCase();
+                                <a
+                                    class="btn-contatar-destaque"
+                                    href="https://wa.me/55${numeroAdmin}?text=${mensagem}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Quero colocar meu perfil
+                                    em destaque
+                                </a>
+                            </div>
+                        </article>
+                    `;
+                }
 
-                    const foto = profissional.foto
-                        ? `
+                const inicial = String(
+                    profissional.nome || "P"
+                )
+                    .trim()
+                    .charAt(0)
+                    .toUpperCase();
+
+                const foto = profissional.foto
+                    ? `
                         <img
-                            src="${escaparAtributo(profissional.foto)}"
-                            alt="Foto de ${escaparHTMLCarrossel(
-                            profissional.nome || "profissional"
-                        )}"
+                            src="${escaparAtributo(
+                                profissional.foto
+                            )}"
+                            alt="Foto de ${escaparAtributo(
+                                profissional.nome ||
+                                "profissional"
+                            )}"
                         >
                     `
-                        : `
+                    : `
                         <div class="avatar-inicial">
-                            ${inicial}
+                            ${escaparHTML(inicial)}
                         </div>
                     `;
 
-                    const linkWhatsapp = profissional.whatsapp
+                const linkWhatsapp =
+                    profissional.whatsapp
                         ? `
-                        <a
-                            class="btn-contatar-destaque"
-                            href="https://wa.me/55${somenteNumeros(
-                            profissional.whatsapp
-                        )}?text=${encodeURIComponent(
-                            "Olá! Vi seu perfil em destaque no site Contrata Reserva."
-                        )}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Conversar no WhatsApp
-                        </a>
-                    `
+                            <a
+                                class="btn-contatar-destaque"
+                                href="https://wa.me/55${somenteNumeros(
+                                    profissional.whatsapp
+                                )}?text=${encodeURIComponent(
+                                    "Olá! Vi seu perfil em destaque no site Contrata Reserva."
+                                )}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Conversar no WhatsApp
+                            </a>
+                        `
                         : `
-                        <span class="perfil-sem-contato">
-                            Disponível no Contrata Reserva
-                        </span>
-                    `;
+                            <span class="perfil-sem-contato">
+                                Disponível no Contrata Reserva
+                            </span>
+                        `;
 
-                    return `
+                return `
                     <article
-                        class="card-destaque ${indice === destaqueAtual
-                            ? "ativo"
-                            : ""
-                        }"
+                        class="card-destaque ${classeAtivo}"
                     >
                         <div class="selo-destaque">
                             ★ Destaque
@@ -242,108 +303,126 @@ function renderizarCarrossel() {
 
                         <div class="conteudo-destaque">
                             <span class="categoria-destaque">
-                                ${escaparHTMLCarrossel(
-                            profissional.servico ||
-                            profissional.categoria ||
-                            "Profissional"
-                        )}
+                                ${escaparHTML(
+                                    profissional.servico ||
+                                    profissional.categoria ||
+                                    "Profissional"
+                                )}
                             </span>
 
                             <h3>
-                                ${escaparHTMLCarrossel(
-                            profissional.nome ||
-                            "Profissional"
-                        )}
+                                ${escaparHTML(
+                                    profissional.nome ||
+                                    "Profissional"
+                                )}
                             </h3>
 
                             <p class="cidade-destaque">
-                                📍 ${escaparHTMLCarrossel(
-                            profissional.cidade ||
-                            "Reserva - PR"
-                        )}
+                                📍 ${escaparHTML(
+                                    profissional.cidade ||
+                                    "Reserva - PR"
+                                )}
                             </p>
 
                             <p class="descricao-destaque">
-                                ${escaparHTMLCarrossel(
-                            profissional.descricao ||
-                            "Profissional disponível no Contrata Reserva."
-                        )}
+                                ${escaparHTML(
+                                    profissional.descricao ||
+                                    "Profissional disponível no Contrata Reserva."
+                                )}
                             </p>
 
                             ${linkWhatsapp}
                         </div>
                     </article>
                 `;
-                }
-            ).join("");
+            })
+            .join("");
 
-        renderizarIndicadores();
+    renderizarIndicadores();
+}
+
+function renderizarIndicadores() {
+    if (!indicadoresCarrossel) {
+        return;
     }
 
-    function renderizarIndicadores() {
-        indicadoresCarrossel.innerHTML =
-            profissionaisDestaque.map(
+    indicadoresCarrossel.innerHTML =
+        profissionaisDestaque
+            .map(
                 (_, indice) => `
-                <button
-                    class="indicador ${indice === destaqueAtual
-                        ? "ativo"
-                        : ""
-                    }"
-                    data-indice="${indice}"
-                    aria-label="Abrir destaque ${indice + 1}"
-                ></button>
-            `
-            ).join("");
+                    <button
+                        class="indicador ${
+                            indice === destaqueAtual
+                                ? "ativo"
+                                : ""
+                        }"
+                        data-indice="${indice}"
+                        aria-label="Abrir destaque ${
+                            indice + 1
+                        }"
+                    ></button>
+                `
+            )
+            .join("");
+}
+
+function mostrarDestaque(indice) {
+    if (profissionaisDestaque.length === 0) {
+        return;
     }
 
-    function mostrarDestaque(indice) {
-        if (profissionaisDestaque.length === 0) {
-            return;
-        }
-
-        if (indice < 0) {
-            destaqueAtual =
-                profissionaisDestaque.length - 1;
-        } else if (
-            indice >= profissionaisDestaque.length
-        ) {
-            destaqueAtual = 0;
-        } else {
-            destaqueAtual = indice;
-        }
-
-        renderizarCarrossel();
+    if (indice < 0) {
+        destaqueAtual =
+            profissionaisDestaque.length - 1;
+    } else if (
+        indice >= profissionaisDestaque.length
+    ) {
+        destaqueAtual = 0;
+    } else {
+        destaqueAtual = indice;
     }
 
-    function iniciarCarrosselAutomatico() {
-        pararCarrosselAutomatico();
+    renderizarCarrossel();
+}
 
-        if (profissionaisDestaque.length <= 1) {
-            return;
-        }
+function iniciarCarrosselAutomatico() {
+    pararCarrosselAutomatico();
 
-        intervaloCarrossel = setInterval(() => {
-            mostrarDestaque(destaqueAtual + 1);
-        }, 5000);
+    if (profissionaisDestaque.length <= 1) {
+        return;
     }
 
-    function pararCarrosselAutomatico() {
-        if (intervaloCarrossel) {
-            clearInterval(intervaloCarrossel);
-            intervaloCarrossel = null;
-        }
-    }
+    intervaloCarrossel = setInterval(() => {
+        mostrarDestaque(destaqueAtual + 1);
+    }, 5000);
+}
 
+function pararCarrosselAutomatico() {
+    if (intervaloCarrossel) {
+        clearInterval(intervaloCarrossel);
+        intervaloCarrossel = null;
+    }
+}
+
+/* ======================================================
+   EVENTOS DO CARROSSEL
+====================================================== */
+
+if (botaoAnterior) {
     botaoAnterior.addEventListener("click", () => {
         mostrarDestaque(destaqueAtual - 1);
         iniciarCarrosselAutomatico();
     });
+}
 
+if (botaoProximo) {
     botaoProximo.addEventListener("click", () => {
         mostrarDestaque(destaqueAtual + 1);
         iniciarCarrosselAutomatico();
     });
+}
 
+if (indicadoresCarrossel) {
     indicadoresCarrossel.addEventListener(
         "click",
         (evento) => {
@@ -361,176 +440,332 @@ function renderizarCarrossel() {
             iniciarCarrosselAutomatico();
         }
     );
+}
+/* ======================================================
+   CARREGAR ANÚNCIOS DE SERVIÇOS
+====================================================== */
 
-    function somenteNumeros(valor) {
-        return String(valor || "").replace(/\D/g, "");
+async function carregar() {
+    if (!lista) {
+        return;
     }
 
-    function escaparHTMLCarrossel(valor) {
-        return String(valor)
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
+    lista.innerHTML =
+        "<p>Carregando serviços...</p>";
 
-    function escaparAtributo(valor) {
-        return escaparHTMLCarrossel(valor);
-    }
-    async function carregar() {
+    try {
+        const consulta = query(
+            collection(db, "anuncios"),
+            where(
+                "expiraEm",
+                ">",
+                Timestamp.now()
+            ),
+            orderBy("expiraEm"),
+            orderBy("criadoEm", "desc")
+        );
+
+        const snapshot = await getDocs(consulta);
+
         lista.innerHTML = "";
-        const q =
-            query(
-                collection(db, "anuncios"),
-                where(
-                    "expiraEm",
-                    ">",
-                    Timestamp.now()
-                ),
-                orderBy("expiraEm"),
-                orderBy("criadoEm", "desc")
-            );
-        const snapshot =
-            await getDocs(q);
-        snapshot.forEach((doc) => {
-            const anuncio = doc.data();
-            const agora = Date.now();
-            const expiraEm = anuncio.expiraEm.toDate().getTime();
-            const diferenca = expiraEm - agora;
-            const horas = Math.floor(
-                diferenca / (1000 * 60 * 60)
-            );
-            const minutos = Math.floor(
-                (diferenca % (1000 * 60 * 60))
-                / (1000 * 60)
-            );
-            lista.innerHTML += `
-<div class="card">
-<h3>${anuncio.titulo}</h3>
-<p>
-<b>Categoria:</b>
-${anuncio.categoria}
-</p>
-<p>
-${anuncio.descricao}
-</p>
-<p>
-📍 ${anuncio.cidade}
-</p>
-<p>
-⏳ Anúncio expira em ${horas}h ${minutos}min
-</p>
-<button onclick="mostrarContato('${doc.id}', '${anuncio.nome}', '${anuncio.telefone}')">
-            Desbloquear Contato
-        </button>
-</div>
-`;
 
-        });
-    }
-    window.mostrarContato = async function (
-        anuncioId,
-        nome,
-        telefone
-    ) {
+        if (snapshot.empty) {
+            lista.innerHTML =
+                "<p>Nenhum serviço publicado no momento.</p>";
 
-        if (!usuarioLogado) {
-
-            alert("Faça login para desbloquear contatos.");
             return;
-
         }
 
-        const usuarioRef =
-            doc(db, "usuarios", usuarioLogado.uid);
+        snapshot.forEach((documento) => {
+            const anuncio = documento.data();
+
+            if (
+                !anuncio.expiraEm ||
+                typeof anuncio.expiraEm.toDate !==
+                    "function"
+            ) {
+                return;
+            }
+
+            const agora = Date.now();
+
+            const expiraEm =
+                anuncio.expiraEm
+                    .toDate()
+                    .getTime();
+
+            const diferenca =
+                Math.max(0, expiraEm - agora);
+
+            const horas = Math.floor(
+                diferenca /
+                (1000 * 60 * 60)
+            );
+
+            const minutos = Math.floor(
+                (
+                    diferenca %
+                    (1000 * 60 * 60)
+                ) /
+                (1000 * 60)
+            );
+
+            const anuncioId =
+                escaparTextoInline(documento.id);
+
+            const nome =
+                escaparTextoInline(
+                    anuncio.nome || ""
+                );
+
+            const telefone =
+                escaparTextoInline(
+                    somenteNumeros(
+                        anuncio.telefone
+                    )
+                );
+
+            lista.innerHTML += `
+                <div class="card">
+                    <h3>
+                        ${escaparHTML(
+                            anuncio.titulo ||
+                            "Serviço publicado"
+                        )}
+                    </h3>
+
+                    <p>
+                        <b>Categoria:</b>
+                        ${escaparHTML(
+                            anuncio.categoria ||
+                            "Não informada"
+                        )}
+                    </p>
+
+                    <p>
+                        ${escaparHTML(
+                            anuncio.descricao || ""
+                        )}
+                    </p>
+
+                    <p>
+                        📍 ${escaparHTML(
+                            anuncio.cidade ||
+                            "Reserva - PR"
+                        )}
+                    </p>
+
+                    <p>
+                        ⏳ Anúncio expira em
+                        ${horas}h ${minutos}min
+                    </p>
+
+                    <button
+                        type="button"
+                        onclick="mostrarContato(
+                            '${anuncioId}',
+                            '${nome}',
+                            '${telefone}'
+                        )"
+                    >
+                        Desbloquear Contato
+                    </button>
+                </div>
+            `;
+        });
+    } catch (erro) {
+        console.error(
+            "Erro ao carregar anúncios:",
+            erro
+        );
+
+        lista.innerHTML =
+            "<p>Não foi possível carregar os serviços.</p>";
+    }
+}
+
+/* ======================================================
+   MOSTRAR CONTATO
+====================================================== */
+
+window.mostrarContato = async function (
+    anuncioId,
+    nome,
+    telefone
+) {
+    try {
+        if (!usuarioLogado) {
+            alert(
+                "Faça login para desbloquear contatos."
+            );
+
+            return;
+        }
+
+        const usuarioRef = doc(
+            db,
+            "usuarios",
+            usuarioLogado.uid
+        );
 
         const usuarioDoc =
             await getDoc(usuarioRef);
 
-        const dados =
-            usuarioDoc.data();
+        if (!usuarioDoc.exists()) {
+            alert(
+                "Cadastro do usuário não encontrado."
+            );
+
+            return;
+        }
+
+        const dados = usuarioDoc.data();
 
         const desbloqueioId =
-            usuarioLogado.uid + "_" + anuncioId;
+            `${usuarioLogado.uid}_${anuncioId}`;
 
-        const desbloqueioRef =
-            doc(
-                db,
-                "desbloqueios",
-                desbloqueioId
-            );
+        const desbloqueioRef = doc(
+            db,
+            "desbloqueios",
+            desbloqueioId
+        );
 
         const desbloqueioDoc =
             await getDoc(desbloqueioRef);
 
-        // Já desbloqueou anteriormente
-
+        /*
+         * Se o contato ainda não foi desbloqueado,
+         * usa crédito ou oferece o anúncio.
+         */
         if (!desbloqueioDoc.exists()) {
+            const creditos =
+                Number(dados.creditos || 0);
 
-if (dados.creditos <= 0) {
+            if (creditos <= 0) {
+                const anuncioAssistido =
+                    await abrirModalAnuncio();
 
-    const anuncioAssistido =
-        await abrirModalAnuncio();
+                if (!anuncioAssistido) {
+                    return;
+                }
 
-    if (!anuncioAssistido) {
+                await registrarDesbloqueioGratuito(
+                    desbloqueioRef,
+                    anuncioId
+                );
+            } else {
+                await updateDoc(usuarioRef, {
+                    creditos: creditos - 1
+                });
+
+                await setDoc(
+                    desbloqueioRef,
+                    {
+                        usuarioId:
+                            usuarioLogado.uid,
+
+                        anuncioId,
+
+                        formaDesbloqueio:
+                            "credito",
+
+                        data:
+                            Timestamp.now()
+                    }
+                );
+
+                console.log(
+                    "Crédito descontado."
+                );
+            }
+        } else {
+            console.log(
+                "Contato já desbloqueado anteriormente."
+            );
+        }
+
+        abrirModalContato(nome, telefone);
+    } catch (erro) {
+        console.error(
+            "Erro ao desbloquear contato:",
+            erro
+        );
+
+        alert(
+            "Não foi possível desbloquear o contato."
+        );
+    }
+};
+
+/* ======================================================
+   MODAL DO CONTATO
+====================================================== */
+
+function abrirModalContato(nome, telefone) {
+    const nomeCliente =
+        document.getElementById("nomeCliente");
+
+    const telefoneCliente =
+        document.getElementById(
+            "telefoneCliente"
+        );
+
+    const btnWhatsapp =
+        document.getElementById("btnWhatsapp");
+
+    const modal =
+        document.getElementById("modal");
+
+    if (
+        !nomeCliente ||
+        !telefoneCliente ||
+        !btnWhatsapp ||
+        !modal
+    ) {
+        console.error(
+            "Elementos do modal de contato não encontrados."
+        );
+
         return;
     }
 
-    await registrarDesbloqueioGratuito(
-        desbloqueioRef,
-        anuncioId
-    );
+    nomeCliente.innerHTML =
+        `<b>Nome:</b> ${escaparHTML(nome)}`;
 
-} else {
+    telefoneCliente.innerHTML =
+        `<b>Telefone:</b> ${escaparHTML(
+            telefone
+        )}`;
 
-    await updateDoc(usuarioRef, {
-        creditos: dados.creditos - 1
-    });
+    const mensagem =
+        "Olá! Vi seu anúncio de serviço no site " +
+        "Contrata Reserva e estou interessado. " +
+        "Podemos combinar o preço?";
 
-    await setDoc(
-        desbloqueioRef,
-        {
-            usuarioId: usuarioLogado.uid,
-            anuncioId: anuncioId,
-            formaDesbloqueio: "credito",
-            data: Timestamp.now()
-        }
-    );
+    btnWhatsapp.href =
+        `https://wa.me/55${somenteNumeros(
+            telefone
+        )}?text=${encodeURIComponent(
+            mensagem
+        )}`;
 
-    console.log("Crédito descontado.");
+    modal.style.display = "block";
 }
-            
-        } else {
 
-            console.log(
-                "Anúncio já desbloqueado."
-            );
+window.fecharModal = function () {
+    const modal =
+        document.getElementById("modal");
 
-        }
-
-        document.getElementById("nomeCliente")
-            .innerHTML =
-            "<b>Nome:</b> " + nome;
-
-        document.getElementById("telefoneCliente")
-            .innerHTML =
-            "<b>Telefone:</b> " + telefone;
-
-        const mensagem =
-            `Olá! Vi seu anúncio de serviço no site Contrata Reserva e estou interessado. Podemos combinar o preço?`;
-
-        document.getElementById("btnWhatsapp")
-            .href =
-            `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`;
-
-        document.getElementById("modal")
-            .style.display =
-            "block";
-
+    if (modal) {
+        modal.style.display = "none";
     }
-async function carregarAnuncio() {
+};
 
+/* ======================================================
+   CARREGAR ANÚNCIO ATIVO DO FIRESTORE
+====================================================== */
+
+async function carregarAnuncioAtivo() {
     const snapshot = await getDocs(
         query(
             collection(db, "anunciosVideos"),
@@ -538,25 +773,53 @@ async function carregarAnuncio() {
         )
     );
 
-    if (snapshot.empty) return null;
+    if (snapshot.empty) {
+        return null;
+    }
 
-    anuncioAtual = snapshot.docs[0].data();
+    const documento = snapshot.docs[0];
+
+    anuncioAtual = {
+        id: documento.id,
+        ...documento.data()
+    };
 
     return anuncioAtual;
 }
 
-    async function registrarDesbloqueioGratuito(
+/* ======================================================
+   REGISTRAR DESBLOQUEIO PELO ANÚNCIO
+====================================================== */
+
+async function registrarDesbloqueioGratuito(
     desbloqueioRef,
     anuncioId
 ) {
-
     await setDoc(
         desbloqueioRef,
         {
-            usuarioId: usuarioLogado.uid,
-            anuncioId: anuncioId,
-            formaDesbloqueio: "anuncio",
-            data: Timestamp.now()
+            usuarioId:
+                usuarioLogado.uid,
+
+            anuncioId,
+
+            anuncioVideoId:
+                anuncioAtual?.id || null,
+
+            empresaAnunciante:
+                anuncioAtual?.empresa || null,
+
+            tituloAnuncio:
+                anuncioAtual?.titulo || null,
+
+            youtubeId:
+                anuncioAtual?.youtubeId || null,
+
+            formaDesbloqueio:
+                "anuncio",
+
+            data:
+                Timestamp.now()
         }
     );
 
@@ -565,29 +828,93 @@ async function carregarAnuncio() {
     );
 }
 
-function abrirModalAnuncio() {
+/* ======================================================
+   AGUARDAR API DO YOUTUBE
+====================================================== */
+
+function aguardarApiYoutube(
+    limiteMs = 10000
+) {
+    return new Promise(
+        (resolve, reject) => {
+            const inicio = Date.now();
+
+            function verificar() {
+                if (
+                    window.YT &&
+                    typeof window.YT.Player ===
+                        "function"
+                ) {
+                    resolve();
+                    return;
+                }
+
+                if (
+                    Date.now() - inicio >=
+                    limiteMs
+                ) {
+                    reject(
+                        new Error(
+                            "A API do YouTube não carregou a tempo."
+                        )
+                    );
+
+                    return;
+                }
+
+                setTimeout(verificar, 200);
+            }
+
+            verificar();
+        }
+    );
+}
+/* ======================================================
+   MODAL DO ANÚNCIO DO YOUTUBE
+====================================================== */
+
+async function abrirModalAnuncio() {
+    let anuncio;
+
+    try {
+        anuncio = await carregarAnuncioAtivo();
+    } catch (erro) {
+        console.error(
+            "Erro ao buscar anúncio ativo:",
+            erro
+        );
+
+        alert(
+            "Não foi possível buscar o anúncio."
+        );
+
+        return false;
+    }
+
+    if (!anuncio || !anuncio.youtubeId) {
+        alert(
+            "Nenhum anúncio está disponível no momento."
+        );
+
+        return false;
+    }
+
+    try {
+        await aguardarApiYoutube();
+    } catch (erro) {
+        console.error(erro);
+
+        alert(
+            "Não foi possível carregar o player do YouTube."
+        );
+
+        return false;
+    }
 
     return new Promise((resolve) => {
-
-        const anuncio = await carregarAnuncio();
-
-if (!anuncio) {
-
-    alert("Nenhum anúncio cadastrado.");
-
-    resolve(false);
-
-    return;
-
-}
         const modalAnuncio =
             document.getElementById(
                 "modalAnuncio"
-            );
-
-        const videoAnuncio =
-            document.getElementById(
-                "videoAnuncio"
             );
 
         const btnAssistir =
@@ -605,246 +932,381 @@ if (!anuncio) {
                 "tempoAnuncio"
             );
 
-        let anuncioIniciado = false;
-        let processoFinalizado = false;
+        const textoModalAnuncio =
+            document.getElementById(
+                "textoModalAnuncio"
+            );
 
-        function limparModal() {
+        let playerBox =
+            document.getElementById(
+                "playerAnuncio"
+            );
 
-            videoAnuncio.pause();
-            videoAnuncio.currentTime = 0;
-            videoAnuncio.style.display = "none";
+        if (
+            !modalAnuncio ||
+            !btnAssistir ||
+            !btnCancelar ||
+            !tempoAnuncio ||
+            !playerBox
+        ) {
+            console.error(
+                "Elementos do modal de anúncio não encontrados."
+            );
 
-            btnAssistir.disabled = false;
-            btnCancelar.disabled = false;
+            resolve(false);
+            return;
+        }
 
-            btnAssistir.textContent =
-                "Assistir anúncio";
+        let finalizado = false;
+        let videoIniciado = false;
+        let maiorTempoAssistido = 0;
+        let intervaloVerificacao = null;
 
-            btnCancelar.style.display =
-                "inline-block";
+        if (textoModalAnuncio) {
+            const empresa =
+                anuncio.empresa ||
+                "Anunciante";
 
-            tempoAnuncio.textContent =
-                "Clique em assistir para começar.";
+            const titulo =
+                anuncio.titulo ||
+                "Assista ao vídeo completo para desbloquear o contato.";
+
+            textoModalAnuncio.textContent =
+                `${empresa}: ${titulo}`;
+        }
+
+        playerBox.style.display = "none";
+
+        /* ==================================================
+           LIMPAR PLAYER
+        ================================================== */
+
+        function limparPlayer() {
+            if (intervaloVerificacao) {
+                clearInterval(
+                    intervaloVerificacao
+                );
+
+                intervaloVerificacao = null;
+            }
+
+            if (
+                playerAnuncio &&
+                typeof playerAnuncio.destroy ===
+                    "function"
+            ) {
+                try {
+                    playerAnuncio.destroy();
+                } catch (erro) {
+                    console.warn(
+                        "Não foi possível destruir o player:",
+                        erro
+                    );
+                }
+            }
+
+            playerAnuncio = null;
+
+            /*
+             * O método destroy() pode remover o elemento
+             * original. Por isso recriamos a div.
+             */
+            if (
+                !document.getElementById(
+                    "playerAnuncio"
+                )
+            ) {
+                const novoPlayer =
+                    document.createElement(
+                        "div"
+                    );
+
+                novoPlayer.id =
+                    "playerAnuncio";
+
+                novoPlayer.className =
+                    "video-anuncio";
+
+                novoPlayer.style.display =
+                    "none";
+
+                tempoAnuncio.before(
+                    novoPlayer
+                );
+            }
+        }
+
+        /* ==================================================
+           FINALIZAR MODAL
+        ================================================== */
+
+        function finalizar(resultado) {
+            if (finalizado) {
+                return;
+            }
+
+            finalizado = true;
+
+            limparPlayer();
 
             modalAnuncio.style.display =
                 "none";
 
-            btnAssistir.removeEventListener(
-                "click",
-                iniciarAnuncio
-            );
+            btnAssistir.disabled = false;
+            btnCancelar.disabled = false;
 
-            btnCancelar.removeEventListener(
-                "click",
-                cancelarAnuncio
-            );
+            btnCancelar.style.display =
+                "inline-block";
 
-            videoAnuncio.removeEventListener(
-                "ended",
-                concluirAnuncio
-            );
+            btnAssistir.textContent =
+                "Assistir anúncio";
 
-            videoAnuncio.removeEventListener(
-                "timeupdate",
-                atualizarTempo
-            );
+            tempoAnuncio.textContent =
+                "Clique em assistir para começar.";
 
-            videoAnuncio.removeEventListener(
-                "pause",
-                impedirPausa
-            );
-        }
-
-        function finalizar(resultado) {
-
-            if (processoFinalizado) {
-                return;
-            }
-
-            processoFinalizado = true;
-
-            limparModal();
+            btnAssistir.onclick = null;
+            btnCancelar.onclick = null;
 
             resolve(resultado);
         }
 
-        function cancelarAnuncio() {
+        /* ==================================================
+           CANCELAR ANÚNCIO
+        ================================================== */
 
-            if (anuncioIniciado) {
+        btnCancelar.onclick = () => {
+            if (videoIniciado) {
                 return;
             }
 
             finalizar(false);
-        }
+        };
 
-        async function iniciarAnuncio() {
+        /* ==================================================
+           INICIAR ANÚNCIO
+        ================================================== */
 
-            anuncioIniciado = true;
+        btnAssistir.onclick = () => {
+            if (videoIniciado) {
+                return;
+            }
+
+            videoIniciado = true;
 
             btnAssistir.disabled = true;
             btnCancelar.disabled = true;
 
-            btnAssistir.textContent =
-                "Assistindo...";
-
             btnCancelar.style.display =
                 "none";
 
-            videoAnuncio.style.display =
-                "block";
+            btnAssistir.textContent =
+                "Assistindo...";
 
             tempoAnuncio.textContent =
-                "Assista até o final para desbloquear.";
+                "Assista ao vídeo até o final.";
 
-            try {
-
-                await videoAnuncio.play();
-
-            } catch (erro) {
-
-                console.error(
-                    "Não foi possível reproduzir o anúncio:",
-                    erro
+            playerBox =
+                document.getElementById(
+                    "playerAnuncio"
                 );
 
-                anuncioIniciado = false;
+            if (!playerBox) {
+                alert(
+                    "O espaço do vídeo não foi encontrado."
+                );
 
-                btnAssistir.disabled = false;
-                btnCancelar.disabled = false;
-
-                btnAssistir.textContent =
-                    "Tentar novamente";
-
-                btnCancelar.style.display =
-                    "inline-block";
-
-                tempoAnuncio.textContent =
-                    "Não foi possível iniciar o vídeo.";
-            }
-        }
-
-        function atualizarTempo() {
-
-            if (
-                !Number.isFinite(
-                    videoAnuncio.duration
-                )
-            ) {
+                finalizar(false);
                 return;
             }
 
-            const restante =
-                Math.ceil(
-                    videoAnuncio.duration -
-                    videoAnuncio.currentTime
+            playerBox.style.display =
+                "block";
+
+            /* ==============================================
+               CRIAR PLAYER DO YOUTUBE
+            ============================================== */
+
+            playerAnuncio =
+                new window.YT.Player(
+                    "playerAnuncio",
+                    {
+                        width: "100%",
+                        height: "315",
+
+                        videoId:
+                            anuncio.youtubeId,
+
+                        playerVars: {
+                            autoplay: 1,
+                            controls: 0,
+                            disablekb: 1,
+                            fs: 0,
+                            rel: 0,
+                            playsinline: 1,
+                            modestbranding: 1
+                        },
+
+                        events: {
+                            /* ==================================
+                               PLAYER PRONTO
+                            ================================== */
+
+                            onReady(evento) {
+                                evento.target
+                                    .playVideo();
+
+                                intervaloVerificacao =
+                                    setInterval(
+                                        () => {
+                                            if (
+                                                !playerAnuncio ||
+                                                typeof playerAnuncio
+                                                    .getCurrentTime !==
+                                                    "function"
+                                            ) {
+                                                return;
+                                            }
+
+                                            const tempoAtual =
+                                                playerAnuncio
+                                                    .getCurrentTime() ||
+                                                0;
+
+                                            const duracao =
+                                                playerAnuncio
+                                                    .getDuration() ||
+                                                0;
+
+                                            /*
+                                             * Se o usuário tentar avançar
+                                             * mais de 2 segundos, retorna
+                                             * para o último ponto assistido.
+                                             */
+                                            if (
+                                                tempoAtual >
+                                                maiorTempoAssistido +
+                                                    2
+                                            ) {
+                                                playerAnuncio
+                                                    .seekTo(
+                                                        maiorTempoAssistido,
+                                                        true
+                                                    );
+
+                                                return;
+                                            }
+
+                                            maiorTempoAssistido =
+                                                Math.max(
+                                                    maiorTempoAssistido,
+                                                    tempoAtual
+                                                );
+
+                                            if (
+                                                duracao >
+                                                0
+                                            ) {
+                                                const restante =
+                                                    Math.max(
+                                                        0,
+                                                        Math.ceil(
+                                                            duracao -
+                                                            tempoAtual
+                                                        )
+                                                    );
+
+                                                tempoAnuncio
+                                                    .textContent =
+                                                    `Tempo restante: ${restante} segundos`;
+                                            }
+                                        },
+                                        500
+                                    );
+                            },
+
+                            /* ==================================
+                               ALTERAÇÃO DE ESTADO
+                            ================================== */
+
+                            onStateChange(evento) {
+                                /*
+                                 * Se o usuário pausar,
+                                 * o vídeo volta a tocar.
+                                 */
+                                if (
+                                    evento.data ===
+                                        window.YT
+                                            .PlayerState
+                                            .PAUSED &&
+                                    !finalizado
+                                ) {
+                                    try {
+                                        playerAnuncio
+                                            .playVideo();
+                                    } catch (
+                                        erro
+                                    ) {
+                                        console.warn(
+                                            "Não foi possível continuar o vídeo:",
+                                            erro
+                                        );
+                                    }
+                                }
+
+                                /*
+                                 * Somente libera quando o
+                                 * vídeo cadastrado termina.
+                                 */
+                                if (
+                                    evento.data ===
+                                    window.YT
+                                        .PlayerState
+                                        .ENDED
+                                ) {
+                                    tempoAnuncio
+                                        .textContent =
+                                        "Anúncio concluído! Liberando contato...";
+
+                                    setTimeout(
+                                        () => {
+                                            finalizar(
+                                                true
+                                            );
+                                        },
+                                        500
+                                    );
+                                }
+                            },
+
+                            /* ==================================
+                               ERRO NO VÍDEO
+                            ================================== */
+
+                            onError(erro) {
+                                console.error(
+                                    "Erro no vídeo do YouTube:",
+                                    erro.data
+                                );
+
+                                alert(
+                                    "Não foi possível reproduzir este anúncio."
+                                );
+
+                                finalizar(false);
+                            }
+                        }
+                    }
                 );
-
-            tempoAnuncio.textContent =
-                `Tempo restante: ${Math.max(
-                    restante,
-                    0
-                )} segundos`;
-        }
-
-        function impedirPausa() {
-
-            if (
-                anuncioIniciado &&
-                !videoAnuncio.ended &&
-                videoAnuncio.currentTime > 0
-            ) {
-
-                tempoAnuncio.textContent =
-                    "O anúncio precisa ser assistido até o final.";
-
-                videoAnuncio.play()
-                    .catch((erro) => {
-                        console.error(
-                            "Erro ao continuar vídeo:",
-                            erro
-                        );
-                    });
-            }
-        }
-
-        function concluirAnuncio() {
-
-            tempoAnuncio.textContent =
-                "Anúncio concluído! Liberando contato...";
-
-            setTimeout(() => {
-                finalizar(true);
-            }, 700);
-        }
-
-        videoAnuncio.controls = false;
-
-        videoAnuncio.addEventListener(
-            "ended",
-            concluirAnuncio
-        );
-
-        videoAnuncio.addEventListener(
-            "timeupdate",
-            atualizarTempo
-        );
-
-        videoAnuncio.addEventListener(
-            "pause",
-            impedirPausa
-        );
-
-        btnAssistir.addEventListener(
-            "click",
-            iniciarAnuncio
-        );
-
-        btnCancelar.addEventListener(
-            "click",
-            cancelarAnuncio
-        );
+        };
 
         modalAnuncio.style.display =
             "block";
     });
-    playerAnuncio = new YT.Player("playerAnuncio", {
-
-    width: "100%",
-    height: "315",
-
-    videoId: anuncio.youtubeId,
-
-    playerVars: {
-
-        autoplay: 1,
-        controls: 0,
-        rel: 0,
-        modestbranding: 1
-
-    },
-
-    events: {
-
-        onStateChange: eventoVideo
-
-    }
-
-});
-function eventoVideo(evento) {
-
-    if (evento.data === YT.PlayerState.ENDED) {
-
-        finalizar(true);
-
-    }
-
 }
-}
-    window.fecharModal = function () {
 
-        document.getElementById("modal")
-            .style.display = "none";
+/* ======================================================
+   INICIALIZAÇÃO
+====================================================== */
 
-    }
-    carregarDestaques();
-    carregar();
+carregarDestaques();
+carregar();
