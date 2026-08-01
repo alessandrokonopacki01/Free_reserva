@@ -6,13 +6,14 @@ import {
   query,
   orderBy,
   doc,
-  updateDoc
+  updateDoc,
+  Timestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-const listaStories = document.getElementById("listaStories");
+const listaStories =
+  document.getElementById("listaStories");
 
 const TEMAS = {
-
   "Construção": {
     classe: "construcao",
     icone: "🔨",
@@ -82,145 +83,462 @@ const TEMAS = {
       "Confira no site"
     ]
   }
-
 };
 
+/* ======================================================
+   CARREGAR ANÚNCIOS PENDENTES
+====================================================== */
+
 async function carregarAnuncios() {
-  const q = query(
-    collection(db, "anuncios"),
-    orderBy("criadoEm", "desc")
-  );
+  listaStories.innerHTML =
+    "<p>Carregando anúncios...</p>";
 
-  const snapshot = await getDocs(q);
+  try {
+    const consulta = query(
+      collection(db, "anuncios"),
+      orderBy("criadoEm", "desc")
+    );
 
-  listaStories.innerHTML = "";
+    const snapshot = await getDocs(consulta);
 
-  if (snapshot.empty) {
-    listaStories.innerHTML = "<p>Nenhum anúncio encontrado.</p>";
-    return;
-  }
+    listaStories.innerHTML = "";
 
-  snapshot.forEach((documento) => {
+    if (snapshot.empty) {
+      listaStories.innerHTML =
+        "<p>Nenhum anúncio encontrado.</p>";
 
-    const anuncio = documento.data();
-
-    const id = documento.id;
-
-    if (anuncio.instagram && anuncio.instagram.publicado === true) {
       return;
     }
 
-    const card = document.createElement("div");
-    card.className = "card";
+    let quantidadePendentes = 0;
 
-   const status = anuncio.instagram?.publicado
-    ? "🟢 Postado"
-    : "🟡 Pendente";
+    snapshot.forEach((documento) => {
+      const anuncio = documento.data();
+      const id = documento.id;
 
-card.innerHTML = `
-<h2>${anuncio.categoria}</h2>
+      if (
+        anuncio.instagram &&
+        anuncio.instagram.publicado === true
+      ) {
+        return;
+      }
 
-<strong>${anuncio.titulo}</strong>
+      quantidadePendentes++;
 
-<p>${anuncio.descricao}</p>
+      const card = document.createElement("div");
+      card.className = "card";
 
-<p class="status">${status}</p>
+      const categoria =
+        anuncio.categoria || "Outros";
 
-<button class="gerar">
-    Gerar Story
-</button>
+      const titulo =
+        anuncio.titulo || "Anúncio sem título";
 
-<button class="postado">
-    Marcar como Postado
-</button>
-`;
+      const descricao =
+        anuncio.descricao || "Sem descrição.";
 
-    card.querySelector("button").addEventListener("click", () => {
-      gerarStory(anuncio, id);
+      const status =
+        anuncio.instagram?.publicado === true
+          ? "🟢 Postado"
+          : "🟡 Pendente";
+
+      card.innerHTML = `
+        <h2>${escaparHTML(categoria)}</h2>
+
+        <strong>
+          ${escaparHTML(titulo)}
+        </strong>
+
+        <p>
+          ${escaparHTML(descricao)}
+        </p>
+
+        <p class="status">
+          ${status}
+        </p>
+
+        <button
+          class="gerar"
+          type="button"
+        >
+          Gerar e publicar Story
+        </button>
+
+        <button
+          class="postado"
+          type="button"
+        >
+          Marcar como postado
+        </button>
+      `;
+
+      const botaoGerar =
+        card.querySelector(".gerar");
+
+      const botaoPostado =
+        card.querySelector(".postado");
+
+      botaoGerar.addEventListener(
+        "click",
+        async () => {
+          await gerarStory(
+            anuncio,
+            id,
+            botaoGerar
+          );
+        }
+      );
+
+      botaoPostado.addEventListener(
+        "click",
+        async () => {
+          await marcarComoPostado(
+            id,
+            botaoPostado
+          );
+        }
+      );
+
+      listaStories.appendChild(card);
     });
 
-    card.querySelector(".postado")
-.addEventListener("click", () => {
+    if (quantidadePendentes === 0) {
+      listaStories.innerHTML =
+        "<p>Nenhum anúncio pendente de publicação.</p>";
+    }
 
-    marcarComoPostado(id);
+  } catch (erro) {
+    console.error(
+      "Erro ao carregar os anúncios:",
+      erro
+    );
 
-});
-
-    listaStories.appendChild(card);
-  });
-
+    listaStories.innerHTML = `
+      <p>
+        Não foi possível carregar os anúncios.
+      </p>
+    `;
+  }
 }
 
-async function gerarStory(anuncio, id) {
-  const story = document.getElementById("storyAnuncio");
-  const tema = escolherTema(anuncio);
+/* ======================================================
+   GERAR E PUBLICAR STORY
+====================================================== */
 
-  story.className = `story-modelo ${tema.classe}`;
+async function gerarStory(
+  anuncio,
+  id,
+  botao
+) {
+  const story =
+    document.getElementById("storyAnuncio");
 
-  document.getElementById("storyIcone").innerText = tema.icone;
-  document.getElementById("storyCategoria").innerText =
-    anuncio.categoria || "SERVIÇO DISPONÍVEL";
+  if (!story) {
+    alert(
+      "O modelo do Story não foi encontrado na página."
+    );
 
-  document.getElementById("storyDescricao").innerText =
-    limitarTexto(anuncio.descricao || "Encontre este profissional no Contrata Reserva.", 120);
-
-  document.getElementById("beneficio1").innerText = tema.beneficios[0];
-  document.getElementById("beneficio2").innerText = tema.beneficios[1];
-  document.getElementById("beneficio3").innerText = tema.beneficios[2];
-
-  story.style.display = "flex";
-
-  const canvas = await html2canvas(story, {
-    width: 1080,
-    height: 1920,
-    scale: 1,
-    backgroundColor: null
-  });
-
-  story.style.display = "none";
-
-  const imagemBase64 = canvas.toDataURL("image/png");
-
-  const resposta = await fetch("/api/publicarStory", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      imagemBase64
-    })
-  });
-
-  const resultado = await resposta.json();
-
-  if (!resposta.ok) {
-    console.error(resultado);
-    alert("Erro ao publicar Story");
     return;
   }
 
-  alert("Story publicado no Instagram!");
+  const tema = escolherTema(anuncio);
 
-  if (id) {
-    await marcarComoPostado(id);
+  const textoOriginal =
+    botao.textContent;
+
+  botao.disabled = true;
+  botao.textContent =
+    "Gerando Story...";
+
+  story.className =
+    `story-modelo ${tema.classe}`;
+
+  document
+    .getElementById("storyIcone")
+    .innerText = tema.icone;
+
+  document
+    .getElementById("storyCategoria")
+    .innerText =
+      anuncio.categoria ||
+      "SERVIÇO DISPONÍVEL";
+
+  document
+    .getElementById("storyDescricao")
+    .innerText =
+      limitarTexto(
+        anuncio.descricao ||
+          "Encontre este serviço no Contrata Reserva.",
+        120
+      );
+
+  document
+    .getElementById("beneficio1")
+    .innerText =
+      tema.beneficios[0];
+
+  document
+    .getElementById("beneficio2")
+    .innerText =
+      tema.beneficios[1];
+
+  document
+    .getElementById("beneficio3")
+    .innerText =
+      tema.beneficios[2];
+
+  story.style.display = "flex";
+
+  try {
+    const canvas = await html2canvas(
+      story,
+      {
+        width: 1080,
+        height: 1920,
+        scale: 1,
+        backgroundColor: null,
+        useCORS: true
+      }
+    );
+
+    const imagemBase64 =
+      canvas.toDataURL("image/png");
+
+    botao.textContent =
+      "Enviando ao Instagram...";
+
+    const resposta = await fetch(
+      "/api/publicarStory",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body: JSON.stringify({
+          imagemBase64
+        })
+      }
+    );
+
+    let resultado;
+
+    try {
+      resultado =
+        await resposta.json();
+
+    } catch {
+      throw new Error(
+        "A API retornou uma resposta inválida."
+      );
+    }
+
+    if (
+      !resposta.ok ||
+      resultado.publicado !== true
+    ) {
+      console.error(
+        "Erro retornado pela API:",
+        resultado
+      );
+
+      const mensagemErro =
+        resultado.erro ||
+        resultado.meta?.error?.message ||
+        resultado.meta?.error?.error_user_msg ||
+        "O Instagram não confirmou a publicação.";
+
+      alert(
+        `Erro ao publicar o Story:\n\n${mensagemErro}`
+      );
+
+      return;
+    }
+
+    await marcarComoPostadoAutomaticamente(
+      id,
+      resultado
+    );
+
+    alert(
+      "Story publicado no Instagram com sucesso!"
+    );
+
+  } catch (erro) {
+    console.error(
+      "Erro ao gerar ou publicar Story:",
+      erro
+    );
+
+    alert(
+      `Erro ao gerar ou publicar o Story:\n\n${erro.message}`
+    );
+
+  } finally {
+    story.style.display = "none";
+
+    botao.disabled = false;
+    botao.textContent =
+      textoOriginal;
   }
 }
 
+/* ======================================================
+   MARCAÇÃO AUTOMÁTICA APÓS PUBLICAÇÃO
+====================================================== */
+
+async function marcarComoPostadoAutomaticamente(
+  id,
+  resultado
+) {
+  if (!id) {
+    return;
+  }
+
+  await updateDoc(
+    doc(db, "anuncios", id),
+    {
+      "instagram.publicado": true,
+
+      "instagram.status":
+        "publicado",
+
+      "instagram.publicadoEm":
+        Timestamp.now(),
+
+      "instagram.mediaId":
+        resultado.instagramMediaId ||
+        null,
+
+      "instagram.containerId":
+        resultado.containerId ||
+        null,
+
+      "instagram.imagemUrl":
+        resultado.imagemUrl ||
+        null
+    }
+  );
+
+  await carregarAnuncios();
+}
+
+/* ======================================================
+   MARCAÇÃO MANUAL
+====================================================== */
+
+async function marcarComoPostado(
+  id,
+  botao
+) {
+  const confirmar = window.confirm(
+    "Deseja marcar este anúncio como postado manualmente?"
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  const textoOriginal =
+    botao.textContent;
+
+  botao.disabled = true;
+  botao.textContent =
+    "Salvando...";
+
+  try {
+    await updateDoc(
+      doc(db, "anuncios", id),
+      {
+        "instagram.publicado": true,
+
+        "instagram.status":
+          "postado_manual",
+
+        "instagram.publicadoEm":
+          Timestamp.now()
+      }
+    );
+
+    alert(
+      "Anúncio marcado como postado!"
+    );
+
+    await carregarAnuncios();
+
+  } catch (erro) {
+    console.error(
+      "Erro ao marcar anúncio como postado:",
+      erro
+    );
+
+    alert(
+      "Não foi possível marcar o anúncio como postado."
+    );
+
+  } finally {
+    botao.disabled = false;
+    botao.textContent =
+      textoOriginal;
+  }
+}
+
+/* ======================================================
+   ESCOLHA DO TEMA
+====================================================== */
+
 function escolherTema(anuncio) {
-  return TEMAS[anuncio.categoria] || TEMAS["Outros"];
+  const categoria =
+    anuncio.categoria || "Outros";
+
+  return (
+    TEMAS[categoria] ||
+    TEMAS["Outros"]
+  );
 }
 
-function limitarTexto(texto, limite) {
-  if (texto.length <= limite) return texto;
-  return texto.substring(0, limite) + "...";
-}
-async function marcarComoPostado(id) {
-  await updateDoc(doc(db, "anuncios", id), {
-    "instagram.publicado": true,
-    "instagram.status": "postado_manual"
-  });
+/* ======================================================
+   LIMITAR TAMANHO DO TEXTO
+====================================================== */
 
-  alert("Marcado como postado!");
-  carregarAnuncios();
+function limitarTexto(
+  texto,
+  limite
+) {
+  const textoSeguro =
+    String(texto || "");
+
+  if (
+    textoSeguro.length <= limite
+  ) {
+    return textoSeguro;
+  }
+
+  return (
+    textoSeguro.substring(
+      0,
+      limite
+    ) + "..."
+  );
 }
+
+/* ======================================================
+   PROTEÇÃO DE TEXTO NO HTML
+====================================================== */
+
+function escaparHTML(valor) {
+  return String(valor || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+/* ======================================================
+   INICIAR PÁGINA
+====================================================== */
+
 carregarAnuncios();
