@@ -41,6 +41,8 @@ let profissionaisDestaque = [];
 let destaqueAtual = 0;
 let intervaloCarrossel = null;
 let usuarioLogado = null;
+let playerAnuncio = null;
+let anuncioAtual = null;
 onAuthStateChanged(auth, (user) => {
     usuarioLogado = user;
 });
@@ -527,6 +529,22 @@ if (dados.creditos <= 0) {
             "block";
 
     }
+async function carregarAnuncio() {
+
+    const snapshot = await getDocs(
+        query(
+            collection(db, "anunciosVideos"),
+            where("ativo", "==", true)
+        )
+    );
+
+    if (snapshot.empty) return null;
+
+    anuncioAtual = snapshot.docs[0].data();
+
+    return anuncioAtual;
+}
+
     async function registrarDesbloqueioGratuito(
     desbloqueioRef,
     anuncioId
@@ -551,6 +569,17 @@ function abrirModalAnuncio() {
 
     return new Promise((resolve) => {
 
+        const anuncio = await carregarAnuncio();
+
+if (!anuncio) {
+
+    alert("Nenhum anúncio cadastrado.");
+
+    resolve(false);
+
+    return;
+
+}
         const modalAnuncio =
             document.getElementById(
                 "modalAnuncio"
@@ -778,6 +807,38 @@ function abrirModalAnuncio() {
         modalAnuncio.style.display =
             "block";
     });
+    playerAnuncio = new YT.Player("playerAnuncio", {
+
+    width: "100%",
+    height: "315",
+
+    videoId: anuncio.youtubeId,
+
+    playerVars: {
+
+        autoplay: 1,
+        controls: 0,
+        rel: 0,
+        modestbranding: 1
+
+    },
+
+    events: {
+
+        onStateChange: eventoVideo
+
+    }
+
+});
+function eventoVideo(evento) {
+
+    if (evento.data === YT.PlayerState.ENDED) {
+
+        finalizar(true);
+
+    }
+
+}
 }
     window.fecharModal = function () {
 
