@@ -961,7 +961,7 @@ formVideoAnuncio.addEventListener(
            await addDoc(
     collection(db, "anunciosVideos"),
     {
-        empresa,carregarEstatisticas()
+        empresa,
         titulo,
         youtubeUrl,
         youtubeId,
