@@ -9,136 +9,269 @@
 </head>
 
 <body>
+
     <section id="telaAcesso" class="tela-acesso">
         <div class="acesso-card">
             <span class="marca">CONTRATA RESERVA</span>
+
             <h1>Painel Administrativo</h1>
+
             <p>Entre com a conta autorizada para administrar a plataforma.</p>
-            <button id="btnEntrarAdmin" class="btn-principal">Entrar com Google</button>
-            <a href="index.html" class="link-voltar">← Voltar ao site</a>
+
+            <button id="btnEntrarAdmin" class="btn-principal">
+                Entrar com Google
+            </button>
+
+            <a href="index.html" class="link-voltar">
+                ← Voltar ao site
+            </a>
+
             <p id="mensagemAcesso" class="mensagem"></p>
         </div>
     </section>
 
     <div id="painelAdmin" class="painel oculto">
+
         <aside class="menu-lateral">
+
             <div>
                 <span class="marca">CONTRATA RESERVA</span>
                 <h2>Admin</h2>
             </div>
 
             <nav>
-                <button class="menu-item ativo" data-secao="visaoGeral">Visão geral</button>
-                <button class="menu-item" data-secao="profissionais">Profissionais</button>
-                <button class="menu-item" data-secao="anuncios">Anúncios</button>
-                <button class="menu-item" data-secao="videos">Vídeos patrocinados</button>
-                <button class="menu-item" data-secao="estatisticas">Estatísticas</button>
+
+                <button class="menu-item ativo" data-secao="visaoGeral">
+                    Visão geral
+                </button>
+
+                <button class="menu-item" data-secao="profissionais">
+                    Profissionais
+                </button>
+
+                <button class="menu-item" data-secao="anuncios">
+                    Anúncios
+                </button>
+
+                <button class="menu-item" data-secao="videos">
+                    Vídeos patrocinados
+                </button>
+
+                <button class="menu-item" data-secao="estatisticas">
+                    Estatísticas
+                </button>
+
             </nav>
 
             <div class="usuario-admin">
+
                 <p id="nomeAdmin"></p>
+
                 <small id="emailAdmin"></small>
-                <button id="btnSair">Sair</button>
+
+                <button id="btnSair">
+                    Sair
+                </button>
+
             </div>
+
         </aside>
 
         <main class="conteudo">
+
             <header class="topo-painel">
+
                 <div>
                     <p class="rotulo">Administração</p>
                     <h1 id="tituloSecao">Visão geral</h1>
                 </div>
-                <button id="btnAtualizar" class="btn-secundario">Atualizar dados</button>
+
+                <button id="btnAtualizar" class="btn-secundario">
+                    Atualizar dados
+                </button>
+
             </header>
 
+            <!-- VISÃO GERAL -->
+
             <section id="visaoGeral" class="secao ativa">
+
                 <div class="cards-resumo">
+
                     <article class="resumo-card">
                         <span>Profissionais cadastrados</span>
                         <strong id="totalProfissionais">0</strong>
                     </article>
+
                     <article class="resumo-card">
                         <span>Anúncios cadastrados</span>
                         <strong id="totalAnuncios">0</strong>
                     </article>
+
                     <article class="resumo-card">
                         <span>Anúncios ativos</span>
                         <strong id="totalAtivos">0</strong>
                     </article>
+
                     <article class="resumo-card">
                         <span>Créditos em circulação</span>
                         <strong id="totalCreditos">0</strong>
                     </article>
+
                 </div>
 
                 <div class="bloco">
+
                     <h2>Últimos anúncios</h2>
+
                     <div id="ultimosAnuncios" class="lista-compacta"></div>
+
                 </div>
+
             </section>
 
+            <!-- PROFISSIONAIS -->
+
             <section id="profissionais" class="secao">
+
                 <div class="barra-filtros">
-                    <input id="buscaProfissional" type="search" placeholder="Buscar por nome ou e-mail">
+
+                    <input
+                        id="buscaProfissional"
+                        type="search"
+                        placeholder="Buscar por nome ou e-mail">
+
                 </div>
+
                 <div class="tabela-container">
+
                     <table>
+
                         <thead>
+
                             <tr>
+
                                 <th>Nome</th>
                                 <th>E-mail</th>
                                 <th>Tipo</th>
                                 <th>Créditos</th>
                                 <th>Cadastro</th>
                                 <th>Destaque</th>
+
                             </tr>
+
                         </thead>
+
                         <tbody id="tabelaProfissionais"></tbody>
+
                     </table>
+
                 </div>
-                <p id="vazioProfissionais" class="estado-vazio oculto">Nenhum profissional encontrado.</p>
+
+                <p
+                    id="vazioProfissionais"
+                    class="estado-vazio oculto">
+
+                    Nenhum profissional encontrado.
+
+                </p>
+
             </section>
 
+            <!-- ANÚNCIOS -->
+
             <section id="anuncios" class="secao">
+
                 <div class="barra-filtros">
-                    <input id="buscaAnuncio" type="search" placeholder="Buscar por título, cliente ou categoria">
+
+                    <input
+                        id="buscaAnuncio"
+                        type="search"
+                        placeholder="Buscar por título, cliente ou categoria">
+
                     <select id="filtroStatus">
-                        <option value="todos">Todos os anúncios</option>
-                        <option value="ativo">Ativos</option>
-                        <option value="expirado">Expirados</option>
+
+                        <option value="todos">
+                            Todos os anúncios
+                        </option>
+
+                        <option value="ativo">
+                            Ativos
+                        </option>
+
+                        <option value="expirado">
+                            Expirados
+                        </option>
+
                     </select>
+
                 </div>
+
                 <div id="listaAnunciosAdmin" class="grade-anuncios"></div>
-                <p id="vazioAnuncios" class="estado-vazio oculto">Nenhum anúncio encontrado.</p>
+
+                <p
+                    id="vazioAnuncios"
+                    class="estado-vazio oculto">
+
+                    Nenhum anúncio encontrado.
+
+                </p>
+
             </section>
+
+            <!-- VÍDEOS -->
+
             <section id="videos" class="secao">
 
                 <div class="bloco">
+
                     <h2>Cadastrar anúncio do YouTube</h2>
 
                     <form id="formVideoAnuncio">
 
-                        <input id="empresaVideo" type="text" placeholder="Nome da empresa" required>
+                        <input
+                            id="empresaVideo"
+                            type="text"
+                            placeholder="Nome da empresa"
+                            required>
 
-                        <input id="tituloVideo" type="text" placeholder="Título do anúncio" required>
+                        <input
+                            id="tituloVideo"
+                            type="text"
+                            placeholder="Título do anúncio"
+                            required>
 
-                        <input id="youtubeUrl" type="url" placeholder="Link do vídeo no YouTube" required>
+                        <input
+                            id="youtubeUrl"
+                            type="url"
+                            placeholder="Link do vídeo no YouTube"
+                            required>
 
-                        <button type="submit" class="btn-principal">
+                        <button
+                            type="submit"
+                            class="btn-principal">
+
                             Cadastrar anúncio
+
                         </button>
 
                     </form>
 
                     <p id="mensagemVideo" class="mensagem"></p>
+
                 </div>
 
                 <div class="bloco">
+
                     <h2>Anúncios cadastrados</h2>
+
                     <div id="listaVideosAdmin"></div>
+
                 </div>
 
             </section>
+
+            <!-- ESTATÍSTICAS -->
 
             <section id="estatisticas" class="secao">
 
@@ -147,36 +280,51 @@
                 <div class="cards-estatisticas">
 
                     <div class="card-est">
+
                         <h3>👁 Visualizações</h3>
+
                         <span id="totalVisualizacoes">0</span>
+
                     </div>
 
                     <div class="card-est">
+
                         <h3>🎬 Vídeos concluídos</h3>
+
                         <span id="totalVideos">0</span>
+
                     </div>
 
                     <div class="card-est">
+
                         <h3>🔓 Contatos desbloqueados</h3>
+
                         <span id="totalDesbloqueios">0</span>
+
                     </div>
 
                     <div class="card-est">
+
                         <h3>💰 Créditos utilizados</h3>
+
                         <span id="totalCreditosUtilizados">0</span>
+
                     </div>
 
                 </div>
 
                 <h2>Anunciantes</h2>
-               
-            </section>
+
+                <div id="listaEstatisticas"></div>
 
             </section>
+
         </main>
+
     </div>
 
     <script type="module" src="admin.js"></script>
+
 </body>
 
 </html>
