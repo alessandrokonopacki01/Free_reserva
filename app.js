@@ -10,7 +10,8 @@ import {
     doc,
     getDoc,
     updateDoc,
-    setDoc
+    setDoc,
+    increment
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 import {
@@ -1152,8 +1153,12 @@ async function abrirModalAnuncio() {
                             ================================== */
 
                             onReady(evento) {
-                                evento.target
-                                    .playVideo();
+
+                                await updateDoc(
+                                    doc(db, "anunciosVideos", anuncio.id),{
+                                        visualizacoes: increment(1)
+                                    });
+                                evento.target.playVideo();
 
                                 intervaloVerificacao =
                                     setInterval(
@@ -1228,7 +1233,7 @@ async function abrirModalAnuncio() {
                                ALTERAÇÃO DE ESTADO
                             ================================== */
 
-                            onStateChange(evento) {
+                            async onStateChange(evento) {
                                 /*
                                  * Se o usuário pausar,
                                  * o vídeo volta a tocar.
@@ -1266,7 +1271,12 @@ async function abrirModalAnuncio() {
                                     tempoAnuncio
                                         .textContent =
                                         "Anúncio concluído! Liberando contato...";
-
+                                    await updateDoc(
+    doc(db, "anunciosVideos", anuncio.id),
+    {
+        conclusoes: increment(1)
+    }
+);
                                     setTimeout(
                                         () => {
                                             finalizar(
