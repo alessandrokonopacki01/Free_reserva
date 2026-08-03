@@ -961,7 +961,7 @@ formVideoAnuncio.addEventListener(
            await addDoc(
     collection(db, "anunciosVideos"),
     {
-        empresa,
+        empresa,carregarEstatisticas()
         titulo,
         youtubeUrl,
         youtubeId,
@@ -1142,7 +1142,16 @@ async function carregarEstatisticas() {
     if (!listaEstatisticas) {
         return;
     }
-
+ if (
+        !totalVisualizacoes ||
+        !totalVideos ||
+        !totalDesbloqueios ||
+        !totalCreditosUtilizados ||
+        !listaEstatisticas
+    ) {
+        console.error("Elementos das estatísticas não encontrados.");
+        return;
+    }
     try {
         const [
             snapshotVideos,
@@ -1163,6 +1172,8 @@ async function carregarEstatisticas() {
                 ...documento.data()
             })
         );
+
+        console.log("VÍDEOS DO FIREBASE:", videos);
 
         const desbloqueios =
             snapshotDesbloqueios.docs.map(
@@ -1199,6 +1210,9 @@ async function carregarEstatisticas() {
                     Number(video.conclusoes || 0),
                 0
             );
+
+            console.log("TOTAL VISUALIZAÇÕES:", visualizacoesGerais);
+console.log("TOTAL CONCLUSÕES:", conclusoesGerais);
 
         totalVisualizacoes.textContent =
             visualizacoesGerais;
