@@ -183,7 +183,12 @@ async function carregarDados() {
         renderizarAnuncios(anuncios);
         renderizarUltimosAnuncios();
         renderizarVideosPatrocinados();
-        await carregarEstatisticas();
+
+console.log("CHEGUEI ANTES DAS ESTATÍSTICAS");
+
+await carregarEstatisticas();
+
+console.log("TERMINEI AS ESTATÍSTICAS");
     } catch (erro) {
         console.error("Erro ao carregar o painel:", erro);
 
