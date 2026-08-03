@@ -33,7 +33,7 @@ const totalVisualizacoes = document.getElementById("totalVisualizacoes");
 
 const totalVideos = document.getElementById("totalVideos");
 const totalDesbloqueios = document.getElementById("totalDesbloqueios");
-const totalCreditos = document.getElementById("totalCreditos");
+const totalCreditosUtilizados = document.getElementById("totalCreditosUtilizados");
 const listaEstatisticas = document.getElementById("listaEstatisticas");
 
 let profissionais = [];
@@ -183,6 +183,7 @@ async function carregarDados() {
         renderizarAnuncios(anuncios);
         renderizarUltimosAnuncios();
         renderizarVideosPatrocinados();
+        await carregarEstatisticas();
     } catch (erro) {
         console.error("Erro ao carregar o painel:", erro);
 
@@ -957,17 +958,20 @@ formVideoAnuncio.addEventListener(
                 );
             }
 
-            await addDoc(
-                collection(db, "anunciosVideos"),
-                {
-                    empresa,
-                    titulo,
-                    youtubeUrl,
-                    youtubeId,
-                    ativo: true,
-                    criadoEm: Timestamp.now()
-                }
-            );
+           await addDoc(
+    collection(db, "anunciosVideos"),
+    {
+        empresa,
+        titulo,
+        youtubeUrl,
+        youtubeId,
+        ativo: true,
+        visualizacoes: 0,
+        conclusoes: 0,
+        valorMensal: 100,
+        criadoEm: Timestamp.now()
+    }
+);
 
             formVideoAnuncio.reset();
 
@@ -1205,8 +1209,8 @@ async function carregarEstatisticas() {
         totalDesbloqueios.textContent =
             desbloqueiosPorAnuncio.length;
 
-        totalCreditos.textContent =
-            desbloqueiosPorCredito.length;
+        totalCreditosUtilizados.textContent =
+    desbloqueiosPorCredito.length;
 
         if (videos.length === 0) {
             listaEstatisticas.innerHTML =
@@ -1331,4 +1335,3 @@ async function carregarEstatisticas() {
             "<p>Não foi possível carregar as estatísticas.</p>";
     }
 }
-carregarEstatisticas();
