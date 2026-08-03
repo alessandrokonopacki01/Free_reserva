@@ -1145,18 +1145,6 @@ listaVideosAdmin.addEventListener(
 
 async function carregarEstatisticas() {
     if (!listaEstatisticas) {
-        return;
-    }
- if (
-        !totalVisualizacoes ||
-        !totalVideos ||
-        !totalDesbloqueios ||
-        !totalCreditosUtilizados ||
-        !listaEstatisticas
-    ) {
-        console.error("Elementos das estatísticas não encontrados.");
-        return;
-    }
     try {
         const [
             snapshotVideos,
