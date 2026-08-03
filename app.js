@@ -1152,7 +1152,7 @@ async function abrirModalAnuncio() {
                                PLAYER PRONTO
                             ================================== */
 
-                            onReady(evento) {
+                            async onReady(evento) {
 
                                 await updateDoc(
                                     doc(db, "anunciosVideos", anuncio.id),{
