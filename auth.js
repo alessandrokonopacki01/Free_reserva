@@ -33,7 +33,7 @@ btnLogin.addEventListener("click", async () => {
             await setDoc(usuarioRef, {
                 nome: usuario.displayName,
                 email: usuario.email,
-                creditos: 5,
+                creditos: 0,
                 tipo: "profissional",
                 criadoEm: Timestamp.now()
             });

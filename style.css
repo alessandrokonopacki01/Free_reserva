@@ -723,3 +723,61 @@ a {
         padding: 20px;
     }
 }
+
+/* MELHORA A LEITURA NO CELULAR */
+@media (max-width: 700px) {
+
+    body {
+        font-size: 17px;
+        line-height: 1.6;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    h3 {
+        font-size: 21px;
+    }
+
+    p,
+    span,
+    label,
+    input,
+    select,
+    textarea,
+    button,
+    a {
+        font-size: 17px;
+    }
+
+    .card {
+        font-size: 17px;
+    }
+
+    .card p {
+        font-size: 16px;
+    }
+
+    .card button,
+    .btn-whatsapp,
+    .btn-assistir-anuncio,
+    .btn-cancelar-anuncio {
+        font-size: 17px;
+        padding: 14px 18px;
+    }
+
+    .modal-content {
+        width: calc(100% - 24px);
+        padding: 22px 18px;
+    }
+
+    #tempoAnuncio,
+    #textoModalAnuncio {
+        font-size: 17px;
+    }
+}
