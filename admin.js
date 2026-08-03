@@ -29,6 +29,12 @@ const mensagemAcesso = document.getElementById("mensagemAcesso");
 const btnEntrarAdmin = document.getElementById("btnEntrarAdmin");
 const btnSair = document.getElementById("btnSair");
 const btnAtualizar = document.getElementById("btnAtualizar");
+const totalVisualizacoes = document.getElementById("totalVisualizacoes");
+
+const totalVideos = document.getElementById("totalVideos");
+const totalDesbloqueios = document.getElementById("totalDesbloqueios");
+const totalCreditos = document.getElementById("totalCreditos");
+const listaEstatisticas = document.getElementById("listaEstatisticas");
 
 let profissionais = [];
 let anuncios = [];
@@ -1127,3 +1133,202 @@ listaVideosAdmin.addEventListener(
         }
     }
 );
+
+async function carregarEstatisticas() {
+    if (!listaEstatisticas) {
+        return;
+    }
+
+    try {
+        const [
+            snapshotVideos,
+            snapshotDesbloqueios
+        ] = await Promise.all([
+            getDocs(
+                collection(db, "anunciosVideos")
+            ),
+
+            getDocs(
+                collection(db, "desbloqueios")
+            )
+        ]);
+
+        const videos = snapshotVideos.docs.map(
+            (documento) => ({
+                id: documento.id,
+                ...documento.data()
+            })
+        );
+
+        const desbloqueios =
+            snapshotDesbloqueios.docs.map(
+                (documento) => ({
+                    id: documento.id,
+                    ...documento.data()
+                })
+            );
+
+        const desbloqueiosPorAnuncio =
+            desbloqueios.filter(
+                (item) =>
+                    item.formaDesbloqueio === "anuncio"
+            );
+
+        const desbloqueiosPorCredito =
+            desbloqueios.filter(
+                (item) =>
+                    item.formaDesbloqueio === "credito"
+            );
+
+        const visualizacoesGerais =
+            videos.reduce(
+                (total, video) =>
+                    total +
+                    Number(video.visualizacoes || 0),
+                0
+            );
+
+        const conclusoesGerais =
+            videos.reduce(
+                (total, video) =>
+                    total +
+                    Number(video.conclusoes || 0),
+                0
+            );
+
+        totalVisualizacoes.textContent =
+            visualizacoesGerais;
+
+        totalVideos.textContent =
+            conclusoesGerais;
+
+        totalDesbloqueios.textContent =
+            desbloqueiosPorAnuncio.length;
+
+        totalCreditos.textContent =
+            desbloqueiosPorCredito.length;
+
+        if (videos.length === 0) {
+            listaEstatisticas.innerHTML =
+                "<p>Nenhum anunciante cadastrado.</p>";
+
+            return;
+        }
+
+        listaEstatisticas.innerHTML =
+            videos.map((video) => {
+
+                const visualizacoes =
+                    Number(
+                        video.visualizacoes || 0
+                    );
+
+                const conclusoes =
+                    Number(
+                        video.conclusoes || 0
+                    );
+
+                const desbloqueiosDoVideo =
+                    desbloqueiosPorAnuncio.filter(
+                        (item) =>
+                            item.anuncioVideoId ===
+                            video.id
+                    ).length;
+
+                const taxaConclusao =
+                    visualizacoes > 0
+                        ? (
+                            conclusoes /
+                            visualizacoes *
+                            100
+                        ).toFixed(1)
+                        : "0.0";
+
+                const valorCampanha =
+                    Number(video.valorMensal || 100);
+
+                const custoVisualizacao =
+                    visualizacoes > 0
+                        ? (
+                            valorCampanha /
+                            visualizacoes
+                        ).toFixed(2)
+                        : "0.00";
+
+                return `
+                    <article class="card-estatistica">
+
+                        <h3>
+                            🏪 ${escaparHTML(
+                                video.empresa ||
+                                "Empresa anunciante"
+                            )}
+                        </h3>
+
+                        <p>
+                            📢 ${escaparHTML(
+                                video.titulo ||
+                                "Anúncio patrocinado"
+                            )}
+                        </p>
+
+                        <p>
+                            👁 Visualizações:
+                            <strong>
+                                ${visualizacoes}
+                            </strong>
+                        </p>
+
+                        <p>
+                            🎬 Vídeos completos:
+                            <strong>
+                                ${conclusoes}
+                            </strong>
+                        </p>
+
+                        <p>
+                            📈 Taxa de conclusão:
+                            <strong>
+                                ${taxaConclusao}%
+                            </strong>
+                        </p>
+
+                        <p>
+                            🔓 Contatos desbloqueados:
+                            <strong>
+                                ${desbloqueiosDoVideo}
+                            </strong>
+                        </p>
+
+                        <p>
+                            💵 Custo por visualização:
+                            <strong>
+                                R$ ${custoVisualizacao}
+                            </strong>
+                        </p>
+
+                        <p>
+                            ${video.ativo ? "🟢" : "🔴"}
+                            Status:
+                            <strong>
+                                ${video.ativo
+                                    ? "Ativo"
+                                    : "Inativo"}
+                            </strong>
+                        </p>
+
+                    </article>
+                `;
+            }).join("");
+
+    } catch (erro) {
+        console.error(
+            "Erro ao carregar estatísticas:",
+            erro
+        );
+
+        listaEstatisticas.innerHTML =
+            "<p>Não foi possível carregar as estatísticas.</p>";
+    }
+}
+carregarEstatisticas();
