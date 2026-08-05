@@ -963,61 +963,41 @@ formVideoAnuncio.addEventListener(
         mensagemVideo.textContent =
             "Salvando anúncio...";
 
-        try {
+   try {
 
-            // Desativa os anúncios anteriores
-            const ativos = videosPatrocinados.filter(
-                (video) => video.ativo === true
-            );
-
-            for (const video of ativos) {
-
-                await updateDoc(
-                    doc(
-                        db,
-                        "anunciosVideos",
-                        video.id
-                    ),
-                    {
-                        ativo: false
-                    }
-                );
-            }
-
-           await addDoc(
-    collection(db, "anunciosVideos"),
-    {
-        empresa,
-        titulo,
-        youtubeUrl,
-        youtubeId,
-        ativo: true,
-        visualizacoes: 0,
-        conclusoes: 0,
-        valorMensal: 100,
-        criadoEm: Timestamp.now()
-    }
-);
-
-            formVideoAnuncio.reset();
-
-            mensagemVideo.textContent =
-                "Anúncio cadastrado com sucesso!";
-
-            await carregarDados();
-
-        } catch (erro) {
-
-            console.error(
-                "Erro ao cadastrar vídeo:",
-                erro
-            );
-
-            mensagemVideo.textContent =
-                "Não foi possível cadastrar o anúncio.";
+    // O novo anúncio entra ativo sem desativar os anteriores.
+    await addDoc(
+        collection(db, "anunciosVideos"),
+        {
+            empresa,
+            titulo,
+            youtubeUrl,
+            youtubeId,
+            ativo: true,
+            visualizacoes: 0,
+            conclusoes: 0,
+            valorMensal: 100,
+            criadoEm: Timestamp.now()
         }
-    }
-);
+    );
+
+    formVideoAnuncio.reset();
+
+    mensagemVideo.textContent =
+        "Anúncio cadastrado com sucesso!";
+
+    await carregarDados();
+
+} catch (erro) {
+
+    console.error(
+        "Erro ao cadastrar vídeo:",
+        erro
+    );
+
+    mensagemVideo.textContent =
+        "Não foi possível cadastrar o anúncio.";
+}
 
 function renderizarVideosPatrocinados() {
 

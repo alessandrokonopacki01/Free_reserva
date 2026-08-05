@@ -766,7 +766,8 @@ window.fecharModal = function () {
    CARREGAR ANÚNCIO ATIVO DO FIRESTORE
 ====================================================== */
 
-async function carregarAnuncioAtivo() {
+async function carregarProximoAnuncioAtivo() {
+
     const snapshot = await getDocs(
         query(
             collection(db, "anunciosVideos"),
@@ -778,12 +779,61 @@ async function carregarAnuncioAtivo() {
         return null;
     }
 
-    const documento = snapshot.docs[0];
+    /*
+     * Cria uma sequência estável.
+     * Os anúncios mais antigos aparecem primeiro.
+     */
+    const anunciosAtivos = snapshot.docs
+        .map((documento) => ({
+            id: documento.id,
+            ...documento.data()
+        }))
+        .sort((a, b) => {
 
-    anuncioAtual = {
-        id: documento.id,
-        ...documento.data()
-    };
+            const dataA =
+                a.criadoEm?.toMillis?.() || 0;
+
+            const dataB =
+                b.criadoEm?.toMillis?.() || 0;
+
+            if (dataA !== dataB) {
+                return dataA - dataB;
+            }
+
+            return a.id.localeCompare(b.id);
+        });
+
+    /*
+     * Recupera qual anúncio deve ser exibido agora.
+     */
+    const chaveIndice =
+        "indiceProximoAnuncioContrata";
+
+    const indiceSalvo = Number(
+        localStorage.getItem(chaveIndice) || 0
+    );
+
+    const indiceAtual =
+        Number.isInteger(indiceSalvo) &&
+        indiceSalvo >= 0
+            ? indiceSalvo %
+                anunciosAtivos.length
+            : 0;
+
+    anuncioAtual =
+        anunciosAtivos[indiceAtual];
+
+    /*
+     * Prepara o próximo anúncio.
+     */
+    const proximoIndice =
+        (indiceAtual + 1) %
+        anunciosAtivos.length;
+
+    localStorage.setItem(
+        chaveIndice,
+        String(proximoIndice)
+    );
 
     return anuncioAtual;
 }
