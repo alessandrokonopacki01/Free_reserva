@@ -952,6 +952,14 @@ formVideoAnuncio.addEventListener(
         const youtubeId =
             extrairIdYoutube(youtubeUrl);
 
+        if (!empresa || !titulo) {
+
+            mensagemVideo.textContent =
+                "Preencha o nome da empresa e o título.";
+
+            return;
+        }
+
         if (!youtubeId) {
 
             mensagemVideo.textContent =
@@ -965,7 +973,6 @@ formVideoAnuncio.addEventListener(
 
         try {
 
-            // O novo anúncio entra ativo sem desativar os anteriores.
             await addDoc(
                 collection(db, "anunciosVideos"),
                 {
@@ -973,7 +980,10 @@ formVideoAnuncio.addEventListener(
                     titulo,
                     youtubeUrl,
                     youtubeId,
+
+                    // O vídeo já entra ativo.
                     ativo: true,
+
                     visualizacoes: 0,
                     conclusoes: 0,
                     valorMensal: 100,
@@ -1095,20 +1105,76 @@ listaVideosAdmin.addEventListener(
 
             if (acao === "ativar-video") {
 
-                for (const video of videosPatrocinados) {
+              window.ativarVideo = async function (videoId) {
 
-                    await updateDoc(
-                        doc(
-                            db,
-                            "anunciosVideos",
-                            video.id
-                        ),
-                        {
-                            ativo: video.id === videoId
-                        }
-                    );
-                }
+    try {
+
+        const videoRef =
+            doc(db, "anunciosVideos", videoId);
+
+        await updateDoc(
+            videoRef,
+            {
+                ativo: true
             }
+        );
+
+        console.log(
+            "Vídeo ativado:",
+            videoId
+        );
+
+        await carregarDados();
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao ativar vídeo:",
+            erro
+        );
+
+        alert(
+            "Não foi possível ativar o vídeo: " +
+            erro.message
+        );
+    }
+};
+            }
+
+            window.desativarVideo = async function (videoId) {
+
+    try {
+
+        const videoRef =
+            doc(db, "anunciosVideos", videoId);
+
+        await updateDoc(
+            videoRef,
+            {
+                ativo: false
+            }
+        );
+
+        console.log(
+            "Vídeo desativado:",
+            videoId
+        );
+
+        await carregarDados();
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao desativar vídeo:",
+            erro
+        );
+
+        alert(
+            "Não foi possível desativar o vídeo: " +
+            erro.message
+        );
+    }
+};
 
             if (acao === "excluir-video") {
 
