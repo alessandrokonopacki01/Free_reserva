@@ -980,10 +980,7 @@ formVideoAnuncio.addEventListener(
                     titulo,
                     youtubeUrl,
                     youtubeId,
-
-                    // O vídeo já entra ativo.
                     ativo: true,
-
                     visualizacoes: 0,
                     conclusoes: 0,
                     valorMensal: 100,
@@ -1006,7 +1003,8 @@ formVideoAnuncio.addEventListener(
             );
 
             mensagemVideo.textContent =
-                "Erro ao cadastrar anúncio: " + erro.message;
+                "Erro ao cadastrar anúncio: " +
+                erro.message;
         }
     }
 );
@@ -1027,6 +1025,10 @@ function renderizarVideosPatrocinados() {
     listaVideosAdmin.innerHTML =
         videosPatrocinados.map((video) => {
 
+            const textoBotaoStatus = video.ativo
+                ? "Desativar"
+                : "Ativar";
+
             return `
                 <article class="card-admin">
 
@@ -1046,9 +1048,11 @@ function renderizarVideosPatrocinados() {
                     <p>
                         Status:
                         <strong>
-                            ${video.ativo
-                                ? "Ativo"
-                                : "Inativo"}
+                            ${
+                                video.ativo
+                                    ? "Ativo"
+                                    : "Inativo"
+                            }
                         </strong>
                     </p>
 
@@ -1065,9 +1069,9 @@ function renderizarVideosPatrocinados() {
 
                         <button
                             data-video-id="${video.id}"
-                            data-acao="ativar-video"
+                            data-acao="alternar-video"
                         >
-                            Ativar
+                            ${textoBotaoStatus}
                         </button>
 
                         <button
@@ -1084,132 +1088,101 @@ function renderizarVideosPatrocinados() {
         }).join("");
 }
 
-listaVideosAdmin.addEventListener(
-    "click",
-    async (evento) => {
+if (listaVideosAdmin) {
 
-        const botao =
-            evento.target.closest("[data-video-id]");
+    listaVideosAdmin.addEventListener(
+        "click",
+        async (evento) => {
 
-        if (!botao) {
-            return;
-        }
-
-        const videoId =
-            botao.dataset.videoId;
-
-        const acao =
-            botao.dataset.acao;
-
-        try {
-
-            if (acao === "ativar-video") {
-
-              window.ativarVideo = async function (videoId) {
-
-    try {
-
-        const videoRef =
-            doc(db, "anunciosVideos", videoId);
-
-        await updateDoc(
-            videoRef,
-            {
-                ativo: true
-            }
-        );
-
-        console.log(
-            "Vídeo ativado:",
-            videoId
-        );
-
-        await carregarDados();
-
-    } catch (erro) {
-
-        console.error(
-            "Erro ao ativar vídeo:",
-            erro
-        );
-
-        alert(
-            "Não foi possível ativar o vídeo: " +
-            erro.message
-        );
-    }
-};
-            }
-
-            window.desativarVideo = async function (videoId) {
-
-    try {
-
-        const videoRef =
-            doc(db, "anunciosVideos", videoId);
-
-        await updateDoc(
-            videoRef,
-            {
-                ativo: false
-            }
-        );
-
-        console.log(
-            "Vídeo desativado:",
-            videoId
-        );
-
-        await carregarDados();
-
-    } catch (erro) {
-
-        console.error(
-            "Erro ao desativar vídeo:",
-            erro
-        );
-
-        alert(
-            "Não foi possível desativar o vídeo: " +
-            erro.message
-        );
-    }
-};
-
-            if (acao === "excluir-video") {
-
-                const confirmar = confirm(
-                    "Deseja excluir este anúncio?"
+            const botao =
+                evento.target.closest(
+                    "[data-video-id]"
                 );
 
-                if (!confirmar) {
-                    return;
+            if (!botao) {
+                return;
+            }
+
+            const videoId =
+                botao.dataset.videoId;
+
+            const acao =
+                botao.dataset.acao;
+
+            const video =
+                videosPatrocinados.find(
+                    (item) =>
+                        item.id === videoId
+                );
+
+            if (!video) {
+
+                alert(
+                    "Anúncio em vídeo não encontrado."
+                );
+
+                return;
+            }
+
+            botao.disabled = true;
+
+            try {
+
+                if (acao === "alternar-video") {
+
+                    await updateDoc(
+                        doc(
+                            db,
+                            "anunciosVideos",
+                            videoId
+                        ),
+                        {
+                            ativo: !video.ativo
+                        }
+                    );
                 }
 
-                await deleteDoc(
-                    doc(
-                        db,
-                        "anunciosVideos",
-                        videoId
-                    )
+                if (acao === "excluir-video") {
+
+                    const confirmar = confirm(
+                        "Deseja excluir este anúncio?"
+                    );
+
+                    if (!confirmar) {
+
+                        botao.disabled = false;
+
+                        return;
+                    }
+
+                    await deleteDoc(
+                        doc(
+                            db,
+                            "anunciosVideos",
+                            videoId
+                        )
+                    );
+                }
+
+                await carregarDados();
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao alterar anúncio:",
+                    erro
                 );
+
+                alert(
+                    "Não foi possível alterar o anúncio: " +
+                    erro.message
+                );
+
+                botao.disabled = false;
             }
-
-            await carregarDados();
-
-        } catch (erro) {
-
-            console.error(
-                "Erro ao alterar anúncio:",
-                erro
-            );
-
-            alert(
-                "Não foi possível alterar o anúncio."
-            );
         }
-    }
-);
+    );
+}
 
 async function carregarEstatisticas() {
       console.log("ELEMENTOS:", {
