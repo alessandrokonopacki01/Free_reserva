@@ -41,7 +41,17 @@ let anuncios = [];
 let destaques = [];
 
 let videosPatrocinados = [];
+let colaboradores = [];
 
+const formColaborador =
+    document.getElementById("formColaborador");
+
+const listaColaboradoresAdmin =
+    document.getElementById("listaColaboradoresAdmin");
+
+const mensagemColaborador =
+    document.getElementById("mensagemColaborador");
+    
 const formVideoAnuncio =
     document.getElementById("formVideoAnuncio");
 
@@ -131,11 +141,12 @@ async function carregarDados() {
     btnAtualizar.textContent = "Atualizando...";
 
     try {
-        const [
+const [
     snapshotUsuarios,
     snapshotAnuncios,
     snapshotDestaques,
-    snapshotVideos
+    snapshotVideos,
+    snapshotColaboradores
 ] = await Promise.all([
 
     getDocs(collection(db, "usuarios")),
@@ -153,6 +164,13 @@ async function carregarDados() {
         query(
             collection(db, "anunciosVideos"),
             orderBy("criadoEm", "desc")
+        )
+    ),
+
+    getDocs(
+        query(
+            collection(db, "colaboradores"),
+            orderBy("nome")
         )
     )
 ]);
@@ -178,17 +196,20 @@ async function carregarDados() {
         ...documento.data()
     }));
 
+    colaboradores =
+    snapshotColaboradores.docs.map((documento) => ({
+        id: documento.id,
+        ...documento.data()
+    }));
+
         atualizarResumo();
         renderizarProfissionais(profissionais);
         renderizarAnuncios(anuncios);
         renderizarUltimosAnuncios();
         renderizarVideosPatrocinados();
-
-console.log("CHEGUEI ANTES DAS ESTATÍSTICAS");
-
+        renderizarColaboradores();
 await carregarEstatisticas();
 
-console.log("TERMINEI AS ESTATÍSTICAS");
     } catch (erro) {
         console.error("Erro ao carregar o painel:", erro);
 
@@ -1362,4 +1383,317 @@ console.log("TOTAL CONCLUSÕES:", conclusoesGerais);
         listaEstatisticas.innerHTML =
             "<p>Não foi possível carregar as estatísticas.</p>";
     }
+}
+
+/* ======================================================
+   COLABORADORES
+====================================================== */
+
+if (formColaborador) {
+
+    formColaborador.addEventListener(
+        "submit",
+        async (evento) => {
+
+            evento.preventDefault();
+
+            const nome = document
+                .getElementById("nomeColaborador")
+                .value
+                .trim();
+
+            const logoUrl = document
+                .getElementById("logoColaborador")
+                .value
+                .trim();
+
+            const whatsapp = document
+                .getElementById("whatsappColaborador")
+                .value
+                .replace(/\D/g, "");
+
+            const endereco = document
+                .getElementById("enderecoColaborador")
+                .value
+                .trim();
+
+            const instagram = document
+                .getElementById("instagramColaborador")
+                .value
+                .trim()
+                .replace(/^@/, "");
+
+            if (
+                whatsapp.length < 10 ||
+                whatsapp.length > 11
+            ) {
+                mensagemColaborador.textContent =
+                    "Informe um WhatsApp válido com DDD.";
+
+                return;
+            }
+
+            mensagemColaborador.textContent =
+                "Salvando colaborador...";
+
+            try {
+
+                await addDoc(
+                    collection(db, "colaboradores"),
+                    {
+                        nome,
+                        logoUrl,
+                        whatsapp,
+                        endereco,
+                        instagram,
+                        ativo: true,
+                        criadoEm: Timestamp.now()
+                    }
+                );
+
+                formColaborador.reset();
+
+                mensagemColaborador.textContent =
+                    "Colaborador cadastrado com sucesso!";
+
+                await carregarDados();
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao cadastrar colaborador:",
+                    erro
+                );
+
+                mensagemColaborador.textContent =
+                    "Não foi possível cadastrar o colaborador.";
+            }
+        }
+    );
+}
+
+function renderizarColaboradores() {
+
+    if (!listaColaboradoresAdmin) {
+        return;
+    }
+
+    if (colaboradores.length === 0) {
+
+        listaColaboradoresAdmin.innerHTML =
+            '<p class="estado-vazio">Nenhum colaborador cadastrado.</p>';
+
+        return;
+    }
+
+    listaColaboradoresAdmin.innerHTML =
+        colaboradores
+            .map((colaborador) => {
+
+                const instagramUsuario =
+                    String(colaborador.instagram || "")
+                        .replace(/^@/, "");
+
+                const instagramUrl =
+                    instagramUsuario
+                        ? `https://www.instagram.com/${encodeURIComponent(
+                            instagramUsuario
+                        )}/`
+                        : "";
+
+                const numeroWhatsapp =
+                    String(colaborador.whatsapp || "")
+                        .replace(/\D/g, "");
+
+                return `
+                    <article class="card-admin card-colaborador-admin">
+
+                        <div class="logo-colaborador-admin">
+
+                            <img
+                                src="${escaparHTML(
+                                    colaborador.logoUrl || ""
+                                )}"
+                                alt="Logo de ${escaparHTML(
+                                    colaborador.nome ||
+                                    "colaborador"
+                                )}"
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <h3>
+                            ${escaparHTML(
+                                colaborador.nome ||
+                                "Empresa"
+                            )}
+                        </h3>
+
+                        <p>
+                            📍
+                            ${escaparHTML(
+                                colaborador.endereco ||
+                                "Endereço não informado"
+                            )}
+                        </p>
+
+                        <p>
+                            📱
+                            <a
+                                href="https://wa.me/55${numeroWhatsapp}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                ${escaparHTML(numeroWhatsapp)}
+                            </a>
+                        </p>
+
+                        <p>
+                            📸
+                            ${
+                                instagramUrl
+                                    ? `
+                                        <a
+                                            href="${instagramUrl}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            @${escaparHTML(
+                                                instagramUsuario
+                                            )}
+                                        </a>
+                                    `
+                                    : "Instagram não informado"
+                            }
+                        </p>
+
+                        <p>
+                            Status:
+                            <strong class="status ${
+                                colaborador.ativo
+                                    ? "ativo"
+                                    : "expirado"
+                            }">
+                                ${
+                                    colaborador.ativo
+                                        ? "Ativo"
+                                        : "Inativo"
+                                }
+                            </strong>
+                        </p>
+
+                        <div class="acoes-admin">
+
+                            <button
+                                type="button"
+                                data-colaborador-id="${colaborador.id}"
+                                data-acao-colaborador="alternar"
+                            >
+                                ${
+                                    colaborador.ativo
+                                        ? "Desativar"
+                                        : "Ativar"
+                                }
+                            </button>
+
+                            <button
+                                type="button"
+                                data-colaborador-id="${colaborador.id}"
+                                data-acao-colaborador="excluir"
+                            >
+                                Excluir
+                            </button>
+
+                        </div>
+
+                    </article>
+                `;
+            })
+            .join("");
+}
+
+if (listaColaboradoresAdmin) {
+
+    listaColaboradoresAdmin.addEventListener(
+        "click",
+        async (evento) => {
+
+            const botao = evento.target.closest(
+                "[data-colaborador-id]"
+            );
+
+            if (!botao) {
+                return;
+            }
+
+            const colaboradorId =
+                botao.dataset.colaboradorId;
+
+            const acao =
+                botao.dataset.acaoColaborador;
+
+            const colaborador =
+                colaboradores.find(
+                    (item) =>
+                        item.id === colaboradorId
+                );
+
+            if (!colaborador) {
+                alert("Colaborador não encontrado.");
+                return;
+            }
+
+            botao.disabled = true;
+
+            try {
+
+                const referencia = doc(
+                    db,
+                    "colaboradores",
+                    colaboradorId
+                );
+
+                if (acao === "alternar") {
+
+                    await updateDoc(
+                        referencia,
+                        {
+                            ativo:
+                                !colaborador.ativo
+                        }
+                    );
+                }
+
+                if (acao === "excluir") {
+
+                    const confirmar = confirm(
+                        `Deseja excluir ${colaborador.nome}?`
+                    );
+
+                    if (!confirmar) {
+                        botao.disabled = false;
+                        return;
+                    }
+
+                    await deleteDoc(referencia);
+                }
+
+                await carregarDados();
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao alterar colaborador:",
+                    erro
+                );
+
+                alert(
+                    "Não foi possível alterar o colaborador."
+                );
+
+                botao.disabled = false;
+            }
+        }
+    );
 }

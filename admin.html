@@ -61,6 +61,10 @@
                     Estatísticas
                 </button>
 
+                <button class="menu-item" data-secao="colaboradores">
+                    Colaboradores
+                </button>
+
             </nav>
 
             <div class="usuario-admin">
@@ -136,10 +140,7 @@
 
                 <div class="barra-filtros">
 
-                    <input
-                        id="buscaProfissional"
-                        type="search"
-                        placeholder="Buscar por nome ou e-mail">
+                    <input id="buscaProfissional" type="search" placeholder="Buscar por nome ou e-mail">
 
                 </div>
 
@@ -168,9 +169,7 @@
 
                 </div>
 
-                <p
-                    id="vazioProfissionais"
-                    class="estado-vazio oculto">
+                <p id="vazioProfissionais" class="estado-vazio oculto">
 
                     Nenhum profissional encontrado.
 
@@ -184,10 +183,7 @@
 
                 <div class="barra-filtros">
 
-                    <input
-                        id="buscaAnuncio"
-                        type="search"
-                        placeholder="Buscar por título, cliente ou categoria">
+                    <input id="buscaAnuncio" type="search" placeholder="Buscar por título, cliente ou categoria">
 
                     <select id="filtroStatus">
 
@@ -209,9 +205,7 @@
 
                 <div id="listaAnunciosAdmin" class="grade-anuncios"></div>
 
-                <p
-                    id="vazioAnuncios"
-                    class="estado-vazio oculto">
+                <p id="vazioAnuncios" class="estado-vazio oculto">
 
                     Nenhum anúncio encontrado.
 
@@ -229,27 +223,13 @@
 
                     <form id="formVideoAnuncio">
 
-                        <input
-                            id="empresaVideo"
-                            type="text"
-                            placeholder="Nome da empresa"
-                            required>
+                        <input id="empresaVideo" type="text" placeholder="Nome da empresa" required>
 
-                        <input
-                            id="tituloVideo"
-                            type="text"
-                            placeholder="Título do anúncio"
-                            required>
+                        <input id="tituloVideo" type="text" placeholder="Título do anúncio" required>
 
-                        <input
-                            id="youtubeUrl"
-                            type="url"
-                            placeholder="Link do vídeo no YouTube"
-                            required>
+                        <input id="youtubeUrl" type="url" placeholder="Link do vídeo no YouTube" required>
 
-                        <button
-                            type="submit"
-                            class="btn-principal">
+                        <button type="submit" class="btn-principal">
 
                             Cadastrar anúncio
 
@@ -316,6 +296,45 @@
                 <h2>Anunciantes</h2>
 
                 <div id="listaEstatisticas"></div>
+
+            </section>
+
+            <section id="colaboradores" class="secao">
+
+                <div class="bloco">
+
+                    <h2>Cadastrar colaborador</h2>
+
+                    <form id="formColaborador">
+
+                        <input id="nomeColaborador" type="text" placeholder="Nome da empresa" required>
+
+                        <input id="logoColaborador" type="url" placeholder="Link da logo" required>
+
+                        <input id="whatsappColaborador" type="text" placeholder="WhatsApp com DDD" required>
+
+                        <input id="enderecoColaborador" type="text" placeholder="Endereço" required>
+
+                        <input id="instagramColaborador" type="text" placeholder="Instagram, exemplo: @empresa"
+                            required>
+
+                        <button type="submit" class="btn-principal">
+                            Cadastrar colaborador
+                        </button>
+
+                    </form>
+
+                    <p id="mensagemColaborador" class="mensagem"></p>
+
+                </div>
+
+                <div class="bloco">
+
+                    <h2>Colaboradores cadastrados</h2>
+
+                    <div id="listaColaboradoresAdmin"></div>
+
+                </div>
 
             </section>
 
