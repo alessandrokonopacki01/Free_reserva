@@ -963,42 +963,43 @@ formVideoAnuncio.addEventListener(
         mensagemVideo.textContent =
             "Salvando anúncio...";
 
-   try {
+        try {
 
-    // O novo anúncio entra ativo sem desativar os anteriores.
-    await addDoc(
-        collection(db, "anunciosVideos"),
-        {
-            empresa,
-            titulo,
-            youtubeUrl,
-            youtubeId,
-            ativo: true,
-            visualizacoes: 0,
-            conclusoes: 0,
-            valorMensal: 100,
-            criadoEm: Timestamp.now()
+            // O novo anúncio entra ativo sem desativar os anteriores.
+            await addDoc(
+                collection(db, "anunciosVideos"),
+                {
+                    empresa,
+                    titulo,
+                    youtubeUrl,
+                    youtubeId,
+                    ativo: true,
+                    visualizacoes: 0,
+                    conclusoes: 0,
+                    valorMensal: 100,
+                    criadoEm: Timestamp.now()
+                }
+            );
+
+            formVideoAnuncio.reset();
+
+            mensagemVideo.textContent =
+                "Anúncio cadastrado com sucesso!";
+
+            await carregarDados();
+
+        } catch (erro) {
+
+            console.error(
+                "Erro ao cadastrar anúncio em vídeo:",
+                erro
+            );
+
+            mensagemVideo.textContent =
+                "Erro ao cadastrar anúncio: " + erro.message;
         }
-    );
-
-    formVideoAnuncio.reset();
-
-    mensagemVideo.textContent =
-        "Anúncio cadastrado com sucesso!";
-
-    await carregarDados();
-
-} catch (erro) {
-
-    console.error(
-        "Erro ao cadastrar vídeo:",
-        erro
-    );
-
-    mensagemVideo.textContent =
-        "Não foi possível cadastrar o anúncio.";
-}
-
+    }
+);
 function renderizarVideosPatrocinados() {
 
     if (!listaVideosAdmin) {

@@ -928,7 +928,7 @@ async function abrirModalAnuncio() {
     let anuncio;
 
     try {
-        anuncio = await carregarAnuncioAtivo();
+        anuncio = await carregarProximoAnuncioAtivo();
     } catch (erro) {
         console.error(
             "Erro ao buscar anúncio ativo:",
