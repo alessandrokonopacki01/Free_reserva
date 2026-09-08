@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin.html
+Disallow: /stories.html
+Disallow: /teste-api.html
+Disallow: /creditos.html
+Disallow: /publicar.html
+Disallow: /api/
+
+Sitemap: https://free-reserva-azyv.vercel.app/sitemap.xml
