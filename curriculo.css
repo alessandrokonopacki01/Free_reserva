@@ -9,22 +9,18 @@
 }
 
 :root {
-    /* IDENTIDADE CONTRATA */
-    --preto: #0b0b0b;
-    --preto-claro: #181818;
-
-    --dourado: #d4af37;
-    --dourado-claro: #f0cf64;
-    --dourado-escuro: #a88620;
+    --azul: #001f4d;
+    --azul-claro: #063b7a;
+    --verde: #43ad12;
+    --verde-escuro: #318b0b;
 
     --branco: #ffffff;
-    --fundo: #f5f5f5;
+    --fundo: #f4f6f8;
+    --texto: #172033;
+    --texto-claro: #6b7280;
+    --borda: #d9dee7;
 
-    --texto: #1b1b1b;
-    --texto-claro: #6b6b6b;
-    --borda: #dddddd;
-
-    --sombra: 0 10px 35px rgba(0, 0, 0, 0.12);
+    --sombra: 0 10px 35px rgba(0, 31, 77, 0.10);
 }
 
 html {
