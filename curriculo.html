@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Monte seu Currículo | Contrata Reserva</title>
+
+    <meta name="description"
+          content="Crie seu currículo de forma simples e rápida com a Contrata Reserva.">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="curriculo.css">
+
+    <!-- jsPDF -->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+</head>
+
+
+<body>
+
+    <main class="curriculo-container">
+
+        <!-- =========================================
+             CABEÇALHO
+        ========================================== -->
+
+        <header class="cabecalho">
+
+            <img
+                src="img/logo-contrata.png"
+                alt="Contrata Reserva"
+                class="logo"
+            >
+
+            <h1>Monte seu currículo</h1>
+
+            <p>
+                Responda algumas perguntas e nós montamos
+                seu currículo em PDF.
+            </p>
+
+        </header>
+
+
+        <!-- =========================================
+             BARRA DE PROGRESSO
+        ========================================== -->
+
+        <section class="progresso-container">
+
+            <div class="progresso-info">
+                <span id="textoProgresso">Etapa 1</span>
+                <span id="porcentagemProgresso">0%</span>
+            </div>
+
+            <div class="barra-progresso">
+                <div id="barraProgresso"></div>
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             FORMULÁRIO
+        ========================================== -->
+
+        <form id="formCurriculo">
+
+
+            <!-- ETAPA 1 - APRESENTAÇÃO -->
+
+            <section class="etapa ativa" data-etapa="1">
+
+                <div class="icone-etapa">📄</div>
+
+                <h2>Vamos montar seu currículo!</h2>
+
+                <p class="descricao">
+                    É rapidinho. Vamos fazer algumas perguntas
+                    e no final seu currículo estará pronto.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-proximo"
+                >
+                    Começar
+                </button>
+
+            </section>
+
+
+            <!-- ETAPA 2 - NOME -->
+
+            <section class="etapa" data-etapa="2">
+
+                <h2>Qual é seu nome completo?</h2>
+
+                <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    placeholder="Ex: João da Silva"
+                    autocomplete="name"
+                    required
+                >
+
+                <div class="acoes">
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-proximo"
+                    >
+                        Continuar
+                    </button>
+                </div>
+
+            </section>
+
+
+            <!-- ETAPA 3 - CONTATO -->
+
+            <section class="etapa" data-etapa="3">
+
+                <h2>Como podemos entrar em contato com você?</h2>
+
+                <label for="telefone">
+                    Telefone / WhatsApp
+                </label>
+
+                <input
+                    type="tel"
+                    id="telefone"
+                    name="telefone"
+                    placeholder="(42) 99999-9999"
+                    autocomplete="tel"
+                    required
+                >
+
+
+                <label for="email">
+                    E-mail
+                    <span class="opcional">(opcional)</span>
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="seunome@email.com"
+                    autocomplete="email"
+                >
+
+                <div class="acoes">
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-proximo"
+                    >
+                        Continuar
+                    </button>
+                </div>
+
+            </section>
+
+
+            <!-- ETAPA 4 - LOCALIZAÇÃO -->
+
+            <section class="etapa" data-etapa="4">
+
+                <h2>Onde você mora?</h2>
+
+                <label for="cidade">
+                    Cidade
+                </label>
+
+                <input
+                    type="text"
+                    id="cidade"
+                    name="cidade"
+                    placeholder="Ex: Reserva"
+                    autocomplete="address-level2"
+                    required
+                >
+
+
+                <label for="bairro">
+                    Bairro
+                </label>
+
+                <input
+                    type="text"
+                    id="bairro"
+                    name="bairro"
+                    placeholder="Ex: Centro"
+                    autocomplete="address-level3"
+                    required
+                >
+
+                <div class="acoes">
+
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-proximo"
+                    >
+                        Continuar
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ETAPA 5 - NASCIMENTO -->
+
+            <section class="etapa" data-etapa="5">
+
+                <h2>Qual é sua data de nascimento?</h2>
+
+                <p class="descricao">
+                    Essa informação é opcional.
+                </p>
+
+                <input
+                    type="date"
+                    id="nascimento"
+                    name="nascimento"
+                >
+
+                <div class="acoes">
+
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-proximo"
+                    >
+                        Continuar
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ETAPA 6 - ESCOLARIDADE -->
+
+            <section class="etapa" data-etapa="6">
+
+                <h2>Qual é sua escolaridade?</h2>
+
+                <select
+                    id="escolaridade"
+                    name="escolaridade"
+                    required
+                >
+
+                    <option value="">
+                        Selecione uma opção
+                    </option>
+
+                    <option value="Ensino Fundamental Incompleto">
+                        Ensino Fundamental Incompleto
+                    </option>
+
+                    <option value="Ensino Fundamental Completo">
+                        Ensino Fundamental Completo
+                    </option>
+
+                    <option value="Ensino Médio Incompleto">
+                        Ensino Médio Incompleto
+                    </option>
+
+                    <option value="Ensino Médio Cursando">
+                        Ensino Médio Cursando
+                    </option>
+
+                    <option value="Ensino Médio Completo">
+                        Ensino Médio Completo
+                    </option>
+
+                    <option value="Ensino Superior Incompleto">
+                        Ensino Superior Incompleto
+                    </option>
+
+                    <option value="Ensino Superior Cursando">
+                        Ensino Superior Cursando
+                    </option>
+
+                    <option value="Ensino Superior Completo">
+                        Ensino Superior Completo
+                    </option>
+
+                </select>
+
+                <div class="acoes">
+
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-proximo"
+                    >
+                        Continuar
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ETAPA 7 - CURSOS -->
+
+            <section class="etapa" data-etapa="7">
+
+                <h2>Você possui cursos ou qualificações?</h2>
+
+                <div class="opcoes">
+
+                    <button
+                        type="button"
+                        class="opcao"
+                        data-cursos="sim"
+                    >
+                        Sim
+                    </button>
+
+                    <button
+                        type="button"
+                        class="opcao"
+                        data-cursos="nao"
+                    >
+                        Não
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="areaCursos"
+                    class="area-condicional"
+                >
+
+                    <label for="cursos">
+                        Quais?
+                    </label>
+
+                    <textarea
+                        id="cursos"
+                        name="cursos"
+                        rows="5"
+                        placeholder="Ex:
+Informática básica
+Excel
+Atendimento ao cliente"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="acoes">
+
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-proximo"
+                    >
+                        Continuar
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ETAPA 8 - EXPERIÊNCIA -->
+
+            <section class="etapa" data-etapa="8">
+
+                <h2>Você já trabalhou anteriormente?</h2>
+
+                <div class="opcoes">
+
+                    <button
+                        type="button"
+                        class="opcao"
+                        data-experiencia="sim"
+                    >
+                        Sim
+                    </button>
+
+                    <button
+                        type="button"
+                        class="opcao"
+                        data-experiencia="nao"
+                    >
+                        Não, busco minha primeira oportunidade
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="areaExperiencias"
+                    class="area-condicional"
+                >
+
+                    <div id="listaExperiencias">
+
+                        <div class="experiencia">
+
+                            <label>
+                                Empresa
+                            </label>
+
+                            <input
+                                type="text"
+                                class="empresa"
+                                placeholder="Nome da empresa"
+                            >
+
+
+                            <label>
+                                Função
+                            </label>
+
+                            <input
+                                type="text"
+                                class="funcao"
+                                placeholder="Ex: Auxiliar de produção"
+                            >
+
+
+                            <label>
+                                Período
+                            </label>
+
+                            <input
+                                type="text"
+                                class="periodo"
+                                placeholder="Ex: Janeiro de 2024 a Junho de 2025"
+                            >
+
+
+                            <label>
+                                Principais atividades
+                            </label>
+
+                            <textarea
+                                class="atividades"
+                                rows="4"
+                                placeholder="Conte brevemente o que você fazia."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="adicionarExperiencia"
+                        class="btn-secundario"
+                    >
+                        + Adicionar outra experiência
+                    </button>
+
+                </div>
+
+
+                <div class="acoes">
+
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-proximo"
+                    >
+                        Continuar
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ETAPA 9 - OBJETIVO -->
+
+            <section class="etapa" data-etapa="9">
+
+                <h2>Que tipo de trabalho você procura?</h2>
+
+                <p class="descricao">
+                    Pode informar uma função específica ou uma área.
+                </p>
+
+                <input
+                    type="text"
+                    id="objetivo"
+                    name="objetivo"
+                    placeholder="Ex: Vendedor, auxiliar administrativo, serviços gerais..."
+                    required
+                >
+
+                <div class="acoes">
+
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                    >
+                        Voltar
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-proximo"
+                    >
+                        Continuar
+                    </button>
+
+                </div>
+
+            </section>
+            <!-- ETAPA 10 - FINAL -->
+            <section class="etapa" data-etapa="10">
+                <div class="icone-etapa">✅</div>
+                <h2>Seu currículo está quase pronto!</h2>
+                <p class="descricao">
+                    Confira suas informações e clique abaixo
+                    para gerar seu currículo.
+                </p>
+                <!-- Futuramente o JS coloca um resumo aqui -->
+                <div id="resumoCurriculo"></div>
+                <div class="acoes">
+                    <button
+                        type="button"
+                        class="btn-voltar"
+                    >
+                        Voltar
+                    </button>
+                    <button
+                        type="submit"
+                        id="gerarCurriculo"
+                        class="btn btn-gerar"
+                    >
+                        Gerar meu currículo
+                    </button>
+                </div>
+            </section>
+        </form>
+        <footer>
+            <p>
+                Contrata Reserva
+            </p>
+            <small>
+                Encontre ou anuncie serviços
+            </small>
+        </footer>
+    </main>
+    <!-- JavaScript -->
+    <script src="curriculo.js"></script>
+</body>
+</html>
