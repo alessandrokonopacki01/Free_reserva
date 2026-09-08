@@ -733,7 +733,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             doc.setGState(
                 new doc.GState({
-                    opacity: 0.055
+                    opacity: 0.15
                 })
             );
 
