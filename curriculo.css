@@ -1,5 +1,12 @@
 /* =====================================================
-   CONTRATA RESERVA - GERADOR DE CURRÍCULOS
+   CONTRATA RESERVA
+   GERADOR DE CURRÍCULOS
+   IDENTIDADE VISUAL: PRETO + DOURADO
+===================================================== */
+
+
+/* =====================================================
+   RESET
 ===================================================== */
 
 * {
@@ -9,30 +16,53 @@
 }
 
 :root {
-    --azul: #001f4d;
-    --azul-claro: #063b7a;
-    --verde: #43ad12;
-    --verde-escuro: #318b0b;
+    /* Identidade Contrata */
+    --preto: #0a0a0a;
+    --preto-claro: #171717;
+    --preto-suave: #242424;
 
+    --dourado: #d4af37;
+    --dourado-claro: #f0cf64;
+    --dourado-escuro: #a88620;
+
+    /* Cores auxiliares */
     --branco: #ffffff;
-    --fundo: #f4f6f8;
-    --texto: #172033;
-    --texto-claro: #6b7280;
-    --borda: #d9dee7;
+    --fundo: #f3f3f3;
+    --texto: #1c1c1c;
+    --texto-claro: #707070;
+    --borda: #dddddd;
 
-    --sombra: 0 10px 35px rgba(0, 31, 77, 0.10);
+    --erro: #c62828;
+
+    --sombra:
+        0 12px 40px rgba(0, 0, 0, 0.14);
 }
+
 
 html {
     scroll-behavior: smooth;
 }
 
+
 body {
     min-height: 100vh;
-    background: var(--fundo);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #050505 0%,
+            #111111 55%,
+            #1b1b1b 100%
+        );
+
     color: var(--texto);
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 25px 15px;
+
+    padding: 35px 15px;
 }
 
 
@@ -43,11 +73,19 @@ body {
 .curriculo-container {
     width: 100%;
     max-width: 720px;
+
     margin: 0 auto;
+
     background: var(--branco);
-    border-radius: 22px;
-    box-shadow: var(--sombra);
+
+    border-radius: 20px;
+
     overflow: hidden;
+
+    box-shadow: var(--sombra);
+
+    border:
+        1px solid rgba(212, 175, 55, 0.25);
 }
 
 
@@ -56,27 +94,77 @@ body {
 ===================================================== */
 
 .cabecalho {
+    position: relative;
+
     text-align: center;
-    padding: 32px 35px 25px;
+
+    padding:
+        35px
+        35px
+        28px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #080808,
+            #111111
+        );
+
+    color: var(--branco);
+
+    border-bottom:
+        3px solid var(--dourado);
 }
+
+
+/* Detalhe dourado discreto */
+
+.cabecalho::after {
+    content: "";
+
+    position: absolute;
+
+    bottom: -3px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: 120px;
+    height: 3px;
+
+    background: var(--dourado-claro);
+}
+
 
 .logo {
     display: block;
+
     width: 230px;
     max-width: 75%;
+
     height: auto;
-    margin: 0 auto 18px;
+
+    margin:
+        0 auto
+        20px;
 }
+
 
 .cabecalho h1 {
-    color: var(--azul);
+    color: var(--dourado);
+
     font-size: 2rem;
-    margin-bottom: 8px;
+    font-weight: 700;
+
+    margin-bottom: 9px;
 }
 
+
 .cabecalho p {
-    color: var(--texto-claro);
+    color: #d7d7d7;
+
     font-size: 0.98rem;
+
     line-height: 1.5;
 }
 
@@ -86,41 +174,66 @@ body {
 ===================================================== */
 
 .progresso-container {
-    padding: 0 45px 25px;
+    padding:
+        24px
+        45px
+        20px;
+
+    background: #fafafa;
+
+    border-bottom:
+        1px solid #eeeeee;
 }
+
 
 .progresso-info {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
 
-    margin-bottom: 8px;
+    margin-bottom: 9px;
 
     font-size: 0.82rem;
     font-weight: bold;
+
     color: var(--texto-claro);
 }
+
+
+#porcentagemProgresso {
+    color: var(--dourado-escuro);
+}
+
 
 .barra-progresso {
     width: 100%;
     height: 7px;
-    background: #e8ebef;
-    border-radius: 20px;
+
+    background: #dedede;
+
+    border-radius: 50px;
+
     overflow: hidden;
 }
+
 
 #barraProgresso {
     width: 0%;
     height: 100%;
-    border-radius: 20px;
 
-    background: linear-gradient(
-        90deg,
-        var(--azul),
-        var(--verde)
-    );
+    border-radius: 50px;
 
-    transition: width 0.35s ease;
+    background:
+        linear-gradient(
+            90deg,
+            var(--dourado-escuro),
+            var(--dourado),
+            var(--dourado-claro)
+        );
+
+    transition:
+        width 0.35s ease;
 }
 
 
@@ -129,19 +242,26 @@ body {
 ===================================================== */
 
 #formCurriculo {
-    padding: 15px 45px 45px;
+    padding:
+        30px
+        45px
+        45px;
+
+    min-height: 360px;
 }
 
 
-/* Todas as etapas começam escondidas */
+/* =====================================================
+   ETAPAS
+===================================================== */
 
 .etapa {
     display: none;
-    animation: aparecer 0.3s ease;
+
+    animation:
+        aparecer 0.3s ease;
 }
 
-
-/* JS utilizará essa classe */
 
 .etapa.ativa {
     display: block;
@@ -152,36 +272,63 @@ body {
 
     from {
         opacity: 0;
-        transform: translateY(8px);
+
+        transform:
+            translateY(8px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
-    }
 
+        transform:
+            translateY(0);
+    }
 }
 
 
 /* =====================================================
-   TÍTULOS
+   TÍTULOS E TEXTOS
 ===================================================== */
 
 .etapa h2 {
-    color: var(--azul);
+    color: var(--preto);
+
     font-size: 1.55rem;
+
     line-height: 1.3;
+
     margin-bottom: 12px;
 }
 
+
+.etapa h2::after {
+    content: "";
+
+    display: block;
+
+    width: 45px;
+    height: 3px;
+
+    margin-top: 10px;
+
+    border-radius: 20px;
+
+    background: var(--dourado);
+}
+
+
 .descricao {
     color: var(--texto-claro);
+
     line-height: 1.6;
+
     margin-bottom: 25px;
 }
 
+
 .icone-etapa {
     font-size: 3rem;
+
     margin-bottom: 15px;
 }
 
@@ -192,17 +339,25 @@ body {
 
 label {
     display: block;
-    margin: 20px 0 8px;
+
+    margin:
+        20px
+        0
+        8px;
 
     font-size: 0.92rem;
+
     font-weight: 700;
 
-    color: var(--azul);
+    color: var(--preto);
 }
+
 
 .opcional {
     font-size: 0.78rem;
+
     font-weight: normal;
+
     color: var(--texto-claro);
 }
 
@@ -214,98 +369,144 @@ label {
 input,
 select,
 textarea {
-
     width: 100%;
 
-    padding: 15px 16px;
+    padding:
+        15px
+        16px;
 
-    border: 1px solid var(--borda);
-    border-radius: 11px;
+    border:
+        1px solid var(--borda);
 
-    background: #fff;
+    border-radius: 10px;
+
+    background: #ffffff;
 
     font-family: inherit;
+
     font-size: 1rem;
+
     color: var(--texto);
 
     outline: none;
 
     transition:
         border-color 0.2s ease,
-        box-shadow 0.2s ease;
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
+
 
 textarea {
     resize: vertical;
+
     min-height: 105px;
 }
+
 
 select {
     cursor: pointer;
 }
 
+
+input:hover,
+select:hover,
+textarea:hover {
+    border-color: #bcbcbc;
+}
+
+
 input:focus,
 select:focus,
 textarea:focus {
-
-    border-color: var(--verde);
+    border-color: var(--dourado);
 
     box-shadow:
-        0 0 0 3px rgba(67, 173, 18, 0.12);
+        0 0 0 3px
+        rgba(212, 175, 55, 0.16);
+
+    background: #fffdf8;
 }
+
 
 input::placeholder,
 textarea::placeholder {
-    color: #a0a7b2;
+    color: #a2a2a2;
 }
 
 
 /* =====================================================
-   BOTÕES
+   BOTÕES PRINCIPAIS
 ===================================================== */
 
 button {
     font-family: inherit;
 }
 
+
 .btn {
-
     border: none;
-    border-radius: 11px;
 
-    padding: 14px 25px;
+    border-radius: 10px;
 
-    background: var(--azul);
-    color: white;
+    padding:
+        14px
+        25px;
+
+    background: var(--preto);
+
+    color: var(--dourado);
 
     font-size: 1rem;
+
     font-weight: bold;
 
     cursor: pointer;
 
+    border:
+        1px solid var(--preto);
+
     transition:
         transform 0.15s ease,
         background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
         box-shadow 0.2s ease;
 }
 
+
 .btn:hover {
-    background: var(--azul-claro);
-    box-shadow: 0 5px 15px rgba(0, 31, 77, 0.16);
+    background: var(--dourado);
+
+    color: var(--preto);
+
+    border-color: var(--dourado);
+
+    box-shadow:
+        0 6px 18px
+        rgba(212, 175, 55, 0.25);
 }
+
 
 .btn:active {
     transform: scale(0.98);
 }
 
 
+.btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
 /* =====================================================
-   AÇÕES - VOLTAR / CONTINUAR
+   VOLTAR / CONTINUAR
 ===================================================== */
 
 .acoes {
-
     display: flex;
+
     justify-content: space-between;
     align-items: center;
 
@@ -314,23 +515,31 @@ button {
     margin-top: 30px;
 }
 
-.btn-voltar {
 
+.btn-voltar {
     border: none;
+
     background: transparent;
 
     color: var(--texto-claro);
 
-    padding: 13px 5px;
+    padding:
+        13px
+        5px;
 
     font-size: 0.95rem;
+
     font-weight: bold;
 
     cursor: pointer;
+
+    transition:
+        color 0.2s ease;
 }
 
+
 .btn-voltar:hover {
-    color: var(--azul);
+    color: var(--dourado-escuro);
 }
 
 
@@ -340,52 +549,62 @@ button {
 
 .opcoes {
     display: flex;
+
     gap: 12px;
+
     flex-wrap: wrap;
+
     margin-top: 22px;
 }
 
-.opcao {
 
+.opcao {
     flex: 1;
 
     min-width: 150px;
 
     padding: 16px;
 
-    border: 2px solid var(--borda);
-    border-radius: 12px;
+    border:
+        2px solid var(--borda);
 
-    background: white;
+    border-radius: 11px;
+
+    background: #ffffff;
+
     color: var(--texto);
 
     font-size: 0.95rem;
+
     font-weight: bold;
 
     cursor: pointer;
 
-    transition: 0.2s ease;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
 }
+
 
 .opcao:hover {
+    border-color: var(--dourado);
 
-    border-color: var(--verde);
+    background: #fffaf0;
 
-    background:
-        rgba(67, 173, 18, 0.05);
+    transform:
+        translateY(-1px);
 }
 
 
-/* JS aplicará quando selecionado */
-
 .opcao.selecionada {
-
-    border-color: var(--verde);
+    border-color: var(--dourado);
 
     background:
-        rgba(67, 173, 18, 0.10);
+        rgba(212, 175, 55, 0.13);
 
-    color: var(--verde-escuro);
+    color: #765e13;
 }
 
 
@@ -394,19 +613,23 @@ button {
 ===================================================== */
 
 .area-condicional {
-
     display: none;
 
     margin-top: 25px;
 
     padding: 22px;
 
-    border-radius: 14px;
+    border-radius: 13px;
 
-    background: #f8fafb;
+    background: #fafafa;
 
-    border: 1px solid #e6e9ed;
+    border:
+        1px solid #e4e4e4;
+
+    border-left:
+        4px solid var(--dourado);
 }
+
 
 .area-condicional.visivel {
     display: block;
@@ -414,60 +637,130 @@ button {
 
 
 /* =====================================================
-   EXPERIÊNCIAS
+   EXPERIÊNCIAS PROFISSIONAIS
 ===================================================== */
 
 .experiencia {
-
     padding-bottom: 25px;
+
     margin-bottom: 25px;
 
-    border-bottom: 1px solid var(--borda);
+    border-bottom:
+        1px solid var(--borda);
 }
+
 
 .experiencia:last-child {
     margin-bottom: 10px;
 }
 
-.btn-secundario {
 
+.btn-secundario {
     width: 100%;
 
-    padding: 13px 18px;
+    padding:
+        13px
+        18px;
 
-    border: 2px dashed var(--verde);
+    border:
+        2px dashed var(--dourado);
+
     border-radius: 10px;
 
     background: transparent;
-    color: var(--verde-escuro);
+
+    color: #765e13;
 
     font-size: 0.93rem;
+
     font-weight: bold;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
 
+
 .btn-secundario:hover {
-    background: rgba(67, 173, 18, 0.07);
+    background:
+        rgba(212, 175, 55, 0.12);
+
+    color: var(--preto);
 }
 
 
 /* =====================================================
-   BOTÃO GERAR
+   REMOVER EXPERIÊNCIA
+===================================================== */
+
+.btn-remover-experiencia {
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 11px;
+
+    border:
+        1px solid #d7d7d7;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #9b1c1c;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.btn-remover-experiencia:hover {
+    background: #fff3f3;
+
+    border-color: #d9aaaa;
+}
+
+
+/* =====================================================
+   BOTÃO GERAR CURRÍCULO
 ===================================================== */
 
 .btn-gerar {
+    background:
+        linear-gradient(
+            135deg,
+            #b58d18,
+            var(--dourado),
+            var(--dourado-claro)
+        );
 
-    background: var(--verde);
+    color: var(--preto);
+
+    border-color: var(--dourado);
 
     padding-left: 28px;
+
     padding-right: 28px;
 }
 
+
 .btn-gerar:hover {
-    background: var(--verde-escuro);
+    background: var(--preto);
+
+    color: var(--dourado);
+
+    border-color: var(--preto);
+
+    box-shadow:
+        0 7px 20px
+        rgba(0, 0, 0, 0.18);
 }
 
 
@@ -476,21 +769,56 @@ button {
 ===================================================== */
 
 #resumoCurriculo {
-
     margin-top: 25px;
 
     padding: 20px;
 
-    background: #f7f9fb;
+    background: #fafafa;
 
-    border: 1px solid var(--borda);
-    border-radius: 12px;
+    border:
+        1px solid var(--borda);
+
+    border-left:
+        4px solid var(--dourado);
+
+    border-radius: 10px;
 
     line-height: 1.6;
 }
 
+
+#resumoCurriculo strong {
+    color: var(--preto);
+}
+
+
 #resumoCurriculo:empty {
     display: none;
+}
+
+
+/* =====================================================
+   ERROS
+===================================================== */
+
+.campo-erro {
+    border-color:
+        var(--erro) !important;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(198, 40, 40, 0.08);
+}
+
+
+.mensagem-erro {
+    display: block;
+
+    margin-top: 6px;
+
+    color: var(--erro);
+
+    font-size: 0.78rem;
 }
 
 
@@ -499,44 +827,32 @@ button {
 ===================================================== */
 
 footer {
+    position: relative;
 
     text-align: center;
 
-    padding: 22px;
+    padding: 24px;
 
-    background: var(--azul);
+    background: var(--preto);
 
-    color: white;
+    color: var(--branco);
+
+    border-top:
+        3px solid var(--dourado);
 }
+
 
 footer p {
+    color: var(--dourado);
+
     font-weight: bold;
-    margin-bottom: 4px;
+
+    margin-bottom: 5px;
 }
+
 
 footer small {
-    opacity: 0.75;
-}
-
-
-/* =====================================================
-   MENSAGENS DE ERRO
-   O JS poderá utilizar essas classes
-===================================================== */
-
-.campo-erro {
-    border-color: #d93025 !important;
-}
-
-.mensagem-erro {
-
-    display: block;
-
-    margin-top: 6px;
-
-    color: #d93025;
-
-    font-size: 0.78rem;
+    color: #cccccc;
 }
 
 
@@ -548,65 +864,103 @@ footer small {
 
     body {
         padding: 0;
-        background: white;
+
+        background: var(--branco);
     }
+
 
     .curriculo-container {
         min-height: 100vh;
+
         border-radius: 0;
+
+        border: none;
+
         box-shadow: none;
     }
 
+
     .cabecalho {
-        padding: 25px 22px 20px;
+        padding:
+            28px
+            22px
+            23px;
     }
+
 
     .logo {
         width: 190px;
-        margin-bottom: 15px;
+
+        margin-bottom: 17px;
     }
+
 
     .cabecalho h1 {
         font-size: 1.65rem;
     }
 
+
     .cabecalho p {
         font-size: 0.9rem;
     }
 
+
     .progresso-container {
-        padding: 0 22px 20px;
+        padding:
+            20px
+            22px
+            18px;
     }
 
+
     #formCurriculo {
-        padding: 20px 22px 40px;
+        padding:
+            25px
+            22px
+            40px;
+
+        min-height: 400px;
     }
+
 
     .etapa h2 {
         font-size: 1.35rem;
     }
 
+
     input,
     select,
     textarea {
+        /*
+           Evita zoom automático em alguns
+           navegadores de celular.
+        */
+
         font-size: 16px;
     }
+
 
     .acoes {
         margin-top: 28px;
     }
 
+
     .acoes .btn {
         flex: 1;
     }
+
 
     .opcoes {
         flex-direction: column;
     }
 
+
     .opcao {
         width: 100%;
+
+        min-width: 0;
     }
+
 
     .area-condicional {
         padding: 17px;
@@ -623,21 +977,27 @@ footer small {
 
     .cabecalho {
         padding-left: 16px;
+
         padding-right: 16px;
     }
+
 
     .progresso-container,
     #formCurriculo {
         padding-left: 16px;
+
         padding-right: 16px;
     }
+
 
     .acoes {
         gap: 8px;
     }
 
+
     .btn {
         padding-left: 15px;
+
         padding-right: 15px;
     }
 
