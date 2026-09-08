@@ -77,7 +77,9 @@ async function carregarColaboradores() {
 
                     <a
                         class="btn-whats"
-                        href="https://wa.me/55${empresa.whatsapp}"
+                        href="https://wa.me/55${empresa.whatsapp}?text=${encodeURIComponent(
+    "Vi no site que você é um colaborador da Contrata Reserva e preciso dos seus serviços."
+)}"
                         target="_blank"
                     >
                         💬 Conversar no WhatsApp
