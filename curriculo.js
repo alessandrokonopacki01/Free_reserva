@@ -4,6 +4,18 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    /* =====================================================
+       CORRETOR ORTOGRÁFICO DO NAVEGADOR
+    ===================================================== */
+
+    document
+        .querySelectorAll('input[type="text"], textarea')
+        .forEach(campo => {
+            campo.setAttribute("spellcheck", "true");
+            campo.setAttribute("lang", "pt-BR");
+        });
+
+
     const form = document.getElementById("formCurriculo");
     const etapas = [...document.querySelectorAll(".etapa")];
 
