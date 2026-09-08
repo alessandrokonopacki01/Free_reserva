@@ -1303,9 +1303,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     "-"
                 )
                 .replace(
-                    /^-|-$|/g,
-                    ""
-                );
+    /^-|-$/g,
+    ""
+);
 
 
         doc.save(
