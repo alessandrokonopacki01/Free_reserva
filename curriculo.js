@@ -890,6 +890,60 @@ async function abrirAnuncioCurriculo() {
 
         let intervalo = null;
 
+        let anuncioConcluido = false;
+
+async function concluirAnuncio() {
+
+    if (anuncioConcluido) {
+        return;
+    }
+
+    anuncioConcluido = true;
+
+    tempo.textContent =
+        "Anúncio concluído! Gerando currículo...";
+
+    if (intervalo) {
+        clearInterval(intervalo);
+        intervalo = null;
+    }
+
+    try {
+
+        if (playerAnuncioCurriculo) {
+            playerAnuncioCurriculo.stopVideo();
+        }
+
+    } catch (erro) {
+        console.warn(erro);
+    }
+
+    try {
+
+        await updateDoc(
+            doc(
+                db,
+                "anunciosVideos",
+                anuncio.id
+            ),
+            {
+                conclusoes: increment(1),
+                conclusoesCurriculo: increment(1)
+            }
+        );
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao registrar conclusão:",
+            erro
+        );
+    }
+
+    setTimeout(() => {
+        finalizar(true);
+    }, 300);
+}
 
         const empresa =
             anuncio.empresa ||
@@ -1197,23 +1251,33 @@ async function abrirAnuncioCurriculo() {
                                                 );
 
 
-                                            if (
-                                                duracao > 0
-                                            ) {
+                                            if (duracao > 0) {
 
-                                                const restante =
-                                                    Math.max(
-                                                        0,
-                                                        Math.ceil(
-                                                            duracao -
-                                                            tempoAtual
-                                                        )
-                                                    );
+    const restanteReal =
+        duracao - tempoAtual;
 
+    const restante =
+        Math.max(
+            0,
+            Math.ceil(restanteReal)
+        );
 
-                                                tempo.textContent =
-                                                    `Tempo restante: ${restante} segundos`;
-                                            }
+    tempo.textContent =
+        `Tempo restante: ${restante} segundos`;
+
+    /*
+     * Finaliza antes do YouTube reiniciar.
+     */
+    if (
+        restanteReal <= 1 &&
+        tempoAtual > 0
+    ) {
+
+        concluirAnuncio();
+
+        return;
+    }
+}
 
                                         },
                                         500
@@ -1221,58 +1285,16 @@ async function abrirAnuncioCurriculo() {
                             },
 
 
-                            async onStateChange(evento) {
+                           async onStateChange(evento) {
 
-                                if (
-                                    evento.data ===
-                                    window.YT
-                                        .PlayerState
-                                        .ENDED
-                                ) {
+    if (
+        evento.data ===
+        window.YT.PlayerState.ENDED
+    ) {
+        await concluirAnuncio();
+    }
 
-                                    tempo.textContent =
-                                        "Anúncio concluído! Gerando currículo...";
-
-
-                                    try {
-
-                                        await updateDoc(
-                                            doc(
-                                                db,
-                                                "anunciosVideos",
-                                                anuncio.id
-                                            ),
-                                            {
-
-                                                conclusoes:
-                                                    increment(1),
-
-                                                conclusoesCurriculo:
-                                                    increment(1)
-                                            }
-                                        );
-
-                                    } catch (erro) {
-
-                                        console.error(
-                                            "Erro ao registrar conclusão:",
-                                            erro
-                                        );
-                                    }
-
-
-                                    setTimeout(
-                                        () => {
-
-                                            finalizar(
-                                                true
-                                            );
-
-                                        },
-                                        500
-                                    );
-                                }
-                            },
+},
 
 
                             onError(erro) {
