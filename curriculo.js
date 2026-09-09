@@ -1223,37 +1223,6 @@ async function abrirAnuncioCurriculo() {
 
                             async onStateChange(evento) {
 
-                                /*
-                                 * Se pausar, volta a tocar.
-                                 */
-
-                                if (
-                                    evento.data ===
-                                    window.YT
-                                        .PlayerState
-                                        .PAUSED &&
-                                    !finalizado
-                                ) {
-
-                                    try {
-
-                                        playerAnuncioCurriculo
-                                            .playVideo();
-
-                                    } catch (erro) {
-
-                                        console.warn(
-                                            erro
-                                        );
-                                    }
-                                }
-
-
-                                /*
-                                 * Só libera o currículo
-                                 * quando terminar.
-                                 */
-
                                 if (
                                     evento.data ===
                                     window.YT
