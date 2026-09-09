@@ -267,3 +267,11 @@ body > h1 {
     radial-gradient(circle at top, rgba(0, 255, 136, .20), transparent 35%),
     linear-gradient(160deg, #00150b, #000 70%);
 }
+
+.story-modelo.emprego {
+  --cor: #ffd700;
+  --cor2: #ffffff;
+  --fundo:
+    radial-gradient(circle at top, rgba(255, 215, 0, .28), transparent 35%),
+    linear-gradient(160deg, #161000, #000 70%);
+}

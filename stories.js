@@ -74,6 +74,16 @@ const TEMAS = {
     ]
   },
 
+  "Vaga de Emprego": {
+  classe: "emprego",
+  icone: "💼",
+  beneficios: [
+    "Oportunidade de trabalho",
+    "Vaga disponível em Reserva",
+    "Entre em contato"
+  ]
+},
+
   "Outros": {
     classe: "servico",
     icone: "💼",
