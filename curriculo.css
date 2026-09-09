@@ -1002,3 +1002,165 @@ footer small {
     }
 
 }
+
+/* =====================================================
+   MODAL DE ANÚNCIO
+===================================================== */
+
+.modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    overflow-y: auto;
+
+    background:
+        rgba(0, 0, 0, 0.82);
+
+    backdrop-filter:
+        blur(4px);
+}
+
+
+.modal-content {
+    background:
+        linear-gradient(
+            145deg,
+            #151515,
+            #050505
+        );
+
+    max-width: 620px;
+
+    margin: 40px auto;
+
+    padding: 28px;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    border:
+        1px solid #ffd700;
+
+    box-shadow:
+        0 0 30px
+        rgba(255, 215, 0, 0.25);
+
+    color: #ffffff;
+}
+
+
+.modal-content h2 {
+    color: #ffd700;
+
+    margin-bottom: 15px;
+}
+
+
+#textoModalAnuncio {
+    color: #eeeeee;
+
+    line-height: 1.5;
+}
+
+
+.video-anuncio {
+    display: none;
+
+    width: 100%;
+
+    margin: 20px 0;
+
+    background: #000;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255, 215, 0, 0.45);
+}
+
+
+#tempoAnuncio {
+    margin: 15px 0;
+
+    color: #ffffff;
+
+    font-weight: bold;
+}
+
+
+.botoes-anuncio {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    margin-top: 20px;
+}
+
+
+.btn-assistir-anuncio,
+.btn-cancelar-anuncio {
+    border: none;
+
+    padding: 13px 22px;
+
+    border-radius: 999px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    font-weight: bold;
+}
+
+
+.btn-assistir-anuncio {
+    background:
+        linear-gradient(
+            135deg,
+            #ffd700,
+            #ff9d00
+        );
+
+    color: #000;
+}
+
+
+.btn-cancelar-anuncio {
+    background: #333;
+
+    color: #fff;
+}
+
+
+.btn-assistir-anuncio:disabled,
+.btn-cancelar-anuncio:disabled {
+    opacity: 0.5;
+
+    cursor: not-allowed;
+}
+
+
+@media (max-width: 600px) {
+
+    .modal-content {
+        width:
+            calc(100% - 30px);
+
+        margin:
+            30px auto;
+
+        padding:
+            20px;
+    }
+}

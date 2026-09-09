@@ -14,8 +14,8 @@
     <link rel="stylesheet" href="curriculo.css">
 
     <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 
 
@@ -453,7 +453,51 @@ Atendimento ao cliente"></textarea>
         </footer>
     </main>
     <!-- JavaScript -->
-    <script src="curriculo.js"></script>
+     <!-- MODAL DO ANÚNCIO PARA LIBERAR O CURRÍCULO -->
+
+<div id="modalAnuncio" class="modal">
+
+    <div class="modal-content modal-anuncio-content">
+
+        <h2>📺 Anúncio dos nossos colaboradores</h2>
+
+        <p id="textoModalAnuncio">
+            Assista ao vídeo completo para gerar seu currículo gratuitamente.
+        </p>
+
+        <div
+            id="playerAnuncio"
+            class="video-anuncio"
+        ></div>
+
+        <p id="tempoAnuncio">
+            Clique em assistir para começar.
+        </p>
+
+        <div class="botoes-anuncio">
+
+            <button
+                id="btnCancelarAnuncio"
+                type="button"
+                class="btn-cancelar-anuncio"
+            >
+                Cancelar
+            </button>
+
+            <button
+                id="btnAssistirAnuncio"
+                type="button"
+                class="btn-assistir-anuncio"
+            >
+                Assistir anúncio
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+    <script type="module" src="curriculo.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,20 @@
 /* =====================================================
    CONTRATA RESERVA - GERADOR DE CURRÍCULOS
 ===================================================== */
+import { db } from "./firebase.js";
+
+import {
+    collection,
+    getDocs,
+    query,
+    where,
+    doc,
+    updateDoc,
+    increment
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+
+let playerAnuncioCurriculo = null;
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -626,7 +640,697 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${partes[2]}/${partes[1]}/${partes[0]}`;
     }
 
+/* =================================================
+   ANÚNCIO PARA LIBERAR CURRÍCULO
+================================================= */
 
+async function carregarProximoAnuncioCurriculo() {
+
+    const snapshot = await getDocs(
+        query(
+            collection(db, "anunciosVideos"),
+            where("ativo", "==", true)
+        )
+    );
+
+    if (snapshot.empty) {
+        return null;
+    }
+
+    const anuncios = snapshot.docs
+        .map(documento => ({
+            id: documento.id,
+            ...documento.data()
+        }))
+        .sort((a, b) => {
+
+            const dataA =
+                a.criadoEm?.toMillis?.() || 0;
+
+            const dataB =
+                b.criadoEm?.toMillis?.() || 0;
+
+            if (dataA !== dataB) {
+                return dataA - dataB;
+            }
+
+            return a.id.localeCompare(b.id);
+        });
+
+
+    const chave =
+        "indiceAnuncioCurriculoContrata";
+
+    const indiceSalvo =
+        Number(
+            localStorage.getItem(chave) || 0
+        );
+
+    const indice =
+        Number.isInteger(indiceSalvo) &&
+        indiceSalvo >= 0
+            ? indiceSalvo % anuncios.length
+            : 0;
+
+
+    const anuncio =
+        anuncios[indice];
+
+
+    const proximoIndice =
+        (indice + 1) % anuncios.length;
+
+
+    localStorage.setItem(
+        chave,
+        String(proximoIndice)
+    );
+
+
+    return anuncio;
+}
+
+
+/* =================================================
+   AGUARDAR API DO YOUTUBE
+================================================= */
+
+function aguardarYoutube(
+    limiteMs = 10000
+) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const inicio =
+                Date.now();
+
+
+            function verificar() {
+
+                if (
+                    window.YT &&
+                    typeof window.YT.Player ===
+                    "function"
+                ) {
+
+                    resolve();
+
+                    return;
+                }
+
+
+                if (
+                    Date.now() - inicio >=
+                    limiteMs
+                ) {
+
+                    reject(
+                        new Error(
+                            "A API do YouTube não carregou."
+                        )
+                    );
+
+                    return;
+                }
+
+
+                setTimeout(
+                    verificar,
+                    200
+                );
+            }
+
+
+            verificar();
+        }
+    );
+}
+
+
+/* =================================================
+   ABRIR ANÚNCIO
+================================================= */
+
+async function abrirAnuncioCurriculo() {
+
+    let anuncio;
+
+
+    try {
+
+        anuncio =
+            await carregarProximoAnuncioCurriculo();
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao carregar anúncio:",
+            erro
+        );
+
+        alert(
+            "Não foi possível carregar o anúncio."
+        );
+
+        return false;
+    }
+
+
+    if (
+        !anuncio ||
+        !anuncio.youtubeId
+    ) {
+
+        /*
+         * Evita bloquear completamente o currículo
+         * caso não exista anúncio ativo.
+         */
+
+        console.warn(
+            "Nenhum anúncio ativo encontrado."
+        );
+
+        return true;
+    }
+
+
+    try {
+
+        await aguardarYoutube();
+
+    } catch (erro) {
+
+        console.error(erro);
+
+        alert(
+            "Não foi possível carregar o vídeo."
+        );
+
+        return false;
+    }
+
+
+    return new Promise(resolve => {
+
+        const modal =
+            document.getElementById(
+                "modalAnuncio"
+            );
+
+        const botaoAssistir =
+            document.getElementById(
+                "btnAssistirAnuncio"
+            );
+
+        const botaoCancelar =
+            document.getElementById(
+                "btnCancelarAnuncio"
+            );
+
+        const tempo =
+            document.getElementById(
+                "tempoAnuncio"
+            );
+
+        const texto =
+            document.getElementById(
+                "textoModalAnuncio"
+            );
+
+
+        let playerBox =
+            document.getElementById(
+                "playerAnuncio"
+            );
+
+
+        if (
+            !modal ||
+            !botaoAssistir ||
+            !botaoCancelar ||
+            !tempo ||
+            !playerBox
+        ) {
+
+            console.error(
+                "Elementos do modal não encontrados."
+            );
+
+            resolve(false);
+
+            return;
+        }
+
+
+        let finalizado = false;
+        let iniciado = false;
+
+        let maiorTempoAssistido = 0;
+
+        let intervalo = null;
+
+
+        const empresa =
+            anuncio.empresa ||
+            "Colaborador Contrata";
+
+
+        const titulo =
+            anuncio.titulo ||
+            "Conheça nossos colaboradores";
+
+
+        texto.textContent =
+            `${empresa}: ${titulo}`;
+
+
+        playerBox.style.display =
+            "none";
+
+
+        function limparPlayer() {
+
+            if (intervalo) {
+
+                clearInterval(intervalo);
+
+                intervalo = null;
+            }
+
+
+            if (
+                playerAnuncioCurriculo &&
+                typeof playerAnuncioCurriculo.destroy ===
+                "function"
+            ) {
+
+                try {
+
+                    playerAnuncioCurriculo.destroy();
+
+                } catch (erro) {
+
+                    console.warn(
+                        erro
+                    );
+                }
+            }
+
+
+            playerAnuncioCurriculo =
+                null;
+
+
+            /*
+             * O destroy do YouTube pode remover
+             * a DIV original.
+             */
+
+            if (
+                !document.getElementById(
+                    "playerAnuncio"
+                )
+            ) {
+
+                const novoPlayer =
+                    document.createElement(
+                        "div"
+                    );
+
+                novoPlayer.id =
+                    "playerAnuncio";
+
+                novoPlayer.className =
+                    "video-anuncio";
+
+                novoPlayer.style.display =
+                    "none";
+
+
+                tempo.before(
+                    novoPlayer
+                );
+            }
+        }
+
+
+        function finalizar(resultado) {
+
+            if (finalizado) {
+                return;
+            }
+
+
+            finalizado = true;
+
+
+            limparPlayer();
+
+
+            modal.style.display =
+                "none";
+
+
+            botaoAssistir.disabled =
+                false;
+
+            botaoCancelar.disabled =
+                false;
+
+            botaoCancelar.style.display =
+                "inline-block";
+
+
+            botaoAssistir.textContent =
+                "Assistir anúncio";
+
+
+            tempo.textContent =
+                "Clique em assistir para começar.";
+
+
+            botaoAssistir.onclick =
+                null;
+
+            botaoCancelar.onclick =
+                null;
+
+
+            resolve(resultado);
+        }
+
+
+        botaoCancelar.onclick = () => {
+
+            if (iniciado) {
+                return;
+            }
+
+            finalizar(false);
+        };
+
+
+        botaoAssistir.onclick = () => {
+
+            if (iniciado) {
+                return;
+            }
+
+
+            iniciado = true;
+
+
+            botaoAssistir.disabled =
+                true;
+
+            botaoCancelar.disabled =
+                true;
+
+            botaoCancelar.style.display =
+                "none";
+
+
+            botaoAssistir.textContent =
+                "Assistindo...";
+
+
+            tempo.textContent =
+                "Assista ao vídeo até o final.";
+
+
+            playerBox =
+                document.getElementById(
+                    "playerAnuncio"
+                );
+
+
+            if (!playerBox) {
+
+                finalizar(false);
+
+                return;
+            }
+
+
+            playerBox.style.display =
+                "block";
+
+
+            playerAnuncioCurriculo =
+                new window.YT.Player(
+                    "playerAnuncio",
+                    {
+
+                        width: "100%",
+
+                        height: "315",
+
+                        videoId:
+                            anuncio.youtubeId,
+
+
+                        playerVars: {
+
+                            autoplay: 1,
+
+                            controls: 0,
+
+                            disablekb: 1,
+
+                            fs: 0,
+
+                            rel: 0,
+
+                            playsinline: 1,
+
+                            modestbranding: 1
+                        },
+
+
+                        events: {
+
+                            async onReady(evento) {
+
+                                try {
+
+                                    await updateDoc(
+                                        doc(
+                                            db,
+                                            "anunciosVideos",
+                                            anuncio.id
+                                        ),
+                                        {
+
+                                            visualizacoes:
+                                                increment(1),
+
+                                            visualizacoesCurriculo:
+                                                increment(1)
+                                        }
+                                    );
+
+                                } catch (erro) {
+
+                                    console.error(
+                                        "Erro ao registrar visualização:",
+                                        erro
+                                    );
+                                }
+
+
+                                evento.target
+                                    .playVideo();
+
+
+                                intervalo =
+                                    setInterval(
+                                        () => {
+
+                                            if (
+                                                !playerAnuncioCurriculo ||
+                                                typeof playerAnuncioCurriculo
+                                                    .getCurrentTime !==
+                                                "function"
+                                            ) {
+
+                                                return;
+                                            }
+
+
+                                            const tempoAtual =
+                                                playerAnuncioCurriculo
+                                                    .getCurrentTime() ||
+                                                0;
+
+
+                                            const duracao =
+                                                playerAnuncioCurriculo
+                                                    .getDuration() ||
+                                                0;
+
+
+                                            /*
+                                             * Impede avançar o vídeo.
+                                             */
+
+                                            if (
+                                                tempoAtual >
+                                                maiorTempoAssistido +
+                                                2
+                                            ) {
+
+                                                playerAnuncioCurriculo
+                                                    .seekTo(
+                                                        maiorTempoAssistido,
+                                                        true
+                                                    );
+
+                                                return;
+                                            }
+
+
+                                            maiorTempoAssistido =
+                                                Math.max(
+                                                    maiorTempoAssistido,
+                                                    tempoAtual
+                                                );
+
+
+                                            if (
+                                                duracao > 0
+                                            ) {
+
+                                                const restante =
+                                                    Math.max(
+                                                        0,
+                                                        Math.ceil(
+                                                            duracao -
+                                                            tempoAtual
+                                                        )
+                                                    );
+
+
+                                                tempo.textContent =
+                                                    `Tempo restante: ${restante} segundos`;
+                                            }
+
+                                        },
+                                        500
+                                    );
+                            },
+
+
+                            async onStateChange(evento) {
+
+                                /*
+                                 * Se pausar, volta a tocar.
+                                 */
+
+                                if (
+                                    evento.data ===
+                                    window.YT
+                                        .PlayerState
+                                        .PAUSED &&
+                                    !finalizado
+                                ) {
+
+                                    try {
+
+                                        playerAnuncioCurriculo
+                                            .playVideo();
+
+                                    } catch (erro) {
+
+                                        console.warn(
+                                            erro
+                                        );
+                                    }
+                                }
+
+
+                                /*
+                                 * Só libera o currículo
+                                 * quando terminar.
+                                 */
+
+                                if (
+                                    evento.data ===
+                                    window.YT
+                                        .PlayerState
+                                        .ENDED
+                                ) {
+
+                                    tempo.textContent =
+                                        "Anúncio concluído! Gerando currículo...";
+
+
+                                    try {
+
+                                        await updateDoc(
+                                            doc(
+                                                db,
+                                                "anunciosVideos",
+                                                anuncio.id
+                                            ),
+                                            {
+
+                                                conclusoes:
+                                                    increment(1),
+
+                                                conclusoesCurriculo:
+                                                    increment(1)
+                                            }
+                                        );
+
+                                    } catch (erro) {
+
+                                        console.error(
+                                            "Erro ao registrar conclusão:",
+                                            erro
+                                        );
+                                    }
+
+
+                                    setTimeout(
+                                        () => {
+
+                                            finalizar(
+                                                true
+                                            );
+
+                                        },
+                                        500
+                                    );
+                                }
+                            },
+
+
+                            onError(erro) {
+
+                                console.error(
+                                    "Erro no vídeo:",
+                                    erro.data
+                                );
+
+
+                                alert(
+                                    "Não foi possível reproduzir este anúncio."
+                                );
+
+
+                                finalizar(false);
+                            }
+                        }
+                    }
+                );
+        };
+
+
+        modal.style.display =
+            "block";
+    });
+}
     /* =================================================
        GERAR PDF
     ================================================= */
@@ -643,9 +1347,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            await gerarPDF();
+    botao.textContent =
+        "Carregando anúncio...";
 
-        } catch (erro) {
+
+    const assistiu =
+        await abrirAnuncioCurriculo();
+
+
+    if (!assistiu) {
+
+        botao.disabled = false;
+
+        botao.textContent =
+            "Gerar meu currículo";
+
+        return;
+    }
+
+
+    botao.textContent =
+        "Gerando currículo...";
+
+
+    await gerarPDF();
+
+} catch (erro) {
 
             console.error(erro);
 
