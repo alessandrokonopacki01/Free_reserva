@@ -4,20 +4,17 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Monte seu Currículo | Contrata Reserva</title>
 
-    <meta name="description"
-          content="Crie seu currículo de forma simples e rápida com a Contrata Reserva.">
+    <meta name="description" content="Crie seu currículo de forma simples e rápida com a Contrata Reserva.">
 
     <!-- CSS -->
     <link rel="stylesheet" href="curriculo.css">
 
     <!-- jsPDF -->
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
     </script>
 </head>
 
@@ -32,11 +29,7 @@
 
         <header class="cabecalho">
 
-            <img
-                src="img/logo-contrata.png"
-                alt="Contrata Reserva"
-                class="logo"
-            >
+            <img src="img/logo-contrata.png" alt="Contrata Reserva" class="logo">
 
             <h1>Monte seu currículo</h1>
 
@@ -86,12 +79,13 @@
                     e no final seu currículo estará pronto.
                 </p>
 
-                <button
-                    type="button"
-                    class="btn btn-proximo"
-                >
+                <button type="button" class="btn btn-proximo">
                     Começar
                 </button>
+
+                <a href="index.html">
+                    Voltar para a pagina inicial
+                </a>
 
             </section>
 
@@ -102,27 +96,14 @@
 
                 <h2>Qual é seu nome completo?</h2>
 
-                <input
-                    type="text"
-                    id="nome"
-                    name="nome"
-                    placeholder="Ex: João da Silva"
-                    autocomplete="name"
-                    required
-                >
+                <input type="text" id="nome" name="nome" placeholder="Ex: João da Silva" autocomplete="name" required>
 
                 <div class="acoes">
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                    >
+                    <button type="button" class="btn-voltar">
                         Voltar
                     </button>
 
-                    <button
-                        type="button"
-                        class="btn btn-proximo"
-                    >
+                    <button type="button" class="btn btn-proximo">
                         Continuar
                     </button>
                 </div>
@@ -140,14 +121,8 @@
                     Telefone / WhatsApp
                 </label>
 
-                <input
-                    type="tel"
-                    id="telefone"
-                    name="telefone"
-                    placeholder="(42) 99999-9999"
-                    autocomplete="tel"
-                    required
-                >
+                <input type="tel" id="telefone" name="telefone" placeholder="(42) 99999-9999" autocomplete="tel"
+                    required>
 
 
                 <label for="email">
@@ -155,26 +130,14 @@
                     <span class="opcional">(opcional)</span>
                 </label>
 
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="seunome@email.com"
-                    autocomplete="email"
-                >
+                <input type="email" id="email" name="email" placeholder="seunome@email.com" autocomplete="email">
 
                 <div class="acoes">
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                    >
+                    <button type="button" class="btn-voltar">
                         Voltar
                     </button>
 
-                    <button
-                        type="button"
-                        class="btn btn-proximo"
-                    >
+                    <button type="button" class="btn btn-proximo">
                         Continuar
                     </button>
                 </div>
@@ -192,42 +155,24 @@
                     Cidade
                 </label>
 
-                <input
-                    type="text"
-                    id="cidade"
-                    name="cidade"
-                    placeholder="Ex: Reserva"
-                    autocomplete="address-level2"
-                    required
-                >
+                <input type="text" id="cidade" name="cidade" placeholder="Ex: Reserva" autocomplete="address-level2"
+                    required>
 
 
                 <label for="bairro">
                     Bairro
                 </label>
 
-                <input
-                    type="text"
-                    id="bairro"
-                    name="bairro"
-                    placeholder="Ex: Centro"
-                    autocomplete="address-level3"
-                    required
-                >
+                <input type="text" id="bairro" name="bairro" placeholder="Ex: Centro" autocomplete="address-level3"
+                    required>
 
                 <div class="acoes">
 
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                    >
+                    <button type="button" class="btn-voltar">
                         Voltar
                     </button>
 
-                    <button
-                        type="button"
-                        class="btn btn-proximo"
-                    >
+                    <button type="button" class="btn btn-proximo">
                         Continuar
                     </button>
 
@@ -246,25 +191,15 @@
                     Essa informação é opcional.
                 </p>
 
-                <input
-                    type="date"
-                    id="nascimento"
-                    name="nascimento"
-                >
+                <input type="date" id="nascimento" name="nascimento">
 
                 <div class="acoes">
 
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                    >
+                    <button type="button" class="btn-voltar">
                         Voltar
                     </button>
 
-                    <button
-                        type="button"
-                        class="btn btn-proximo"
-                    >
+                    <button type="button" class="btn btn-proximo">
                         Continuar
                     </button>
 
@@ -279,11 +214,7 @@
 
                 <h2>Qual é sua escolaridade?</h2>
 
-                <select
-                    id="escolaridade"
-                    name="escolaridade"
-                    required
-                >
+                <select id="escolaridade" name="escolaridade" required>
 
                     <option value="">
                         Selecione uma opção
@@ -325,17 +256,11 @@
 
                 <div class="acoes">
 
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                    >
+                    <button type="button" class="btn-voltar">
                         Voltar
                     </button>
 
-                    <button
-                        type="button"
-                        class="btn btn-proximo"
-                    >
+                    <button type="button" class="btn btn-proximo">
                         Continuar
                     </button>
 
@@ -352,60 +277,38 @@
 
                 <div class="opcoes">
 
-                    <button
-                        type="button"
-                        class="opcao"
-                        data-cursos="sim"
-                    >
+                    <button type="button" class="opcao" data-cursos="sim">
                         Sim
                     </button>
 
-                    <button
-                        type="button"
-                        class="opcao"
-                        data-cursos="nao"
-                    >
+                    <button type="button" class="opcao" data-cursos="nao">
                         Não
                     </button>
 
                 </div>
 
 
-                <div
-                    id="areaCursos"
-                    class="area-condicional"
-                >
+                <div id="areaCursos" class="area-condicional">
 
                     <label for="cursos">
                         Quais?
                     </label>
 
-                    <textarea
-                        id="cursos"
-                        name="cursos"
-                        rows="5"
-                        placeholder="Ex:
+                    <textarea id="cursos" name="cursos" rows="5" placeholder="Ex:
 Informática básica
 Excel
-Atendimento ao cliente"
-                    ></textarea>
+Atendimento ao cliente"></textarea>
 
                 </div>
 
 
                 <div class="acoes">
 
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                    >
+                    <button type="button" class="btn-voltar">
                         Voltar
                     </button>
 
-                    <button
-                        type="button"
-                        class="btn btn-proximo"
-                    >
+                    <button type="button" class="btn btn-proximo">
                         Continuar
                     </button>
 
@@ -422,29 +325,18 @@ Atendimento ao cliente"
 
                 <div class="opcoes">
 
-                    <button
-                        type="button"
-                        class="opcao"
-                        data-experiencia="sim"
-                    >
+                    <button type="button" class="opcao" data-experiencia="sim">
                         Sim
                     </button>
 
-                    <button
-                        type="button"
-                        class="opcao"
-                        data-experiencia="nao"
-                    >
+                    <button type="button" class="opcao" data-experiencia="nao">
                         Não, busco minha primeira oportunidade
                     </button>
 
                 </div>
 
 
-                <div
-                    id="areaExperiencias"
-                    class="area-condicional"
-                >
+                <div id="areaExperiencias" class="area-condicional">
 
                     <div id="listaExperiencias">
 
@@ -454,55 +346,36 @@ Atendimento ao cliente"
                                 Empresa
                             </label>
 
-                            <input
-                                type="text"
-                                class="empresa"
-                                placeholder="Nome da empresa"
-                            >
+                            <input type="text" class="empresa" placeholder="Nome da empresa">
 
 
                             <label>
                                 Função
                             </label>
 
-                            <input
-                                type="text"
-                                class="funcao"
-                                placeholder="Ex: Auxiliar de produção"
-                            >
+                            <input type="text" class="funcao" placeholder="Ex: Auxiliar de produção">
 
 
                             <label>
                                 Período
                             </label>
 
-                            <input
-                                type="text"
-                                class="periodo"
-                                placeholder="Ex: Janeiro de 2024 a Junho de 2025"
-                            >
+                            <input type="text" class="periodo" placeholder="Ex: Janeiro de 2024 a Junho de 2025">
 
 
                             <label>
                                 Principais atividades
                             </label>
 
-                            <textarea
-                                class="atividades"
-                                rows="4"
-                                placeholder="Conte brevemente o que você fazia."
-                            ></textarea>
+                            <textarea class="atividades" rows="4"
+                                placeholder="Conte brevemente o que você fazia."></textarea>
 
                         </div>
 
                     </div>
 
 
-                    <button
-                        type="button"
-                        id="adicionarExperiencia"
-                        class="btn-secundario"
-                    >
+                    <button type="button" id="adicionarExperiencia" class="btn-secundario">
                         + Adicionar outra experiência
                     </button>
 
@@ -511,17 +384,11 @@ Atendimento ao cliente"
 
                 <div class="acoes">
 
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                    >
+                    <button type="button" class="btn-voltar">
                         Voltar
                     </button>
 
-                    <button
-                        type="button"
-                        class="btn btn-proximo"
-                    >
+                    <button type="button" class="btn btn-proximo">
                         Continuar
                     </button>
 
@@ -540,27 +407,16 @@ Atendimento ao cliente"
                     Pode informar uma função específica ou uma área.
                 </p>
 
-                <input
-                    type="text"
-                    id="objetivo"
-                    name="objetivo"
-                    placeholder="Ex: Vendedor, auxiliar administrativo, serviços gerais..."
-                    required
-                >
+                <input type="text" id="objetivo" name="objetivo"
+                    placeholder="Ex: Vendedor, auxiliar administrativo, serviços gerais..." required>
 
                 <div class="acoes">
 
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                    >
+                    <button type="button" class="btn-voltar">
                         Voltar
                     </button>
 
-                    <button
-                        type="button"
-                        class="btn btn-proximo"
-                    >
+                    <button type="button" class="btn btn-proximo">
                         Continuar
                     </button>
 
@@ -578,17 +434,10 @@ Atendimento ao cliente"
                 <!-- Futuramente o JS coloca um resumo aqui -->
                 <div id="resumoCurriculo"></div>
                 <div class="acoes">
-                    <button
-                        type="button"
-                        class="btn-voltar"
-                    >
+                    <button type="button" class="btn-voltar">
                         Voltar
                     </button>
-                    <button
-                        type="submit"
-                        id="gerarCurriculo"
-                        class="btn btn-gerar"
-                    >
+                    <button type="submit" id="gerarCurriculo" class="btn btn-gerar">
                         Gerar meu currículo
                     </button>
                 </div>
@@ -606,4 +455,5 @@ Atendimento ao cliente"
     <!-- JavaScript -->
     <script src="curriculo.js"></script>
 </body>
+
 </html>
