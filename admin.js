@@ -983,6 +983,8 @@ formVideoAnuncio.addEventListener(
                     ativo: true,
                     visualizacoes: 0,
                     conclusoes: 0,
+                    visualizacoesCurriculo: 0,
+                    conclusoesCurriculo: 0,
                     valorMensal: 100,
                     criadoEm: Timestamp.now()
                 }
@@ -1266,6 +1268,22 @@ async function carregarEstatisticas() {
                 0
             );
 
+            const visualizacoesCurriculoGerais =
+    videos.reduce(
+        (total, video) =>
+            total +
+            Number(video.visualizacoesCurriculo || 0),
+        0
+    );
+
+const conclusoesCurriculoGerais =
+    videos.reduce(
+        (total, video) =>
+            total +
+            Number(video.conclusoesCurriculo || 0),
+        0
+    );
+
             console.log("TOTAL VISUALIZAÇÕES:", visualizacoesGerais);
 console.log("TOTAL CONCLUSÕES:", conclusoesGerais);
 
@@ -1300,6 +1318,16 @@ console.log("TOTAL CONCLUSÕES:", conclusoesGerais);
                     Number(
                         video.conclusoes || 0
                     );
+
+                    const visualizacoesCurriculo =
+    Number(
+        video.visualizacoesCurriculo || 0
+    );
+
+const conclusoesCurriculo =
+    Number(
+        video.conclusoesCurriculo || 0
+    );
 
                 const desbloqueiosDoVideo =
                     desbloqueiosPorAnuncio.filter(
@@ -1358,6 +1386,20 @@ console.log("TOTAL CONCLUSÕES:", conclusoesGerais);
                                 ${conclusoes}
                             </strong>
                         </p>
+
+                        <p>
+    📄 Visualizações pelo currículo:
+    <strong>
+        ${visualizacoesCurriculo}
+    </strong>
+</p>
+
+<p>
+    ✅ Currículos liberados:
+    <strong>
+        ${conclusoesCurriculo}
+    </strong>
+</p>
 
                         <p>
                             📈 Taxa de conclusão:
