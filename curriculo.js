@@ -1956,9 +1956,9 @@ async function concluirAnuncio() {
         );
 
 
-        paragrafo(
-            `Busco uma oportunidade na área de ${objetivo}, onde possa desenvolver minhas habilidades, adquirir experiência e contribuir com a equipe e com os objetivos da empresa.`
-        );
+       paragrafo(
+    "Busco uma oportunidade no mercado de trabalho em que possa contribuir com minhas habilidades, adquirir novos conhecimentos e desenvolver minhas competências profissionais, colaborando para o crescimento da empresa."
+);
 
 
         /* =============================================
