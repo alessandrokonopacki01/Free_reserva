@@ -19,51 +19,158 @@
 </head>
 
 <body>
-    <header class="hero">
-        
-        <h1>Contrata Reserva</h1>
 
-        <h2>Empregos e Serviços em Reserva PR</h2>
+<header class="portal-topo">
+    <a class="portal-marca" href="index.html"
+       aria-label="Contrata Reserva - início">
+        <span class="marca-destaque">CONTRATA</span>
+        <span>RESERVA</span>
+    </a>
 
-        <p>
-            Encontre vagas de emprego, oportunidades de trabalho,
-            serviços e profissionais em Reserva-PR.
-        </p>
+    <div class="portal-topo-acoes">
+        <span class="portal-local">Reserva · PR</span>
 
-        <p>
-            Na Contrata Reserva você pode divulgar um serviço,
-            procurar trabalho ou encontrar profissionais da cidade.
-        </p>
-        <a href="publicar.html">
-            <button class="btn">
-                Publicar Anúncio Gratuitamente
-            </button>
-        </a>
-        <button id="btnLogin" class="btn">
-            Faça seu login
+        <button id="btnLogin" class="portal-login"
+                type="button">
+            Entrar na minha conta
         </button>
-        <p id="usuarioInfo"></p>
-        <a href="creditos.html">
-            <button class="btn">
-                Comprar Créditos
-            </button>
+    </div>
+</header>
+
+<main class="portal-inicio">
+
+    <!-- DESTAQUE PRINCIPAL -->
+    <section class="portal-hero">
+        <div class="portal-hero-conteudo">
+            <span class="portal-sobretitulo">
+                EMPREGOS E SERVIÇOS EM RESERVA
+            </span>
+
+            <h1>
+                Oportunidades para quem
+                <em>faz acontecer.</em>
+            </h1>
+
+            <p>
+                Encontre profissionais, anuncie seus serviços
+                ou descubra novas oportunidades de trabalho
+                na sua cidade.
+            </p>
+
+            <div class="portal-acoes-principais">
+                <a class="portal-acao-dourada"
+                   href="publicar.html">
+                    Publicar anúncio ↗
+                </a>
+
+                <a class="portal-acao-contorno"
+                   href="#oportunidades">
+                    Explorar oportunidades ↓
+                </a>
+            </div>
+        </div>
+
+        <div class="portal-hero-selo" aria-hidden="true">
+            <span class="portal-selo-icone">✦</span>
+            <span>
+                Conectando pessoas
+                e oportunidades
+            </span>
+        </div>
+    </section>
+
+    <!-- FERRAMENTAS -->
+    <section class="portal-servicos">
+        <div class="portal-secao-cabecalho">
+            <div>
+                <span class="portal-sobretitulo">
+                    TUDO EM UM SÓ LUGAR
+                </span>
+                <h2>Ferramentas e serviços</h2>
+            </div>
+
+            <p>
+                Soluções práticas para trabalhar,
+                contratar e organizar.
+            </p>
+        </div>
+
+        <div class="portal-grid">
+
+            <a class="portal-card" href="curriculo.html">
+                <span class="portal-card-icone">▤</span>
+                <h3>Monte seu currículo</h3>
+                <p>
+                    Crie seu currículo profissional
+                    de forma simples.
+                </p>
+                <span class="portal-card-link">
+                    Acessar ferramenta ↗
+                </span>
+            </a>
+
+            <a class="portal-card"
+               href="https://grademestre.vercel.app/"
+               target="_blank" rel="noopener noreferrer">
+                <span class="portal-card-icone">▦</span>
+                <h3>GradeMestre</h3>
+                <p>
+                    Gere e organize grades horárias escolares.
+                </p>
+                <span class="portal-card-link">
+                    Abrir GradeMestre ↗
+                </span>
+            </a>
+
+            <a class="portal-card"
+               href="colaboradores.html">
+                <span class="portal-card-icone">♧</span>
+                <h3>Empresas colaboradoras</h3>
+                <p>
+                    Conheça quem fortalece
+                    nossa comunidade.
+                </p>
+                <span class="portal-card-link">
+                    Conhecer empresas ↗
+                </span>
+            </a>
+
+            <a class="portal-card"
+               href="creditos.html">
+                <span class="portal-card-icone">◇</span>
+                <h3>Comprar créditos</h3>
+                <p>
+                    Tenha acesso a mais contatos
+                    e oportunidades.
+                </p>
+                <span class="portal-card-link">
+                    Ver créditos ↗
+                </span>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- CONTA DO USUÁRIO -->
+    <section class="portal-conta">
+        <span class="portal-conta-icone">◉</span>
+
+        <div class="portal-conta-texto">
+            <h2>Minha conta</h2>
+
+            <p id="usuarioInfo" aria-live="polite">
+                Entre na sua conta para consultar
+                seu saldo de créditos.
+            </p>
+        </div>
+
+        <a href="creditos.html" class="portal-conta-link">
+            Gerenciar créditos →
         </a>
-        <a href="colaboradores.html">
-            <button class="btn">
-                Empresas Colaboradoras
-            </button>
-        </a>
-        <a href="curriculo.html">
-            <button class="btn">
-                Monte seu currículo
-            </button>
-        </a>
-        <a href="https://grademestre.vercel.app/">
-            <button class="btn">
-                Monte sua grade horária
-            </button>
-        </a>
-    </header>
+    </section>
+
+</main>
+
 
     <section id="secaoDestaques" class="secao-destaques oculto">
         <div class="cabecalho-destaques">
@@ -92,7 +199,7 @@
 
         <div id="indicadoresCarrossel" class="indicadores-carrossel"></div>
     </section>
-    <section class="lista">
+<section class="lista" id="oportunidades">
         <h2>Vagas, trabalhos e serviços publicados em Reserva PR</h2>
         <div id="anuncios"></div>
     </section>

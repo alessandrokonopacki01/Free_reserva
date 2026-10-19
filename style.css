@@ -781,3 +781,464 @@ a {
         font-size: 17px;
     }
 }
+
+/* =========================================
+   CONTRATA RESERVA — NOVO PORTAL
+   ========================================= */
+
+/* TOPO */
+
+.portal-topo,
+.portal-inicio {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.portal-topo {
+    max-width: 1180px;
+    margin: auto;
+    padding: 24px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.portal-marca {
+    color: white;
+    font-size: 21px;
+    letter-spacing: .5px;
+    font-weight: 900;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.portal-marca .marca-destaque {
+    color: #ffd43b;
+}
+
+.portal-topo-acoes {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.portal-local {
+    font-size: 13px;
+    color: #a9a9a9;
+}
+
+.portal-login {
+    font-size: 13px;
+    font-weight: 700;
+    background: #1a1a1a;
+    color: #f7d45b;
+    border: 1px solid #51431d;
+    padding: 11px 17px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.portal-login:hover {
+    background: #302816;
+    border-color: #d4af37;
+}
+
+/* CONTEÚDO PRINCIPAL */
+
+.portal-inicio {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 10px 22px 36px;
+}
+
+/* DESTAQUE PRINCIPAL */
+
+.portal-hero {
+    background:
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(255, 215, 0, .13),
+            transparent 43%
+        ),
+        linear-gradient(125deg, #191919, #0d0d0d);
+
+    border: 1px solid #383126;
+    border-radius: 24px;
+    padding: clamp(28px, 5vw, 58px);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.portal-hero-conteudo {
+    max-width: 715px;
+}
+
+.portal-sobretitulo {
+    display: block;
+    color: #e4c052;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+}
+
+.portal-hero h1 {
+    font-size: clamp(31px, 4.7vw, 55px);
+    font-weight: 850;
+    line-height: 1.13;
+    letter-spacing: -1.7px;
+    color: white;
+    margin: 0 0 20px;
+}
+
+.portal-hero h1 em {
+    font-style: normal;
+    color: #ffda45;
+}
+
+.portal-hero p {
+    color: #c3c3c3;
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 590px;
+    margin: 0 0 29px;
+}
+
+/* BOTÕES PRINCIPAIS */
+
+.portal-acoes-principais {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.portal-acao-dourada,
+.portal-acao-contorno {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.portal-acao-dourada {
+    background: #ffd43b;
+    color: #141414;
+}
+
+.portal-acao-dourada:hover {
+    background: #ffe278;
+    transform: translateY(-2px);
+}
+
+.portal-acao-contorno {
+    color: #f5f5f5;
+    border: 1px solid #5a5035;
+    background: #24221d;
+}
+
+.portal-acao-contorno:hover {
+    border-color: #d4af37;
+    background: #363022;
+}
+
+/* ELEMENTO DECORATIVO */
+
+.portal-hero-selo {
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    border: 1px solid #6b5825;
+    background: radial-gradient(
+        circle,
+        #312813,
+        #12110e 75%
+    );
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-align: center;
+    gap: 16px;
+
+    color: #dac789;
+    font-size: 12px;
+    line-height: 1.5;
+
+    box-shadow: 0 0 70px rgba(212, 175, 55, .06);
+}
+
+.portal-selo-icone {
+    font-size: 52px;
+    color: #ffd43b;
+}
+
+/* FERRAMENTAS E SERVIÇOS */
+
+.portal-servicos {
+    padding: 47px 0 25px;
+}
+
+.portal-secao-cabecalho {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 22px;
+    margin-bottom: 22px;
+}
+
+.portal-secao-cabecalho .portal-sobretitulo {
+    margin-bottom: 8px;
+}
+
+.portal-secao-cabecalho h2 {
+    font-size: 29px;
+    color: white;
+    line-height: 1.2;
+}
+
+.portal-secao-cabecalho > p {
+    font-size: 14px;
+    color: #aaa;
+    max-width: 270px;
+    text-align: right;
+    line-height: 1.5;
+}
+
+/* CARDS */
+
+.portal-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.portal-card {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding: 23px 20px;
+    background: #171717;
+    border: 1px solid #37332a;
+    border-radius: 17px;
+    color: white;
+    text-decoration: none;
+
+    transition:
+        transform .2s,
+        border-color .2s,
+        background .2s;
+}
+
+.portal-card:hover {
+    transform: translateY(-4px);
+    border-color: #b39335;
+    background: #201d17;
+}
+
+.portal-card-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
+
+    background: #332b15;
+    color: #ffd43b;
+    font-size: 28px;
+    margin-bottom: 16px;
+}
+
+.portal-card h3 {
+    font-size: 16px;
+    color: white;
+    line-height: 1.35;
+    margin-bottom: 9px;
+}
+
+.portal-card p {
+    font-size: 13px;
+    color: #ababab;
+    line-height: 1.5;
+    margin-bottom: 22px;
+    font-weight: 400;
+}
+
+.portal-card-link {
+    margin-top: auto;
+    color: #f1ca56;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+/* MINHA CONTA */
+
+.portal-conta {
+    margin-top: 17px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    background: #151515;
+    border: 1px solid #302e29;
+    border-radius: 17px;
+    padding: 19px 23px;
+}
+
+.portal-conta-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #282212;
+    border-radius: 12px;
+    color: #edc650;
+
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    font-size: 22px;
+}
+
+.portal-conta-texto {
+    min-width: 0;
+    flex: 1;
+}
+
+.portal-conta h2 {
+    font-size: 15px;
+    color: white;
+    margin: 0 0 5px;
+}
+
+.portal-conta #usuarioInfo {
+    font-size: 13px;
+    color: #bbb;
+    margin: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+.portal-conta-link {
+    font-size: 13px;
+    color: #ffd43b;
+    white-space: nowrap;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 940px) {
+    .portal-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .portal-hero-selo {
+        width: 145px;
+        height: 145px;
+    }
+}
+
+@media (max-width: 620px) {
+    .portal-topo {
+        padding: 18px 16px;
+    }
+
+    .portal-marca {
+        font-size: 17px;
+    }
+
+    .portal-local {
+        display: none;
+    }
+
+    .portal-login {
+        font-size: 12px;
+        padding: 10px;
+    }
+
+    .portal-inicio {
+        padding: 4px 15px 24px;
+    }
+
+    .portal-hero {
+        padding: 27px 23px;
+    }
+
+    .portal-hero h1 {
+        letter-spacing: -.5px;
+    }
+
+    .portal-hero-selo {
+        display: none;
+    }
+
+    .portal-acoes-principais {
+        flex-direction: column;
+    }
+
+    .portal-acao-dourada,
+    .portal-acao-contorno {
+        width: 100%;
+    }
+
+    .portal-secao-cabecalho {
+        display: block;
+    }
+
+    .portal-secao-cabecalho > p {
+        text-align: left;
+        margin-top: 10px;
+    }
+
+    .portal-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .portal-card {
+        padding: 17px 14px;
+        min-height: 220px;
+    }
+
+    .portal-card h3 {
+        font-size: 14px;
+    }
+
+    .portal-card p {
+        font-size: 12px;
+    }
+
+    .portal-conta {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .portal-conta-link {
+        margin-left: 57px;
+    }
+}
+
+@media (max-width: 360px) {
+    .portal-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .portal-card {
+        min-height: 180px;
+    }
+}
