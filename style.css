@@ -953,31 +953,16 @@ a {
 
 /* ELEMENTO DECORATIVO */
 
-.portal-hero-selo {
-    width: 190px;
-    height: 190px;
+.portal-hero-logo {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
     border-radius: 50%;
-    border: 1px solid #6b5825;
-    background: radial-gradient(
-        circle,
-        #312813,
-        #12110e 75%
-    );
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    text-align: center;
-    gap: 16px;
-
-    color: #dac789;
-    font-size: 12px;
-    line-height: 1.5;
-
-    box-shadow: 0 0 70px rgba(212, 175, 55, .06);
+    display: block;
 }
+
 
 .portal-selo-icone {
     font-size: 52px;
