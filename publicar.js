@@ -13,6 +13,7 @@ botao.addEventListener("click", async () => {
     const nome = document.getElementById("nome").value.trim();
     const telefone = document.getElementById("telefone").value.trim();
     const categoria = document.getElementById("categoria").value;
+    const cidade = document.getElementById("cidade").value;
     const titulo = document.getElementById("titulo").value.trim();
     const descricao = document.getElementById("descricao").value.trim();
 
@@ -31,7 +32,7 @@ botao.addEventListener("click", async () => {
             categoria,
             titulo,
             descricao,
-            cidade: "Reserva",
+            cidade,
             status: "ativo",
 
             instagram: {
