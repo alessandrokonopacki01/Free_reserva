@@ -297,6 +297,9 @@ async function gerarStory(
     .innerText =
       tema.beneficios[2];
 
+document.getElementById("storyCidade").innerText =
+  `📍 ${(anuncio.cidade || "Reserva").toUpperCase()} - PR`;
+
   story.style.display = "flex";
 
   try {
