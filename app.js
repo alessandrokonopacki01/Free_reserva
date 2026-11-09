@@ -1012,6 +1012,8 @@ async function abrirModalAnuncio() {
         let videoIniciado = false;
         let maiorTempoAssistido = 0;
         let intervaloVerificacao = null;
+        let anuncioConcluido = false;
+        let ultimaVerificacaoMs = 0;
 
         if (textoModalAnuncio) {
             const empresa =
@@ -1121,6 +1123,34 @@ async function abrirModalAnuncio() {
             resolve(resultado);
         }
 
+        async function concluirAnuncio() {
+    if (anuncioConcluido || finalizado) return;
+
+    anuncioConcluido = true;
+
+    tempoAnuncio.textContent =
+        "Anúncio concluído! Liberando contato...";
+
+    if (intervaloVerificacao) {
+        clearInterval(intervaloVerificacao);
+        intervaloVerificacao = null;
+    }
+
+    try {
+        await updateDoc(
+            doc(db, "anunciosVideos", anuncio.id),
+            { conclusoes: increment(1) }
+        );
+    } catch (erro) {
+        console.warn(
+            "Não foi possível registrar a conclusão:",
+            erro
+        );
+    }
+
+    finalizar(true);
+}
+
         /* ==================================================
            CANCELAR ANÚNCIO
         ================================================== */
@@ -1189,7 +1219,7 @@ async function abrirModalAnuncio() {
 
                         playerVars: {
                             autoplay: 1,
-                            controls: 0,
+                            controls: 1,
                             disablekb: 1,
                             fs: 0,
                             rel: 0,
@@ -1203,140 +1233,95 @@ async function abrirModalAnuncio() {
                             ================================== */
 
                             async onReady(evento) {
+    try {
+        evento.target.playVideo();
+    } catch (erro) {
+        console.warn("Erro ao iniciar vídeo:", erro);
+    }
 
-                                await updateDoc(
-                                    doc(db, "anunciosVideos", anuncio.id),{
-                                        visualizacoes: increment(1)
-                                    });
-                                evento.target.playVideo();
+    updateDoc(
+        doc(db, "anunciosVideos", anuncio.id),
+        { visualizacoes: increment(1) }
+    ).catch(erro => {
+        console.warn("Erro ao registrar visualização:", erro);
+    });
 
-                                intervaloVerificacao =
-                                    setInterval(
-                                        () => {
-                                            if (
-                                                !playerAnuncio ||
-                                                typeof playerAnuncio
-                                                    .getCurrentTime !==
-                                                    "function"
-                                            ) {
-                                                return;
-                                            }
+    ultimaVerificacaoMs = Date.now();
 
-                                            const tempoAtual =
-                                                playerAnuncio
-                                                    .getCurrentTime() ||
-                                                0;
+    intervaloVerificacao = setInterval(() => {
+        if (
+            finalizado ||
+            anuncioConcluido ||
+            !playerAnuncio ||
+            typeof playerAnuncio.getCurrentTime !== "function"
+        ) {
+            return;
+        }
 
-                                            const duracao =
-                                                playerAnuncio
-                                                    .getDuration() ||
-                                                0;
+        const tempoAtual = playerAnuncio.getCurrentTime() || 0;
+        const duracao = playerAnuncio.getDuration() || 0;
 
-                                            /*
-                                             * Se o usuário tentar avançar
-                                             * mais de 2 segundos, retorna
-                                             * para o último ponto assistido.
-                                             */
-                                            if (
-                                                tempoAtual >
-                                                maiorTempoAssistido +
-                                                    2
-                                            ) {
-                                                playerAnuncio
-                                                    .seekTo(
-                                                        maiorTempoAssistido,
-                                                        true
-                                                    );
+        const agora = Date.now();
+        const decorrido = Math.max(
+            0,
+            (agora - ultimaVerificacaoMs) / 1000
+        );
 
-                                                return;
-                                            }
+        ultimaVerificacaoMs = agora;
 
-                                            maiorTempoAssistido =
-                                                Math.max(
-                                                    maiorTempoAssistido,
-                                                    tempoAtual
-                                                );
+        if (
+            tempoAtual > maiorTempoAssistido +
+            Math.max(3, decorrido + 2)
+        ) {
+            try {
+                playerAnuncio.seekTo(maiorTempoAssistido, true);
+            } catch (erro) {
+                console.warn("Erro ao corrigir avanço:", erro);
+            }
+            return;
+        }
 
-                                            if (
-                                                duracao >
-                                                0
-                                            ) {
-                                                const restante =
-                                                    Math.max(
-                                                        0,
-                                                        Math.ceil(
-                                                            duracao -
-                                                            tempoAtual
-                                                        )
-                                                    );
+        maiorTempoAssistido = Math.max(
+            maiorTempoAssistido,
+            tempoAtual
+        );
 
-                                                tempoAnuncio
-                                                    .textContent =
-                                                    `Tempo restante: ${restante} segundos`;
-                                            }
-                                        },
-                                        500
-                                    );
-                            },
+        if (duracao > 0) {
+            const restante = Math.max(
+                0,
+                Math.ceil(duracao - tempoAtual)
+            );
+
+            tempoAnuncio.textContent =
+                `Tempo restante: ${restante} segundos`;
+
+            if (
+                duracao - tempoAtual <= 0.75 &&
+                maiorTempoAssistido >= duracao - 1.5
+            ) {
+                void concluirAnuncio();
+            }
+        }
+    }, 500);
+},
+
 
                             /* ==================================
                                ALTERAÇÃO DE ESTADO
                             ================================== */
 
                             async onStateChange(evento) {
-                                /*
-                                 * Se o usuário pausar,
-                                 * o vídeo volta a tocar.
-                                 */
-                                if (
-                                    evento.data ===
-                                        window.YT
-                                            .PlayerState
-                                            .PAUSED &&
-                                    !finalizado
-                                ) {
-                                    try {
-                                        playerAnuncio
-                                            .playVideo();
-                                    } catch (
-                                        erro
-                                    ) {
-                                        console.warn(
-                                            "Não foi possível continuar o vídeo:",
-                                            erro
-                                        );
-                                    }
-                                }
+    if (finalizado || anuncioConcluido) return;
 
-                                /*
-                                 * Somente libera quando o
-                                 * vídeo cadastrado termina.
-                                 */
-                                if (
-                                    evento.data ===
-                                    window.YT
-                                        .PlayerState
-                                        .ENDED
-                                ) {
-                                    tempoAnuncio
-                                        .textContent =
-                                        "Anúncio concluído! Liberando contato...";
-                                    await updateDoc(
-    doc(db, "anunciosVideos", anuncio.id),
-    {
-        conclusoes: increment(1)
+    if (evento.data === window.YT.PlayerState.ENDED) {
+        void concluirAnuncio();
+    } else if (
+        evento.data === window.YT.PlayerState.PAUSED
+    ) {
+        tempoAnuncio.textContent =
+            "Vídeo pausado. Aperte reproduzir para continuar.";
     }
-);
-                                    setTimeout(
-                                        () => {
-                                            finalizar(
-                                                true
-                                            );
-                                        },
-                                        500
-                                    );
-                                }
-                            },
+},
 
                             /* ==================================
                                ERRO NO VÍDEO

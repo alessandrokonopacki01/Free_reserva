@@ -887,6 +887,7 @@ async function abrirAnuncioCurriculo() {
         let iniciado = false;
 
         let maiorTempoAssistido = 0;
+        let ultimaVerificacaoMs = 0;
 
         let intervalo = null;
 
@@ -1148,7 +1149,7 @@ async function concluirAnuncio() {
 
                             autoplay: 1,
 
-                            controls: 0,
+                            controls: 1,
 
                             disablekb: 1,
 
@@ -1195,8 +1196,7 @@ async function concluirAnuncio() {
 
                                 evento.target
                                     .playVideo();
-
-
+                                    ultimaVerificacaoMs = Date.now();
                                 intervalo =
                                     setInterval(
                                         () => {
@@ -1228,20 +1228,30 @@ async function concluirAnuncio() {
                                              * Impede avançar o vídeo.
                                              */
 
-                                            if (
-                                                tempoAtual >
-                                                maiorTempoAssistido +
-                                                2
-                                            ) {
+                                           const agora = Date.now();
 
-                                                playerAnuncioCurriculo
-                                                    .seekTo(
-                                                        maiorTempoAssistido,
-                                                        true
-                                                    );
+const decorrido = Math.max(
+    0,
+    (agora - ultimaVerificacaoMs) / 1000
+);
 
-                                                return;
-                                            }
+ultimaVerificacaoMs = agora;
+
+if (
+    tempoAtual > maiorTempoAssistido +
+    Math.max(3, decorrido + 2)
+) {
+    try {
+        playerAnuncioCurriculo.seekTo(
+            maiorTempoAssistido,
+            true
+        );
+    } catch (erro) {
+        console.warn("Erro ao corrigir avanço:", erro);
+    }
+
+    return;
+}
 
 
                                             maiorTempoAssistido =
@@ -1269,8 +1279,8 @@ async function concluirAnuncio() {
      * Finaliza antes do YouTube reiniciar.
      */
     if (
-        restanteReal <= 1 &&
-        tempoAtual > 0
+restanteReal <= 0.75 &&
+maiorTempoAssistido >= duracao - 1.5
     ) {
 
         concluirAnuncio();
